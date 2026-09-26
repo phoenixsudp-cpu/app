@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phoenix Sudarshan Computers - ERP & Service Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-area, #printable-area * { visibility: visible; }
+      #printable-area { position: absolute; left: 0; top: 0; width: 100%; border: none !important; margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col md:flex-row">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside id="sidebar" class="bg-slate-900 text-slate-300 w-full md:w-64 flex-shrink-0 flex flex-col justify-between hidden md:flex border-r border-slate-800 z-30">
+    <div>
+      <div class="p-4 border-b border-slate-800 flex items-center gap-3">
+        <div class="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-white tracking-wide uppercase" id="sidebar-shop-name">Phoenix Sudarshan</h1>
+          <p class="text-xs text-blue-400">Computers & IT Support</p>
+        </div>
+      </div>
+      <nav class="p-3 space-y-1 text-sm font-medium">
+        <a href="#dashboard" onclick="navigate('dashboard')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-chart-pie w-5 text-slate-400"></i> Dashboard
+        </a>
+        <a href="#jobs" onclick="navigate('jobs')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-screwdriver-wrench w-5 text-slate-400"></i> Job Cards
+        </a>
+        <a href="#customers" onclick="navigate('customers')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-users w-5 text-slate-400"></i> Customers & Devices
+        </a>
+        <a href="#quotations" onclick="navigate('quotations')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-slate-400"></i> Quotations
+        </a>
+        <a href="#invoices" onclick="navigate('invoices')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-receipt w-5 text-slate-400"></i> Invoices & Billing
+        </a>
+        <a href="#inventory" onclick="navigate('inventory')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-boxes-stacked w-5 text-slate-400"></i> Parts & Inventory
+        </a>
+        <a href="#settings" onclick="navigate('settings')" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+          <i class="fa-solid fa-sliders w-5 text-slate-400"></i> Shop Settings & Backup
+        </a>
+      </nav>
+    </div>
+    <div class="p-3 border-t border-slate-800 bg-slate-950/60 text-xs text-slate-400">
+      <span>Logged in: </span><span id="currentUserLabel" class="text-white font-semibold">Dasharath (Admin)</span>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <header class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+        <span class="text-base font-bold text-slate-800" id="topbar-title">Dashboard</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openJobCardModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs">
+          <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">New Job Card</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900 text-slate-200 p-4 border-b border-slate-800 space-y-2 text-sm">
+      <a href="#dashboard" onclick="navigate('dashboard'); toggleMobileSidebar();" class="block py-1">Dashboard</a>
+      <a href="#jobs" onclick="navigate('jobs'); toggleMobileSidebar();" class="block py-1">Job Cards</a>
+      <a href="#customers" onclick="navigate('customers'); toggleMobileSidebar();" class="block py-1">Customers</a>
+      <a href="#quotations" onclick="navigate('quotations'); toggleMobileSidebar();" class="block py-1">Quotations</a>
+      <a href="#invoices" onclick="navigate('invoices'); toggleMobileSidebar();" class="block py-1">Invoices</a>
+      <a href="#inventory" onclick="navigate('inventory'); toggleMobileSidebar();" class="block py-1">Inventory</a>
+      <a href="#settings" onclick="navigate('settings'); toggleMobileSidebar();" class="block py-1">Settings</a>
+    </div>
+
+    <main id="app-view" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar"></main>
+  </div>
+
+  <!-- ==================== FORM MODAL ==================== -->
+  <div id="formModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-3 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full my-6 flex flex-col max-h-[92vh]">
+      <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl">
+        <h3 class="font-bold text-slate-800 text-base" id="formModalTitle">Form</h3>
+        <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold px-2">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 text-xs" id="formModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PRINTABLE MODAL ==================== -->
+  <div id="printModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full my-8 flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl no-print">
+        <h3 class="font-bold text-slate-800 text-base" id="printModalTitle">Print Document</h3>
+        <div class="flex gap-2">
+          <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
+            <i class="fa-solid fa-print"></i> Print (A4)
+          </button>
+          <button onclick="closePrintModal()" class="text-slate-500 hover:text-slate-800 text-lg px-2">&times;</button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 bg-white" id="printable-area"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl text-sm flex items-center gap-3 transform transition-transform duration-300 translate-y-24 z-50">
+    <span id="toast-icon" class="text-emerald-400"><i class="fa-solid fa-circle-check"></i></span>
+    <span id="toast-message">Operation successful</span>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       STORAGE & DEFAULT STATE
+       ========================================================================== */
+    const STORAGE_KEY = "phoenix_sudarshan_full_suite_v3";
+
+    const defaultState = {
+      settings: {
+        shopName: "Phoenix Sudarshan Computers",
+        tagline: "Computer Sales, Laptop Chip-Level Repair & IT Support",
+        address: "Main Road, Opp. City Tower, Udupi, Karnataka - 576101",
+        phone: "+91 98450 12345",
+        whatsapp: "919845012345",
+        email: "support@phoenixsudarshan.in",
+        enableGST: true,
+        gstin: "29AAAAA0000A1Z5",
+        pan: "ABCDE1234F",
+        bankName: "HDFC Bank, Udupi Branch",
+        accountNo: "50200012345678",
+        ifsc: "HDFC0001234",
+        upiId: "phoenixcomp@okhdfcbank",
+        prefixJob: "JOB-2026-",
+        prefixCust: "CUS-2026-",
+        prefixQuot: "QT-2026-",
+        prefixInv: "INV-2026-",
+        termsJobCard: "1. Device stored strictly at owner's risk.\n2. Diagnosis estimate valid for 7 days.\n3. Physical & water-damaged parts carry no guarantee.\n4. Unclaimed devices after 30 days are subject to disposal or storage fees.",
+        termsQuotation: "1. Quotation valid for 7 days from issue date.\n2. Spare parts pricing subject to sudden market changes.\n3. 50% deposit required for special ordered components.\n4. Repair commences after customer approval.",
+        termsInvoice: "1. Warranty valid only on replaced parts with original bill.\n2. No warranty for physical burn, corrosion, or surge damage.\n3. Goods once sold will not be returned or exchanged.\n4. Subject to Udupi jurisdiction."
+      },
+      customers: [
+        { id: "CUS-2026-00001", name: "Ravi Kumar", company: "Ravi Enterprises", mobile: "9876543210", email: "ravi@example.com", address: "Brahmavar", city: "Udupi", date: "2026-09-10" },
+        { id: "CUS-2026-00002", name: "Suresh Hegde", company: "Suresh Tech", mobile: "9844011223", email: "suresh@example.com", address: "Court Road", city: "Udupi", date: "2026-08-15" }
+      ],
+      devices: [
+        { id: "DEV-001", customerId: "CUS-2026-00001", brand: "HP", model: "Pavilion 15-eg", serial: "5CD1234ABC", type: "Laptop" },
+        { id: "DEV-002", customerId: "CUS-2026-00002", brand: "Dell", model: "Inspiron 3511", serial: "DL99881122", type: "Laptop" }
+      ],
+      jobs: [
+        {
+          id: "JOB-2026-00001",
+          customerId: "CUS-2026-00001",
+          deviceId: "DEV-001",
+          date: "2026-09-20",
+          status: "Repairing",
+          complaint: "No display, charging light blinks",
+          technician: "Ramesh",
+          accessories: "Adapter",
+          estimatedCost: 3500,
+          advancePaid: 500,
+          diagnosisData: { faultFound: "Motherboard 19V rail short circuit", solution: "Replace charging IC and filter caps", partsList: [] }
+        }
+      ],
+      quotations: [
+        {
+          id: "QT-2026-00001",
+          jobId: "JOB-2026-00001",
+          customerId: "CUS-2026-00001",
+          date: "2026-09-21",
+          validUntil: "2026-09-28",
+          items: [
+            { desc: "Laptop Motherboard Chip-Level Power Repair", hsn: "9987", costPrice: 600, marginPct: 200, rate: 1800, gstRate: 18, finalPrice: 2124, qty: 1, discount: 0 }
+          ],
+          note: "Includes thorough cooling fan cleanup and thermal paste reapplication.",
+          discount: 0,
+          status: "Approved"
+        }
+      ],
+      invoices: [
+        {
+          id: "INV-2026-00001",
+          jobId: "JOB-2026-00001",
+          customerId: "CUS-2026-00001",
+          date: "2026-09-23",
+          items: [
+            { desc: "Motherboard Power Service & Caps Replacement", hsn: "9987", rate: 1800, gstRate: 18, qty: 1, discount: 100 }
+          ],
+          manualDiscount: 50,
+          amountPaid: 1950,
+          warrantyText: "30 Days service warranty"
+        }
+      ],
+      items: [
+        { id: "ITM-001", code: "SSD-512", name: "Kingston 512GB NVMe SSD", category: "SSD", costPrice: 2100, marginPct: 30, sellingPrice: 2730, gstRate: 18, stock: 12 },
+        { id: "ITM-002", code: "RAM-8GB", name: "Crucial 8GB DDR4 3200MHz", category: "RAM", costPrice: 1200, marginPct: 25, sellingPrice: 1500, gstRate: 18, stock: 8 },
+        { id: "ITM-003", code: "SRV-CHIP", name: "Motherboard Chip-Level Repair", category: "Service", costPrice: 500, marginPct: 260, sellingPrice: 1800, gstRate: 18, stock: 999 }
+      ]
+    };
+
+    function getDB() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState));
+        return defaultState;
+      }
+      return JSON.parse(raw);
+    }
+
+    function saveDB(db) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    /* ==========================================================================
+       FINANCIAL CALCULATION ENGINE
+       ========================================================================== */
+    function computeQuotationTotals(items, overallDiscount = 0) {
+      const db = getDB();
+      const isGST = db.settings.enableGST !== false;
+      let taxableSubtotal = 0;
+      let totalTax = 0;
+      let grossFinal = 0;
+
+      items.forEach(it => {
+        const qty = Number(it.qty || 1);
+        const rate = Number(it.rate || 0);
+        const disc = Number(it.discount || 0);
+        const lineTaxable = Math.max(0, (rate * qty) - disc);
+        const gstRate = isGST ? Number(it.gstRate || 0) : 0;
+        const lineTax = (lineTaxable * gstRate) / 100;
+        const lineTotal = lineTaxable + lineTax;
+
+        taxableSubtotal += lineTaxable;
+        totalTax += lineTax;
+        grossFinal += lineTotal;
+      });
+
+      const netFinal = Math.max(0, Math.round(grossFinal - Number(overallDiscount || 0)));
+      return { taxableSubtotal, totalTax, grossFinal, netFinal, isGST };
+    }
+
+    function computeInvoiceTotals(items, manualDiscount = 0) {
+      const db = getDB();
+      const isGST = db.settings.enableGST !== false;
+      let taxable = 0;
+      let totalGst = 0;
+
+      items.forEach(it => {
+        const lineGross = Number(it.rate || 0) * Number(it.qty || 1) - Number(it.discount || 0);
+        const gstRate = isGST ? Number(it.gstRate || 0) : 0;
+        taxable += Math.max(0, lineGross);
+        totalGst += (Math.max(0, lineGross) * gstRate) / 100;
+      });
+
+      const grandTotal = Math.max(0, Math.round(taxable + totalGst - Number(manualDiscount || 0)));
+      return { taxable, totalGst, grandTotal, isGST };
+    }
+
+    /* ==========================================================================
+       EXCEL / CSV EXPORT UTILITY (SINGLE, 1 MONTH, 3 MONTHS)
+       ========================================================================== */
+    function filterByPeriod(records, dateField, periodType, singleId = null) {
+      if (singleId) {
+        return records.filter(r => r.id === singleId);
+      }
+      if (periodType === 'all') return records;
+
+      const now = new Date();
+      const days = periodType === '1m' ? 30 : (periodType === '3m' ? 90 : 365);
+      const cutoff = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+
+      return records.filter(r => {
+        const d = new Date(r[dateField] || r.date || r.dateReceived || now);
+        return d >= cutoff;
+      });
+    }
+
+    function exportToCSV(filename, rows) {
+      if (!rows || !rows.length) {
+        showToast("No records available to export for this period!");
+        return;
+      }
+      const keys = Object.keys(rows[0]);
+      const csvContent = "data:text/csv;charset=utf-8," +
+        [keys.join(",")].concat(
+          rows.map(row => keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(","))
+        ).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Export downloaded successfully!");
+    }
+
+    function exportJobsExcel(period, singleId = null) {
+      const db = getDB();
+      const filtered = filterByPeriod(db.jobs, 'date', period, singleId);
+      const rows = filtered.map(j => {
+        const cust = db.customers.find(c => c.id === j.customerId) || {};
+        const dev = db.devices.find(d => d.id === j.deviceId) || {};
+        return {
+          "Job ID": j.id,
+          "Date": j.date,
+          "Customer Name": cust.name || 'Unknown',
+          "Phone": cust.mobile || '',
+          "Device": `${dev.brand || ''} ${dev.model || ''}`,
+          "Complaint": j.complaint,
+          "Status": j.status,
+          "Est Cost": j.estimatedCost,
+          "Advance Paid": j.advancePaid
+        };
+      });
+      exportToCSV(`JobCards_${period}`, rows);
+    }
+
+    function exportQuotationsExcel(period, singleId = null) {
+      const db = getDB();
+      const filtered = filterByPeriod(db.quotations, 'date', period, singleId);
+      const rows = filtered.map(q => {
+        const cust = db.customers.find(c => c.id === q.customerId) || {};
+        const totals = computeQuotationTotals(q.items, q.discount);
+        return {
+          "Quote ID": q.id,
+          "Date": q.date,
+          "Customer": cust.name || '',
+          "Phone": cust.mobile || '',
+          "Linked Job": q.jobId || 'Direct',
+          "Items Count": q.items.length,
+          "Taxable Subtotal": totals.taxableSubtotal.toFixed(2),
+          "Total Tax": totals.totalTax.toFixed(2),
+          "Manual Discount": q.discount || 0,
+          "Final Amount": totals.netFinal,
+          "Status": q.status
+        };
+      });
+      exportToCSV(`Quotations_${period}`, rows);
+    }
+
+    function exportInvoicesExcel(period, singleId = null) {
+      const db = getDB();
+      const filtered = filterByPeriod(db.invoices, 'date', period, singleId);
+      const rows = filtered.map(inv => {
+        const cust = db.customers.find(c => c.id === inv.customerId) || {};
+        const totals = computeInvoiceTotals(inv.items, inv.manualDiscount);
+        return {
+          "Invoice ID": inv.id,
+          "Date": inv.date,
+          "Customer": cust.name || '',
+          "Mobile": cust.mobile || '',
+          "Grand Total": totals.grandTotal,
+          "Amount Paid": inv.amountPaid || 0,
+          "Balance Due": Math.max(0, totals.grandTotal - (inv.amountPaid || 0))
+        };
+      });
+      exportToCSV(`Invoices_${period}`, rows);
+    }
+
+    /* ==========================================================================
+       ROUTING
+       ========================================================================== */
+    function navigate(route, param = null) {
+      const container = document.getElementById("app-view");
+      const title = document.getElementById("topbar-title");
+
+      document.querySelectorAll(".nav-link").forEach(l => {
+        l.classList.remove("bg-slate-800", "text-white");
+        if (l.getAttribute("href") === "#" + route) l.classList.add("bg-slate-800", "text-white");
+      });
+
+      switch (route) {
+        case "dashboard":
+          title.textContent = "Executive Dashboard";
+          renderDashboard(container);
+          break;
+        case "jobs":
+          title.textContent = "Service Job Cards";
+          renderJobsList(container);
+          break;
+        case "customers":
+          title.textContent = "Customers & Device Assets";
+          renderCustomers(container);
+          break;
+        case "quotations":
+          title.textContent = "Quotations & Estimates";
+          renderQuotations(container);
+          break;
+        case "invoices":
+          title.textContent = "Invoices & Billing";
+          renderInvoices(container);
+          break;
+        case "inventory":
+          title.textContent = "Spare Parts & Pricing";
+          renderInventory(container);
+          break;
+        case "settings":
+          title.textContent = "Settings, T&C & Backup";
+          renderSettings(container);
+          break;
+        default:
+          renderDashboard(container);
+      }
+    }
+
+    /* ==========================================================================
+       DASHBOARD
+       ========================================================================== */
+    function renderDashboard(container) {
+      const db = getDB();
+      const openJobs = db.jobs.filter(j => !['Delivered', 'Cancelled'].includes(j.status)).length;
+      container.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <span class="text-xs font-semibold text-slate-500 uppercase">Customers</span>
+            <div class="text-2xl font-bold text-slate-800 mt-1">${db.customers.length}</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <span class="text-xs font-semibold text-slate-500 uppercase">Active Jobs</span>
+            <div class="text-2xl font-bold text-blue-600 mt-1">${openJobs}</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <span class="text-xs font-semibold text-slate-500 uppercase">Quotations</span>
+            <div class="text-2xl font-bold text-amber-600 mt-1">${db.quotations.length}</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <span class="text-xs font-semibold text-slate-500 uppercase">Invoices</span>
+            <div class="text-2xl font-bold text-emerald-600 mt-1">${db.invoices.length}</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6 flex flex-wrap gap-2">
+          <button onclick="openJobCardModal()" class="px-3 py-2 bg-blue-600 text-white rounded text-xs font-medium"><i class="fa-solid fa-plus mr-1"></i> New Job Card</button>
+          <button onclick="openQuotationModal()" class="px-3 py-2 bg-amber-600 text-white rounded text-xs font-medium"><i class="fa-solid fa-file-invoice mr-1"></i> New Quotation</button>
+          <button onclick="openInvoiceModal()" class="px-3 py-2 bg-emerald-600 text-white rounded text-xs font-medium"><i class="fa-solid fa-receipt mr-1"></i> New Invoice</button>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       JOB CARDS MODULE (WITH INLINE CUSTOMER/DEVICE, EDIT, SAVE & PRINT/WHATSAPP)
+       ========================================================================== */
+    function renderJobsList(container) {
+      const db = getDB();
+      container.innerHTML = `
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Job Cards</h2>
+            <p class="text-xs text-slate-500">Service tickets and hardware repairs</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <!-- Period Exports -->
+            <button onclick="exportJobsExcel('1m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 1 Month
+            </button>
+            <button onclick="exportJobsExcel('3m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 3 Months
+            </button>
+            <button onclick="openJobCardModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow">
+              + Create Job Card
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+              <tr>
+                <th class="p-3">Job ID</th>
+                <th class="p-3">Date</th>
+                <th class="p-3">Customer</th>
+                <th class="p-3">Device</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${db.jobs.map(job => {
+                const cust = db.customers.find(c => c.id === job.customerId) || {};
+                const dev = db.devices.find(d => d.id === job.deviceId) || {};
+                return `
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-blue-600">${job.id}</td>
+                    <td class="p-3 text-slate-600">${job.date}</td>
+                    <td class="p-3 font-semibold text-slate-800">${cust.name || 'Unknown'}<br><span class="text-slate-400 font-normal">${cust.mobile || ''}</span></td>
+                    <td class="p-3">${dev.brand || ''} ${dev.model || ''}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700">${job.status}</span></td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openJobCardModal('${job.id}')" title="Edit" class="px-2 py-1 bg-slate-100 hover:bg-blue-100 text-blue-700 rounded"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="exportJobsExcel('single', '${job.id}')" title="Export this Entry" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded"><i class="fa-solid fa-file-excel"></i></button>
+                      <button onclick="printJobCard('${job.id}')" title="Print" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded"><i class="fa-solid fa-print"></i></button>
+                      <button onclick="sendJobCardWhatsApp('${job.id}')" title="WhatsApp" class="px-2 py-1 bg-emerald-600 text-white rounded"><i class="fa-brands fa-whatsapp"></i></button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function openJobCardModal(jobId = null) {
+      const db = getDB();
+      const job = jobId ? db.jobs.find(j => j.id === jobId) : null;
+      const isEdit = !!job;
+      const jId = job ? job.id : (db.settings.prefixJob + String(db.jobs.length + 1).padStart(5, '0'));
+      const jDate = job ? job.date : new Date().toISOString().split('T')[0];
+
+      document.getElementById("formModalTitle").innerText = isEdit ? `Edit Job Card (${jId})` : "Create New Job Card";
+      document.getElementById("formModalBody").innerHTML = `
+        <form onsubmit="event.preventDefault();" id="jobCardForm" class="space-y-4">
+          <input type="hidden" id="jcEditId" value="${isEdit ? jId : ''}">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Job Card #</label>
+              <input type="text" id="jcId" value="${jId}" readonly class="w-full p-2 bg-slate-100 border rounded font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Intake Date</label>
+              <input type="date" id="jcDate" value="${jDate}" class="w-full p-2 border rounded">
+            </div>
+          </div>
+
+          <!-- Customer Selector with Inline Add New -->
+          <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700">Customer</label>
+              <button type="button" onclick="toggleElement('jcNewCustFields')" class="text-blue-600 font-semibold text-xs">+ Add New Customer</button>
+            </div>
+            <select id="jcCustomer" onchange="populateCustomerDevices(this.value)" class="w-full p-2 border rounded">
+              <option value="">-- Choose Existing Customer --</option>
+              ${db.customers.map(c => `<option value="${c.id}" ${job && job.customerId === c.id ? 'selected' : ''}>${c.name} -${c.mobile}</option>`).join('')}
+            </select>
+            <!-- Inline new customer container -->
+            <div id="jcNewCustFields" class="hidden p-2.5 bg-white border border-blue-200 rounded grid grid-cols-3 gap-2">
+              <input type="text" id="jcInlineCustName" placeholder="Full Name *" class="p-1.5 border rounded">
+              <input type="tel" id="jcInlineCustMobile" placeholder="10 Digit Phone *" class="p-1.5 border rounded">
+              <input type="text" id="jcInlineCustCity" placeholder="City / Town" class="p-1.5 border rounded">
+            </div>
+          </div>
+
+          <!-- Device Selector with Inline Add New -->
+          <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700">Device Hardware</label>
+              <button type="button" onclick="toggleElement('jcNewDevFields')" class="text-blue-600 font-semibold text-xs">+ Add New Device</button>
+            </div>
+            <select id="jcDevice" class="w-full p-2 border rounded">
+              <option value="">-- Choose Existing Device --</option>
+            </select>
+            <!-- Inline new device container -->
+            <div id="jcNewDevFields" class="hidden p-2.5 bg-white border border-blue-200 rounded grid grid-cols-4 gap-2">
+              <select id="jcInlineDevType" class="p-1.5 border rounded">
+                <option value="Laptop">Laptop</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Printer">Printer</option>
+                <option value="CCTV">CCTV</option>
+              </select>
+              <input type="text" id="jcInlineDevBrand" placeholder="Brand (Dell, HP)" class="p-1.5 border rounded">
+              <input type="text" id="jcInlineDevModel" placeholder="Model" class="p-1.5 border rounded">
+              <input type="text" id="jcInlineDevSerial" placeholder="Serial / S-Tag" class="p-1.5 border rounded">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1">Customer Reported Fault / Issue *</label>
+            <textarea id="jcComplaint" rows="2" class="w-full p-2 border rounded" required>${job ? job.complaint : ''}</textarea>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Assigned Technician</label>
+              <input type="text" id="jcTechnician" value="${job ? job.technician : 'Ramesh (Senior Tech)'}" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Est. Cost (₹)</label>
+              <input type="number" id="jcEstCost" value="${job ? job.estimatedCost : 0}" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Advance Received (₹)</label>
+              <input type="number" id="jcAdvance" value="${job ? job.advancePaid : 0}" class="w-full p-2 border rounded">
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons: Save, Print & Save, WhatsApp & Save -->
+          <div class="flex flex-wrap gap-2 pt-3 border-t">
+            <button type="button" onclick="saveJobCardAction('save')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+            </button>
+            <button type="button" onclick="saveJobCardAction('print')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded">
+              <i class="fa-solid fa-print mr-1"></i> Print & Save
+            </button>
+            <button type="button" onclick="saveJobCardAction('whatsapp')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded">
+              <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp & Save
+            </button>
+          </div>
+        </form>
+      `;
+
+      if (job) {
+        populateCustomerDevices(job.customerId, job.deviceId);
+      }
+      document.getElementById("formModal").classList.remove("hidden");
+    }
+
+    function populateCustomerDevices(custId, selectedDevId = null) {
+      const db = getDB();
+      const devSelect = document.getElementById("jcDevice");
+      if (!devSelect) return;
+      const devices = db.devices.filter(d => d.customerId === custId);
+      devSelect.innerHTML = `<option value="">-- Choose Existing Device --</option>` +
+        devices.map(d => `<option value="${d.id}" ${selectedDevId === d.id ? 'selected' : ''}>${d.brand} ${d.model} (${d.type} - SN: ${d.serial || 'N/A'})</option>`).join('');
+    }
+
+    function saveJobCardAction(action) {
+      const db = getDB();
+      const editId = document.getElementById("jcEditId").value;
+      let custId = document.getElementById("jcCustomer").value;
+
+      // Handle inline new customer creation if typed
+      const inlineCustName = document.getElementById("jcInlineCustName").value.trim();
+      const inlineCustMobile = document.getElementById("jcInlineCustMobile").value.trim();
+      if (inlineCustName && inlineCustMobile) {
+        custId = db.settings.prefixCust + String(db.customers.length + 1).padStart(5, '0');
+        db.customers.push({
+          id: custId,
+          name: inlineCustName,
+          mobile: inlineCustMobile,
+          city: document.getElementById("jcInlineCustCity").value.trim() || "Udupi",
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+
+      if (!custId) {
+        alert("Please choose or add a customer!");
+        return;
+      }
+
+      // Handle inline new device creation if typed
+      let devId = document.getElementById("jcDevice").value;
+      const inlineDevBrand = document.getElementById("jcInlineDevBrand").value.trim();
+      if (inlineDevBrand) {
+        devId = "DEV-" + String(db.devices.length + 1).padStart(3, '0');
+        db.devices.push({
+          id: devId,
+          customerId: custId,
+          type: document.getElementById("jcInlineDevType").value,
+          brand: inlineDevBrand,
+          model: document.getElementById("jcInlineDevModel").value.trim() || "Generic",
+          serial: document.getElementById("jcInlineDevSerial").value.trim() || ""
+        });
+      }
+
+      const complaint = document.getElementById("jcComplaint").value.trim();
+      if (!complaint) {
+        alert("Complaint description is required!");
+        return;
+      }
+
+      let jobRecord;
+      if (editId) {
+        jobRecord = db.jobs.find(j => j.id === editId);
+        jobRecord.customerId = custId;
+        jobRecord.deviceId = devId;
+        jobRecord.date = document.getElementById("jcDate").value;
+        jobRecord.complaint = complaint;
+        jobRecord.technician = document.getElementById("jcTechnician").value;
+        jobRecord.estimatedCost = Number(document.getElementById("jcEstCost").value || 0);
+        jobRecord.advancePaid = Number(document.getElementById("jcAdvance").value || 0);
+      } else {
+        jobRecord = {
+          id: document.getElementById("jcId").value,
+          customerId: custId,
+          deviceId: devId,
+          date: document.getElementById("jcDate").value,
+          status: "Received",
+          complaint: complaint,
+          technician: document.getElementById("jcTechnician").value,
+          estimatedCost: Number(document.getElementById("jcEstCost").value || 0),
+          advancePaid: Number(document.getElementById("jcAdvance").value || 0),
+          diagnosisData: { faultFound: "", solution: "", partsList: [] }
+        };
+        db.jobs.unshift(jobRecord);
+      }
+
+      saveDB(db);
+      closeFormModal();
+      showToast(`Job Card ${jobRecord.id} saved.`);
+      navigate('jobs');
+
+      if (action === 'print') {
+        printJobCard(jobRecord.id);
+      } else if (action === 'whatsapp') {
+        sendJobCardWhatsApp(jobRecord.id);
+      }
+    }
+
+    function printJobCard(jobId) {
+      const db = getDB();
+      const job = db.jobs.find(j => j.id === jobId);
+      if (!job) return;
+      const cust = db.customers.find(c => c.id === job.customerId) || {};
+      const dev = db.devices.find(d => d.id === job.deviceId) || {};
+      const s = db.settings;
+
+      document.getElementById("printable-area").innerHTML = `
+        <div class="text-slate-900 font-sans p-2">
+          <div class="border-b-2 border-slate-900 pb-3 flex justify-between items-start">
+            <div>
+              <h1 class="text-xl font-black uppercase tracking-tight text-blue-900">${s.shopName}</h1>
+              <p class="text-xs text-slate-600">${s.tagline}</p>
+              <p class="text-xs text-slate-500">${s.address}</p>
+              <p class="text-xs text-slate-600">Phone: ${s.phone} | WhatsApp: +${s.whatsapp}</p>
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-slate-900 text-white font-bold text-xs px-3 py-1 uppercase tracking-wider mb-1">SERVICE JOB CARD</span>
+              <div class="text-xs font-mono font-bold">Job No: ${job.id}</div>
+              <div class="text-xs text-slate-600">Date: ${job.date}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 my-3 text-xs">
+            <div class="border p-2.5 rounded">
+              <span class="font-bold uppercase text-[10px] text-slate-500 block mb-1">Customer Info</span>
+              <div class="font-bold text-sm">${cust.name || 'N/A'}</div>
+              <div>Phone: ${cust.mobile || 'N/A'}</div>
+              <div>Address: ${cust.address || ''}, ${cust.city || ''}</div>
+            </div>
+            <div class="border p-2.5 rounded">
+              <span class="font-bold uppercase text-[10px] text-slate-500 block mb-1">Device Details</span>
+              <div>Brand / Model: <span class="font-bold">${dev.brand || ''} ${dev.model || ''}</span></div>
+              <div>Serial: <span class="font-mono">${dev.serial || 'N/A'}</span></div>
+            </div>
+          </div>
+
+          <div class="border p-3 rounded mb-3 text-xs">
+            <span class="font-bold uppercase text-[10px] text-slate-500 block mb-0.5">Problem Reported</span>
+            <p class="font-medium text-slate-900">${job.complaint}</p>
+            <div class="border-t mt-2 pt-2 flex justify-between">
+              <span>Technician: <b>${job.technician}</b></span>
+              <span>Estimated: <b>₹ ${job.estimatedCost}</b></span>
+              <span>Advance Paid: <b class="text-emerald-700">₹ ${job.advancePaid}</b></span>
+            </div>
+          </div>
+
+          <div class="border p-2.5 rounded bg-slate-50/50 text-[10px] text-slate-600 mb-6">
+            <span class="font-bold uppercase text-slate-700 block mb-1">Job Card Terms & Conditions:</span>
+            <p class="whitespace-pre-line">${s.termsJobCard}</p>
+          </div>
+
+          <div class="flex justify-between items-end pt-6 px-4 text-xs font-semibold">
+            <div class="text-center border-t border-slate-400 w-44 pt-1">Customer Signature</div>
+            <div class="text-center border-t border-slate-400 w-44 pt-1">For ${s.shopName}</div>
+          </div>
+        </div>
+      `;
+      document.getElementById("printModalTitle").innerText = `Job Card - ${job.id}`;
+      document.getElementById("printModal").classList.remove("hidden");
+    }
+
+    function sendJobCardWhatsApp(jobId) {
+      const db = getDB();
+      const job = db.jobs.find(j => j.id === jobId);
+      if (!job) return;
+      const cust = db.customers.find(c => c.id === job.customerId) || {};
+      const cleanPhone = (cust.mobile || "").replace(/[^0-9]/g, "");
+      const formatted = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+      const msg = `Hello ${cust.name}, your Job Card ${job.id} for "${job.complaint}" is registered at ${db.settings.shopName}. Est Cost: ₹${job.estimatedCost}. Thank you!`;
+      window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    /* ==========================================================================
+       QUOTATIONS MODULE (DYNAMIC MARGIN + GST SLABS, DISCOUNT, FINAL PRICE PRINT)
+       ========================================================================== */
+    let currentQuoteItems = [];
+
+    function renderQuotations(container) {
+      const db = getDB();
+      container.innerHTML = `
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Quotations & Estimates</h2>
+            <p class="text-xs text-slate-500">Formulas: Cost + Margin % + GST = Final Price</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="exportQuotationsExcel('1m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 1 Month
+            </button>
+            <button onclick="exportQuotationsExcel('3m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 3 Months
+            </button>
+            <button onclick="openQuotationModal()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow">
+              + New Quotation
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+              <tr>
+                <th class="p-3">Quote #</th>
+                <th class="p-3">Date</th>
+                <th class="p-3">Customer</th>
+                <th class="p-3">Job ID</th>
+                <th class="p-3">Final Amount</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${db.quotations.map(q => {
+                const cust = db.customers.find(c => c.id === q.customerId) || {};
+                const totals = computeQuotationTotals(q.items, q.discount);
+                return `
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-blue-600">${q.id}</td>
+                    <td class="p-3 text-slate-600">${q.date}</td>
+                    <td class="p-3 font-semibold text-slate-800">${cust.name || 'N/A'}</td>
+                    <td class="p-3 text-slate-600">${q.jobId || 'Direct'}</td>
+                    <td class="p-3 font-bold text-slate-800">₹ ${totals.netFinal.toLocaleString('en-IN')}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700">${q.status}</span></td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openQuotationModal('${q.id}')" title="Edit" class="px-2 py-1 bg-slate-100 hover:bg-blue-100 text-blue-700 rounded"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="exportQuotationsExcel('single', '${q.id}')" title="Export this Quote" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded"><i class="fa-solid fa-file-excel"></i></button>
+                      <button onclick="printQuotation('${q.id}')" title="Print" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded"><i class="fa-solid fa-print"></i></button>
+                      <button onclick="sendQuotationWhatsApp('${q.id}')" title="WhatsApp" class="px-2 py-1 bg-emerald-600 text-white rounded"><i class="fa-brands fa-whatsapp"></i></button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function openQuotationModal(quoteId = null) {
+      const db = getDB();
+      const quote = quoteId ? db.quotations.find(q => q.id === quoteId) : null;
+      const isEdit = !!quote;
+      const qId = quote ? quote.id : (db.settings.prefixQuot + String(db.quotations.length + 1).padStart(5, '0'));
+      const qDate = quote ? quote.date : new Date().toISOString().split('T')[0];
+      const qValid = quote ? quote.validUntil : new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+
+      currentQuoteItems = quote ? JSON.parse(JSON.stringify(quote.items)) : [];
+
+      document.getElementById("formModalTitle").innerText = isEdit ? `Edit Quotation (${qId})` : "Create New Quotation";
+      document.getElementById("formModalBody").innerHTML = `
+        <form onsubmit="event.preventDefault();" id="quotationForm" class="space-y-4">
+          <input type="hidden" id="qtEditId" value="${isEdit ? qId : ''}">
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Quotation #</label>
+              <input type="text" id="qtId" value="${qId}" readonly class="w-full p-2 bg-slate-100 border rounded font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Issue Date</label>
+              <input type="date" id="qtDate" value="${qDate}" class="w-full p-2 border rounded">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Valid Until</label>
+              <input type="date" id="qtValidUntil" value="${qValid}" class="w-full p-2 border rounded">
+            </div>
+          </div>
+
+          <!-- Customer Selection with Inline Customer Creation -->
+          <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700">Customer</label>
+              <button type="button" onclick="toggleElement('qtNewCustFields')" class="text-blue-600 font-semibold text-xs">+ Add New Customer</button>
+            </div>
+            <select id="qtCustomer" class="w-full p-2 border rounded">
+              <option value="">-- Choose Customer --</option>
+              ${db.customers.map(c => `<option value="${c.id}" ${quote && quote.customerId === c.id ? 'selected' : ''}>${c.name} -${c.mobile}</option>`).join('')}
+            </select>
+            <div id="qtNewCustFields" class="hidden p-2.5 bg-white border border-blue-200 rounded grid grid-cols-3 gap-2">
+              <input type="text" id="qtInlineCustName" placeholder="Full Name *" class="p-1.5 border rounded">
+              <input type="tel" id="qtInlineCustMobile" placeholder="Mobile Number *" class="p-1.5 border rounded">
+              <input type="text" id="qtInlineCustCity" placeholder="City" class="p-1.5 border rounded">
+            </div>
+          </div>
+
+          <!-- Link to Job Card Optional -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Linked Job (Optional)</label>
+              <select id="qtJob" class="w-full p-2 border rounded">
+                <option value="">Direct Quotation (No Job Card)</option>
+                ${db.jobs.map(j => `<option value="${j.id}" ${quote && quote.jobId === j.id ? 'selected' : ''}>${j.id} -${j.complaint.substring(0, 30)}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Overall Manual Discount (₹)</label>
+              <input type="number" id="qtManualDiscount" oninput="renderQuotationItemRows()" value="${quote ? quote.discount : 0}" class="w-full p-2 border rounded font-bold text-rose-600">
+            </div>
+          </div>
+
+          <!-- ADD NEW ITEM SECTION WITH DYNAMIC COST + MARGIN% + GST = FINAL PRICE -->
+          <div class="border border-amber-200 bg-amber-50/50 p-3 rounded-lg space-y-2">
+            <span class="font-bold text-amber-900 block text-xs">Add Item with Cost, Margin & GST Slab Calculation</span>
+            <div class="grid grid-cols-12 gap-2">
+              <div class="col-span-12 sm:col-span-4">
+                <input type="text" id="qtItemDesc" placeholder="Item / Service Name *" class="w-full p-1.5 border rounded bg-white">
+              </div>
+              <div class="col-span-4 sm:col-span-2">
+                <input type="number" id="qtItemCost" oninput="calcDynamicFinalPrice()" placeholder="Cost Price (₹)" class="w-full p-1.5 border rounded bg-white">
+              </div>
+              <div class="col-span-4 sm:col-span-2">
+                <input type="number" id="qtItemMargin" oninput="calcDynamicFinalPrice()" value="20" placeholder="Margin %" class="w-full p-1.5 border rounded bg-white">
+              </div>
+              <div class="col-span-4 sm:col-span-2">
+                <select id="qtItemGstSlab" onchange="calcDynamicFinalPrice()" class="w-full p-1.5 border rounded bg-white font-semibold">
+                  <option value="0">GST 0%</option>
+                  <option value="5">GST 5%</option>
+                  <option value="12">GST 12%</option>
+                  <option value="18" selected>GST 18% (Default)</option>
+                  <option value="28">GST 28%</option>
+                </select>
+              </div>
+              <div class="col-span-12 sm:col-span-2 flex items-center justify-end">
+                <button type="button" onclick="addCalculatedItemToQuote()" class="w-full py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded font-bold">+ Add Item</button>
+              </div>
+            </div>
+            <div class="text-[11px] text-slate-600 flex justify-between px-1">
+              <span>Rate (Excl. Tax): <b id="qtPreviewRate">₹0.00</b></span>
+              <span>Final Selling Price (Incl. GST): <b id="qtPreviewFinal" class="text-emerald-700 font-bold">₹0.00</b></span>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div class="border rounded-lg overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 font-semibold">
+                <tr>
+                  <th class="p-2">Item Description</th>
+                  <th class="p-2 w-16">Cost</th>
+                  <th class="p-2 w-16">Margin%</th>
+                  <th class="p-2 w-20">Rate</th>
+                  <th class="p-2 w-16 text-center">GST Slab</th>
+                  <th class="p-2 w-20 text-right">Final Price</th>
+                  <th class="p-2 w-12 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="quotationItemsBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1">Quotation Notes / Remarks</label>
+            <textarea id="qtNotes" rows="2" placeholder="e.g. Includes 3 months warranty and doorstep pickup." class="w-full p-2 border rounded">${quote ? (quote.note || '') : ''}</textarea>
+          </div>
+
+          <div class="flex justify-between items-center text-sm font-bold bg-slate-50 p-3 rounded">
+            <span>Quotation Net Total:</span>
+            <span id="qtLiveTotal" class="text-xl text-blue-700">₹ 0.00</span>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-2 border-t">
+            <button type="button" onclick="saveQuotationAction('save')" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+            </button>
+            <button type="button" onclick="saveQuotationAction('print')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded">
+              <i class="fa-solid fa-print mr-1"></i> Print & Save
+            </button>
+            <button type="button" onclick="saveQuotationAction('whatsapp')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded">
+              <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp & Save
+            </button>
+          </div>
+        </form>
+      `;
+
+      renderQuotationItemRows();
+      calcDynamicFinalPrice();
+      document.getElementById("formModal").classList.remove("hidden");
+    }
+
+    function calcDynamicFinalPrice() {
+      const cost = Number(document.getElementById("qtItemCost").value || 0);
+      const marginPct = Number(document.getElementById("qtItemMargin").value || 0);
+      const gstSlab = Number(document.getElementById("qtItemGstSlab").value || 0);
+
+      const rate = cost + (cost * (marginPct / 100));
+      const finalPrice = rate + (rate * (gstSlab / 100));
+
+      document.getElementById("qtPreviewRate").innerText = `₹${rate.toFixed(2)}`;
+      document.getElementById("qtPreviewFinal").innerText = `₹${finalPrice.toFixed(2)}`;
+      return { rate, finalPrice, gstSlab, cost, marginPct };
+    }
+
+    function addCalculatedItemToQuote() {
+      const desc = document.getElementById("qtItemDesc").value.trim();
+      if (!desc) {
+        alert("Item description is required!");
+        return;
+      }
+      const calc = calcDynamicFinalPrice();
+      currentQuoteItems.push({
+        desc: desc,
+        costPrice: calc.cost,
+        marginPct: calc.marginPct,
+        rate: Math.round(calc.rate),
+        gstRate: calc.gstSlab,
+        finalPrice: Math.round(calc.finalPrice),
+        qty: 1,
+        discount: 0
+      });
+
+      document.getElementById("qtItemDesc").value = "";
+      document.getElementById("qtItemCost").value = "";
+      renderQuotationItemRows();
+    }
+
+    function removeQuoteItem(idx) {
+      currentQuoteItems.splice(idx, 1);
+      renderQuotationItemRows();
+    }
+
+    function renderQuotationItemRows() {
+      const tbody = document.getElementById("quotationItemsBody");
+      if (!tbody) return;
+      if (currentQuoteItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-slate-400">No items added yet.</td></tr>`;
+      } else {
+        tbody.innerHTML = currentQuoteItems.map((it, i) => `
+          <tr>
+            <td class="p-2 font-medium">${it.desc}</td>
+            <td class="p-2">₹${it.costPrice || 0}</td>
+            <td class="p-2">${it.marginPct || 0}%</td>
+            <td class="p-2">₹${it.rate}</td>
+            <td class="p-2 text-center">${it.gstRate}%</td>
+            <td class="p-2 text-right font-bold text-emerald-700">₹${it.finalPrice}</td>
+            <td class="p-2 text-center"><button type="button" onclick="removeQuoteItem(${i})" class="text-rose-500 font-bold">&times;</button></td>
+          </tr>
+        `).join('');
+      }
+
+      const disc = Number(document.getElementById("qtManualDiscount").value || 0);
+      const totals = computeQuotationTotals(currentQuoteItems, disc);
+      document.getElementById("qtLiveTotal").innerText = `₹ ${totals.netFinal.toLocaleString('en-IN')}`;
+    }
+
+    function saveQuotationAction(action) {
+      const db = getDB();
+      const editId = document.getElementById("qtEditId").value;
+      let custId = document.getElementById("qtCustomer").value;
+
+      // Handle inline customer
+      const inlineName = document.getElementById("qtInlineCustName").value.trim();
+      const inlineMobile = document.getElementById("qtInlineCustMobile").value.trim();
+      if (inlineName && inlineMobile) {
+        custId = db.settings.prefixCust + String(db.customers.length + 1).padStart(5, '0');
+        db.customers.push({
+          id: custId,
+          name: inlineName,
+          mobile: inlineMobile,
+          city: document.getElementById("qtInlineCustCity").value.trim() || "Udupi",
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+
+      if (!custId) {
+        alert("Please choose or add a customer!");
+        return;
+      }
+      if (currentQuoteItems.length === 0) {
+        alert("Please add at least one item to the quotation!");
+        return;
+      }
+
+      let quoteRecord;
+      if (editId) {
+        quoteRecord = db.quotations.find(q => q.id === editId);
+        quoteRecord.customerId = custId;
+        quoteRecord.jobId = document.getElementById("qtJob").value || null;
+        quoteRecord.date = document.getElementById("qtDate").value;
+        quoteRecord.validUntil = document.getElementById("qtValidUntil").value;
+        quoteRecord.items = [...currentQuoteItems];
+        quoteRecord.discount = Number(document.getElementById("qtManualDiscount").value || 0);
+        quoteRecord.note = document.getElementById("qtNotes").value.trim();
+      } else {
+        quoteRecord = {
+          id: document.getElementById("qtId").value,
+          jobId: document.getElementById("qtJob").value || null,
+          customerId: custId,
+          date: document.getElementById("qtDate").value,
+          validUntil: document.getElementById("qtValidUntil").value,
+          items: [...currentQuoteItems],
+          discount: Number(document.getElementById("qtManualDiscount").value || 0),
+          note: document.getElementById("qtNotes").value.trim(),
+          status: "Waiting for Approval"
+        };
+        db.quotations.unshift(quoteRecord);
+      }
+
+      saveDB(db);
+      closeFormModal();
+      showToast(`Quotation ${quoteRecord.id} saved.`);
+      navigate('quotations');
+
+      if (action === 'print') {
+        printQuotation(quoteRecord.id);
+      } else if (action === 'whatsapp') {
+        sendQuotationWhatsApp(quoteRecord.id);
+      }
+    }
+
+    function printQuotation(quoteId) {
+      const db = getDB();
+      const q = db.quotations.find(item => item.id === quoteId);
+      if (!q) return;
+      const cust = db.customers.find(c => c.id === q.customerId) || {};
+      const s = db.settings;
+      const totals = computeQuotationTotals(q.items, q.discount);
+
+      document.getElementById("printable-area").innerHTML = `
+        <div class="text-slate-900 font-sans p-2">
+          <div class="border-b-2 border-slate-900 pb-3 flex justify-between items-start">
+            <div>
+              <h1 class="text-2xl font-black uppercase text-blue-900">${s.shopName}</h1>
+              <p class="text-xs text-slate-600">${s.tagline}</p>
+              <p class="text-xs text-slate-500">${s.address}</p>
+              <p class="text-xs text-slate-600">Phone: ${s.phone} | GSTIN: ${s.gstin}</p>
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-amber-600 text-white font-bold text-xs px-3 py-1 uppercase tracking-wider mb-1">PROFORMA ESTIMATE</span>
+              <div class="text-xs font-mono font-bold">Quote #: ${q.id}</div>
+              <div class="text-xs text-slate-600">Date: ${q.date}</div>
+              <div class="text-xs text-slate-600">Valid Until: ${q.validUntil}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 my-3 text-xs">
+            <div class="border p-2.5 rounded">
+              <span class="font-bold text-[10px] text-slate-500 uppercase block mb-1">Customer Details</span>
+              <div class="font-bold text-sm text-slate-800">${cust.name || 'N/A'}</div>
+              <div>Phone: ${cust.mobile || 'N/A'}</div>
+            </div>
+            <div class="border p-2.5 rounded">
+              <span class="font-bold text-[10px] text-slate-500 uppercase block mb-1">Details</span>
+              <div>Job Card Ref: <span class="font-semibold">${q.jobId || 'Direct'}</span></div>
+              <div>Status: <b>${q.status}</b></div>
+            </div>
+          </div>
+
+          <!-- PRINT SHOWS FINAL PRICE AS REQUESTED -->
+          <table class="w-full text-left text-xs border border-slate-300 mb-3">
+            <thead class="bg-slate-100 font-bold border-b">
+              <tr>
+                <th class="p-2 border-r w-8">#</th>
+                <th class="p-2 border-r">Item Description</th>
+                <th class="p-2 border-r text-center w-12">Qty</th>
+                <th class="p-2 border-r text-right w-24">Rate (₹)</th>
+                <th class="p-2 border-r text-center w-16">GST Slab</th>
+                <th class="p-2 text-right w-28">Final Price (₹)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              ${q.items.map((it, idx) => `
+                <tr>
+                  <td class="p-2 border-r text-center">${idx + 1}</td>
+                  <td class="p-2 border-r font-medium">${it.desc}</td>
+                  <td class="p-2 border-r text-center">${it.qty || 1}</td>
+                  <td class="p-2 border-r text-right">₹ ${Number(it.rate).toFixed(2)}</td>
+                  <td class="p-2 border-r text-center">${it.gstRate}%</td>
+                  <td class="p-2 text-right font-bold text-slate-900">₹ ${Number(it.finalPrice || (it.rate * 1.18)).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          ${q.note ? `
+            <div class="p-2.5 bg-amber-50/60 border border-amber-200 rounded text-xs mb-3">
+              <span class="font-bold text-amber-900 block text-[10px] uppercase">Special Quotation Note:</span>
+              <p class="text-amber-800">${q.note}</p>
+            </div>
+          ` : ''}
+
+          <div class="flex justify-between items-start text-xs my-4">
+            <div class="w-7/12 border p-2.5 rounded bg-slate-50/50">
+              <span class="font-bold text-[10px] text-slate-700 uppercase block mb-1">Quotation Terms & Conditions:</span>
+              <p class="whitespace-pre-line text-[10px] text-slate-600">${s.termsQuotation}</p>
+            </div>
+            <div class="w-4/12 space-y-1 text-right">
+              <div class="flex justify-between py-1 border-b"><span>Taxable:</span><span>₹ ${totals.taxableSubtotal.toFixed(2)}</span></div>
+              <div class="flex justify-between py-0.5"><span>Taxes:</span><span>₹ ${totals.totalTax.toFixed(2)}</span></div>
+              ${q.discount > 0 ? `<div class="flex justify-between py-0.5 text-rose-600"><span>Manual Discount:</span><span>- ₹ ${q.discount}</span></div>` : ''}
+              <div class="flex justify-between py-1 border-t border-b-2 font-bold text-sm">
+                <span>Final Estimate:</span>
+                <span>₹ ${totals.netFinal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-end pt-8 px-4 text-xs font-semibold">
+            <div class="text-center border-t border-slate-400 w-44 pt-1">Client Acceptance</div>
+            <div class="text-center border-t border-slate-400 w-44 pt-1">Authorized Signatory</div>
+          </div>
+        </div>
+      `;
+      document.getElementById("printModalTitle").innerText = `Quotation - ${q.id}`;
+      document.getElementById("printModal").classList.remove("hidden");
+    }
+
+    function sendQuotationWhatsApp(quoteId) {
+      const db = getDB();
+      const q = db.quotations.find(item => item.id === quoteId);
+      if (!q) return;
+      const cust = db.customers.find(c => c.id === q.customerId) || {};
+      const totals = computeQuotationTotals(q.items, q.discount);
+      const cleanPhone = (cust.mobile || "").replace(/[^0-9]/g, "");
+      const formatted = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+      const msg = `Dear ${cust.name}, quotation #${q.id} for ₹${totals.netFinal.toLocaleString('en-IN')} has been generated at ${db.settings.shopName}. Valid until ${q.validUntil}.`;
+      window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    /* ==========================================================================
+       INVOICES MODULE (INLINE CUSTOMER/INVENTORY, MANUAL DISCOUNT, PRINT & SAVE)
+       ========================================================================== */
+    let currentInvoiceItems = [];
+
+    function renderInvoices(container) {
+      const db = getDB();
+      container.innerHTML = `
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Invoices & Billing</h2>
+            <p class="text-xs text-slate-500">Tax invoices and customer billing</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="exportInvoicesExcel('1m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 1 Month
+            </button>
+            <button onclick="exportInvoicesExcel('3m')" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export 3 Months
+            </button>
+            <button onclick="openInvoiceModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded shadow">
+              + New Invoice
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+              <tr>
+                <th class="p-3">Invoice #</th>
+                <th class="p-3">Date</th>
+                <th class="p-3">Customer</th>
+                <th class="p-3">Grand Total</th>
+                <th class="p-3">Paid</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${db.invoices.map(inv => {
+                const cust = db.customers.find(c => c.id === inv.customerId) || {};
+                const totals = computeInvoiceTotals(inv.items, inv.manualDiscount);
+                return `
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-blue-600">${inv.id}</td>
+                    <td class="p-3 text-slate-600">${inv.date}</td>
+                    <td class="p-3 font-semibold text-slate-800">${cust.name || 'N/A'}</td>
+                    <td class="p-3 font-bold text-slate-800">₹ ${totals.grandTotal.toLocaleString('en-IN')}</td>
+                    <td class="p-3 text-emerald-600 font-semibold">₹ ${inv.amountPaid || 0}</td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openInvoiceModal('${inv.id}')" title="Edit" class="px-2 py-1 bg-slate-100 hover:bg-blue-100 text-blue-700 rounded"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="exportInvoicesExcel('single', '${inv.id}')" title="Export this Entry" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded"><i class="fa-solid fa-file-excel"></i></button>
+                      <button onclick="printInvoice('${inv.id}')" title="Print" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded"><i class="fa-solid fa-print"></i></button>
+                      <button onclick="sendInvoiceWhatsApp('${inv.id}')" title="WhatsApp" class="px-2 py-1 bg-emerald-600 text-white rounded"><i class="fa-brands fa-whatsapp"></i></button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function openInvoiceModal(invId = null) {
+      const db = getDB();
+      const inv = invId ? db.invoices.find(i => i.id === invId) : null;
+      const isEdit = !!inv;
+      const invoiceNum = inv ? inv.id : (db.settings.prefixInv + String(db.invoices.length + 1).padStart(5, '0'));
+      const invoiceDate = inv ? inv.date : new Date().toISOString().split('T')[0];
+
+      currentInvoiceItems = inv ? JSON.parse(JSON.stringify(inv.items)) : [];
+
+      document.getElementById("formModalTitle").innerText = isEdit ? `Edit Invoice (${invoiceNum})` : "Create New Tax Invoice";
+      document.getElementById("formModalBody").innerHTML = `
+        <form onsubmit="event.preventDefault();" id="invoiceForm" class="space-y-4">
+          <input type="hidden" id="invEditId" value="${isEdit ? invoiceNum : ''}">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Invoice #</label>
+              <input type="text" id="invNum" value="${invoiceNum}" readonly class="w-full p-2 bg-slate-100 border rounded font-mono">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Invoice Date</label>
+              <input type="date" id="invDate" value="${invoiceDate}" class="w-full p-2 border rounded">
+            </div>
+          </div>
+
+          <!-- Customer Selection with Inline Addition -->
+          <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700">Customer</label>
+              <button type="button" onclick="toggleElement('invNewCustFields')" class="text-blue-600 font-semibold text-xs">+ Add New Customer</button>
+            </div>
+            <select id="invCustomer" class="w-full p-2 border rounded">
+              <option value="">-- Select Customer --</option>
+              ${db.customers.map(c => `<option value="${c.id}" ${inv && inv.customerId === c.id ? 'selected' : ''}>${c.name} -${c.mobile}</option>`).join('')}
+            </select>
+            <div id="invNewCustFields" class="hidden p-2.5 bg-white border border-blue-200 rounded grid grid-cols-3 gap-2">
+              <input type="text" id="invInlineCustName" placeholder="Full Name *" class="p-1.5 border rounded">
+              <input type="tel" id="invInlineCustMobile" placeholder="Phone Number *" class="p-1.5 border rounded">
+              <input type="text" id="invInlineCustCity" placeholder="City" class="p-1.5 border rounded">
+            </div>
+          </div>
+
+          <!-- Pick from inventory or create inline item -->
+          <div class="border p-3 rounded-lg bg-slate-50 space-y-2">
+            <span class="font-bold text-slate-700 text-xs block">Add Items from Inventory or Custom</span>
+            <div class="grid grid-cols-12 gap-2">
+              <div class="col-span-5">
+                <select id="invStockPick" onchange="autoFillInvoiceStockItem(this.value)" class="w-full p-1.5 border rounded bg-white">
+                  <option value="">-- Choose from Master Catalog --</option>
+                  ${db.items.map(it => `<option value="${it.id}">${it.name} (₹${it.sellingPrice})</option>`).join('')}
+                </select>
+              </div>
+              <div class="col-span-3">
+                <input type="text" id="invItemDesc" placeholder="Item Name" class="w-full p-1.5 border rounded bg-white">
+              </div>
+              <div class="col-span-2">
+                <input type="number" id="invItemRate" placeholder="Rate (₹)" class="w-full p-1.5 border rounded bg-white">
+              </div>
+              <div class="col-span-2">
+                <button type="button" onclick="addItemToInvoice()" class="w-full py-1.5 bg-blue-600 text-white rounded font-bold">+ Add</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invoice items table -->
+          <div class="border rounded-lg overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 font-semibold">
+                <tr>
+                  <th class="p-2">Description</th>
+                  <th class="p-2 w-16 text-center">Qty</th>
+                  <th class="p-2 w-20 text-right">Rate</th>
+                  <th class="p-2 w-20 text-right">Line Discount</th>
+                  <th class="p-2 w-12 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceItemsBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+
+          <!-- Manual Discounts and Paid Amount -->
+          <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded">
+            <div>
+              <label class="block font-semibold mb-1">Overall Manual Discount (₹)</label>
+              <input type="number" id="invManualDiscount" oninput="renderInvoiceItemRows()" value="${inv ? inv.manualDiscount : 0}" class="w-full p-2 border rounded font-bold text-rose-600">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Amount Paid (₹)</label>
+              <input type="number" id="invAmountPaid" value="${inv ? inv.amountPaid : 0}" class="w-full p-2 border rounded font-bold text-emerald-600">
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center text-sm font-bold p-2">
+            <span>Invoice Grand Total:</span>
+            <span id="invLiveTotal" class="text-xl text-blue-700">₹ 0.00</span>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-2 border-t">
+            <button type="button" onclick="saveInvoiceAction('save')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Save
+            </button>
+            <button type="button" onclick="saveInvoiceAction('print')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded">
+              <i class="fa-solid fa-print mr-1"></i> Print & Save
+            </button>
+            <button type="button" onclick="saveInvoiceAction('whatsapp')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded">
+              <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp & Save
+            </button>
+          </div>
+        </form>
+      `;
+
+      renderInvoiceItemRows();
+      document.getElementById("formModal").classList.remove("hidden");
+    }
+
+    function autoFillInvoiceStockItem(id) {
+      if (!id) return;
+      const db = getDB();
+      const it = db.items.find(i => i.id === id);
+      if (it) {
+        document.getElementById("invItemDesc").value = it.name;
+        document.getElementById("invItemRate").value = it.sellingPrice;
+      }
+    }
+
+    function addItemToInvoice() {
+      const desc = document.getElementById("invItemDesc").value.trim();
+      const rate = Number(document.getElementById("invItemRate").value || 0);
+      if (!desc) {
+        alert("Item description required!");
+        return;
+      }
+      currentInvoiceItems.push({
+        desc: desc,
+        rate: rate,
+        qty: 1,
+        discount: 0,
+        gstRate: 18
+      });
+      document.getElementById("invItemDesc").value = "";
+      document.getElementById("invItemRate").value = "";
+      renderInvoiceItemRows();
+    }
+
+    function removeInvoiceItem(idx) {
+      currentInvoiceItems.splice(idx, 1);
+      renderInvoiceItemRows();
+    }
+
+    function renderInvoiceItemRows() {
+      const tbody = document.getElementById("invoiceItemsBody");
+      if (!tbody) return;
+      if (currentInvoiceItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-400">No items added.</td></tr>`;
+      } else {
+        tbody.innerHTML = currentInvoiceItems.map((it, i) => `
+          <tr>
+            <td class="p-2 font-medium">${it.desc}</td>
+            <td class="p-2 text-center">${it.qty}</td>
+            <td class="p-2 text-right">₹${it.rate}</td>
+            <td class="p-2 text-right">
+              <input type="number" value="${it.discount || 0}" oninput="currentInvoiceItems[${i}].discount=Number(this.value); renderInvoiceItemRows();" class="w-16 p-1 border rounded text-right">
+            </td>
+            <td class="p-2 text-center"><button type="button" onclick="removeInvoiceItem(${i})" class="text-rose-500 font-bold">&times;</button></td>
+          </tr>
+        `).join('');
+      }
+
+      const overallDisc = Number(document.getElementById("invManualDiscount").value || 0);
+      const totals = computeInvoiceTotals(currentInvoiceItems, overallDisc);
+      document.getElementById("invLiveTotal").innerText = `₹ ${totals.grandTotal.toLocaleString('en-IN')}`;
+    }
+
+    function saveInvoiceAction(action) {
+      const db = getDB();
+      const editId = document.getElementById("invEditId").value;
+      let custId = document.getElementById("invCustomer").value;
+
+      // Handle inline customer
+      const inlineName = document.getElementById("invInlineCustName").value.trim();
+      const inlineMobile = document.getElementById("invInlineCustMobile").value.trim();
+      if (inlineName && inlineMobile) {
+        custId = db.settings.prefixCust + String(db.customers.length + 1).padStart(5, '0');
+        db.customers.push({
+          id: custId,
+          name: inlineName,
+          mobile: inlineMobile,
+          city: document.getElementById("invInlineCustCity").value.trim() || "Udupi",
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+
+      if (!custId) {
+        alert("Please select or register a customer!");
+        return;
+      }
+      if (currentInvoiceItems.length === 0) {
+        alert("Please add at least one item!");
+        return;
+      }
+
+      let invRecord;
+      if (editId) {
+        invRecord = db.invoices.find(i => i.id === editId);
+        invRecord.customerId = custId;
+        invRecord.date = document.getElementById("invDate").value;
+        invRecord.items = [...currentInvoiceItems];
+        invRecord.manualDiscount = Number(document.getElementById("invManualDiscount").value || 0);
+        invRecord.amountPaid = Number(document.getElementById("invAmountPaid").value || 0);
+      } else {
+        invRecord = {
+          id: document.getElementById("invNum").value,
+          customerId: custId,
+          date: document.getElementById("invDate").value,
+          items: [...currentInvoiceItems],
+          manualDiscount: Number(document.getElementById("invManualDiscount").value || 0),
+          amountPaid: Number(document.getElementById("invAmountPaid").value || 0),
+          warrantyText: "30 Days service warranty"
+        };
+        db.invoices.unshift(invRecord);
+      }
+
+      saveDB(db);
+      closeFormModal();
+      showToast(`Invoice ${invRecord.id} saved.`);
+      navigate('invoices');
+
+      if (action === 'print') {
+        printInvoice(invRecord.id);
+      } else if (action === 'whatsapp') {
+        sendInvoiceWhatsApp(invRecord.id);
+      }
+    }
+
+    function printInvoice(invId) {
+      const db = getDB();
+      const inv = db.invoices.find(i => i.id === invId);
+      if (!inv) return;
+      const cust = db.customers.find(c => c.id === inv.customerId) || {};
+      const s = db.settings;
+      const isGST = s.enableGST !== false;
+      const totals = computeInvoiceTotals(inv.items, inv.manualDiscount);
+
+      document.getElementById("printable-area").innerHTML = `
+        <div class="text-slate-900 font-sans p-2">
+          <div class="border-b-2 border-slate-900 pb-3 flex justify-between items-start">
+            <div>
+              <h1 class="text-2xl font-black uppercase text-blue-900">${s.shopName}</h1>
+              <p class="text-xs text-slate-600">${s.tagline}</p>
+              <p class="text-xs text-slate-500">${s.address}</p>
+              <p class="text-xs text-slate-600">Phone: ${s.phone} ${isGST ? `| GSTIN: ${s.gstin}` : ''}</p>
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-slate-900 text-white font-bold text-xs px-3 py-1 uppercase tracking-wider mb-1">
+                ${isGST ? 'TAX INVOICE' : 'RETAIL INVOICE'}
+              </span>
+              <div class="text-xs font-mono font-bold">Invoice #: ${inv.id}</div>
+              <div class="text-xs text-slate-600">Date: ${inv.date}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 my-3 text-xs">
+            <div class="border p-2.5 rounded">
+              <span class="font-bold text-[10px] text-slate-500 uppercase block mb-1">Billed To</span>
+              <div class="font-bold text-sm text-slate-800">${cust.name || 'N/A'}</div>
+              <div>Mobile: ${cust.mobile || 'N/A'}</div>
+              <div>Address: ${cust.address || ''}, ${cust.city || ''}</div>
+            </div>
+            <div class="border p-2.5 rounded">
+              <span class="font-bold text-[10px] text-slate-500 uppercase block mb-1">Bank & UPI</span>
+              <div>Bank: ${s.bankName}</div>
+              <div>A/C: <span class="font-mono font-bold">${s.accountNo}</span></div>
+              <div>UPI: <span class="font-bold">${s.upiId}</span></div>
+            </div>
+          </div>
+
+          <table class="w-full text-left text-xs border border-slate-300 mb-3">
+            <thead class="bg-slate-100 font-bold border-b">
+              <tr>
+                <th class="p-2 border-r w-8">#</th>
+                <th class="p-2 border-r">Description</th>
+                <th class="p-2 border-r text-center w-12">Qty</th>
+                <th class="p-2 border-r text-right w-20">Rate</th>
+                <th class="p-2 border-r text-right w-20">Discount</th>
+                <th class="p-2 text-right w-24">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              ${inv.items.map((it, idx) => {
+                const lineNet = (it.rate * it.qty) - (it.discount || 0);
+                return `
+                  <tr>
+                    <td class="p-2 border-r text-center">${idx + 1}</td>
+                    <td class="p-2 border-r font-medium">${it.desc}</td>
+                    <td class="p-2 border-r text-center">${it.qty}</td>
+                    <td class="p-2 border-r text-right">₹ ${Number(it.rate).toFixed(2)}</td>
+                    <td class="p-2 border-r text-right text-rose-600">₹ ${Number(it.discount || 0).toFixed(2)}</td>
+                    <td class="p-2 text-right font-bold">₹ ${Number(lineNet).toFixed(2)}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+
+          <div class="flex justify-between items-start text-xs my-4">
+            <div class="w-7/12 border p-2.5 rounded bg-slate-50/50">
+              <span class="font-bold text-[10px] text-slate-700 uppercase block mb-1">Invoice Terms & Conditions:</span>
+              <p class="whitespace-pre-line text-[10px] text-slate-600">${s.termsInvoice}</p>
+            </div>
+            <div class="w-4/12 space-y-1 text-right">
+              <div class="flex justify-between py-1 border-b"><span>Subtotal:</span><span>₹ ${totals.taxable.toFixed(2)}</span></div>
+              ${isGST ? `<div class="flex justify-between py-0.5"><span>GST:</span><span>₹ ${totals.totalGst.toFixed(2)}</span></div>` : ''}
+              ${inv.manualDiscount > 0 ? `<div class="flex justify-between py-0.5 text-rose-600"><span>Special Discount:</span><span>- ₹ ${inv.manualDiscount}</span></div>` : ''}
+              <div class="flex justify-between py-1 border-t border-b-2 font-black text-sm">
+                <span>Grand Total:</span>
+                <span>₹ ${totals.grandTotal.toFixed(2)}</span>
+              </div>
+              <div class="flex justify-between py-0.5 text-emerald-700 font-bold"><span>Paid:</span><span>₹ ${inv.amountPaid.toFixed(2)}</span></div>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-end pt-8 px-4 text-xs font-semibold">
+            <div class="text-center border-t border-slate-400 w-44 pt-1">Customer Sign</div>
+            <div class="text-center border-t border-slate-400 w-44 pt-1">For ${s.shopName}</div>
+          </div>
+        </div>
+      `;
+      document.getElementById("printModalTitle").innerText = `Invoice - ${inv.id}`;
+      document.getElementById("printModal").classList.remove("hidden");
+    }
+
+    function sendInvoiceWhatsApp(invId) {
+      const db = getDB();
+      const inv = db.invoices.find(i => i.id === invId);
+      if (!inv) return;
+      const cust = db.customers.find(c => c.id === inv.customerId) || {};
+      const totals = computeInvoiceTotals(inv.items, inv.manualDiscount);
+      const cleanPhone = (cust.mobile || "").replace(/[^0-9]/g, "");
+      const formatted = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+      const msg = `Dear ${cust.name}, invoice #${inv.id} for ₹${totals.grandTotal.toLocaleString('en-IN')} has been generated. Thank you for your business!`;
+      window.open(`https://wa.me/${formatted}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    /* ==========================================================================
+       CUSTOMERS & INVENTORY VIEWS
+       ========================================================================== */
+    function renderCustomers(container) {
+      const db = getDB();
+      container.innerHTML = `
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Customer Directory</h2>
+            <p class="text-xs text-slate-500">Clients and registered devices</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="exportToCSV('Customers', db.customers)" class="px-2.5 py-1.5 bg-slate-200 text-slate-700 text-xs font-semibold rounded">
+              <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export Customers
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+              <tr>
+                <th class="p-3">ID</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Mobile</th>
+                <th class="p-3">Company</th>
+                <th class="p-3">City</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${db.customers.map(c => `
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono text-blue-600">${c.id}</td>
+                  <td class="p-3 font-bold text-slate-800">${c.name}</td>
+                  <td class="p-3 text-slate-600">${c.mobile}</td>
+                  <td class="p-3 text-slate-600">${c.company || 'Personal'}</td>
+                  <td class="p-3 text-slate-500">${c.city || ''}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderInventory(container) {
+      const db = getDB();
+      container.innerHTML = `
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Parts & Inventory</h2>
+            <p class="text-xs text-slate-500">Master parts and service labour items</p>
+          </div>
+          <button onclick="exportToCSV('Inventory', db.items)" class="px-2.5 py-1.5 bg-slate-200 text-slate-700 text-xs font-semibold rounded">
+            <i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> Export Inventory
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b">
+              <tr>
+                <th class="p-3">SKU</th>
+                <th class="p-3">Description</th>
+                <th class="p-3">Cost Price</th>
+                <th class="p-3">Margin %</th>
+                <th class="p-3">Selling Price</th>
+                <th class="p-3">Stock</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${db.items.map(it => `
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono text-slate-500">${it.code}</td>
+                  <td class="p-3 font-bold text-slate-800">${it.name}</td>
+                  <td class="p-3 text-slate-600">₹${it.costPrice}</td>
+                  <td class="p-3">${it.marginPct || 0}%</td>
+                  <td class="p-3 font-bold text-slate-800">₹${it.sellingPrice}</td>
+                  <td class="p-3 font-semibold ${it.stock < 5 ? 'text-rose-600' : 'text-emerald-600'}">${it.stock}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       SETTINGS & SEPARATE T&C
+       ========================================================================== */
+    function renderSettings(container) {
+      const db = getDB();
+      const s = db.settings;
+      container.innerHTML = `
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs max-w-3xl space-y-4 text-xs">
+          <div class="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div>
+              <span class="font-bold text-slate-800 text-sm">Master GST Toggle</span>
+              <p class="text-slate-500 text-[11px]">When disabled, tax calculations bypass CGST/SGST/IGST across all documents.</p>
+            </div>
+            <input type="checkbox" id="setGst" ${s.enableGST !== false ? 'checked' : ''} class="h-5 w-5 text-blue-600">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block font-semibold mb-1">Business Name</label><input type="text" id="setShopName" value="${s.shopName}" class="w-full p-2 border rounded"></div>
+            <div><label class="block font-semibold mb-1">Phone</label><input type="text" id="setPhone" value="${s.phone}" class="w-full p-2 border rounded"></div>
+          </div>
+          <div><label class="block font-semibold mb-1">Address</label><input type="text" id="setAddress" value="${s.address}" class="w-full p-2 border rounded"></div>
+
+          <div class="border-t pt-3 space-y-3">
+            <span class="font-bold text-slate-700 block uppercase text-[11px]">Independent Terms & Conditions</span>
+            <div>
+              <label class="block font-semibold mb-1">1. Job Card Terms & Conditions</label>
+              <textarea id="setTermsJob" rows="3" class="w-full p-2 border rounded">${s.termsJobCard}</textarea>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">2. Quotation Terms & Conditions</label>
+              <textarea id="setTermsQuot" rows="3" class="w-full p-2 border rounded">${s.termsQuotation}</textarea>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">3. Invoice Terms & Conditions</label>
+              <textarea id="setTermsInv" rows="3" class="w-full p-2 border rounded">${s.termsInvoice}</textarea>
+            </div>
+          </div>
+
+          <button onclick="saveAllSettings()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow">Save Settings</button>
+        </div>
+      `;
+    }
+
+    function saveAllSettings() {
+      const db = getDB();
+      db.settings.enableGST = document.getElementById("setGst").checked;
+      db.settings.shopName = document.getElementById("setShopName").value;
+      db.settings.phone = document.getElementById("setPhone").value;
+      db.settings.address = document.getElementById("setAddress").value;
+      db.settings.termsJobCard = document.getElementById("setTermsJob").value;
+      db.settings.termsQuotation = document.getElementById("setTermsQuot").value;
+      db.settings.termsInvoice = document.getElementById("setTermsInv").value;
+      saveDB(db);
+      showToast("Settings and individual Terms & Conditions saved.");
+    }
+
+    /* ==========================================================================
+       UTILITIES
+       ========================================================================== */
+    function toggleElement(id) {
+      document.getElementById(id).classList.toggle("hidden");
+    }
+
+    function closeFormModal() {
+      document.getElementById("formModal").classList.add("hidden");
+    }
+
+    function closePrintModal() {
+      document.getElementById("printModal").classList.add("hidden");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-message").innerText = msg;
+      toast.classList.remove("translate-y-24");
+      setTimeout(() => toast.classList.add("translate-y-24"), 3000);
+    }
+
+    function toggleMobileSidebar() {
+      document.getElementById("mobile-menu").classList.toggle("hidden");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      navigate('dashboard');
+    });
+  </script>
+</body>
+</html>
