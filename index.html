@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Phoenix Solutions - Computer & CCTV Sales & Service</title>
   
+  <!-- PWA Metadata -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="Phoenix_Solutions_logo.png">
+  <link rel="apple-touch-icon" href="Phoenix_Solutions_logo.png">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phoenix ERP">
+
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     input, select, textarea { font-size: 15px !important; }
@@ -25,7 +35,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900 pb-24 md:pb-10 font-sans antialiased">
 
-  <!-- TOP HEADER WITH LOGO -->
+  <!-- TOP HEADER -->
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -38,10 +48,16 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <div id="sync-status-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+        <!-- PWA Install Button (Displays automatically on Windows / Android when available) -->
+        <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Install App</span>
+        </button>
+
+        <button onclick="manualSyncNow()" id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition">
           <span class="w-2 h-2 rounded-full bg-slate-500" id="sync-dot"></span>
-          <span id="sync-text">Local Storage</span>
-        </div>
+          <span id="sync-text">Checking...</span>
+        </button>
         <button onclick="switchTab('settings')" title="Shop Settings & Policies" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
           <i data-lucide="settings" class="w-5 h-5"></i>
         </button>
@@ -52,7 +68,7 @@
     </div>
   </header>
 
-  <!-- MAIN NAVIGATION TABS (DESKTOP) -->
+  <!-- NAVIGATION TABS -->
   <nav class="hidden md:flex bg-white border-b border-slate-200 px-4">
     <div class="max-w-7xl mx-auto flex gap-4 w-full">
       <button onclick="switchTab('dashboard')" id="nav-d-dashboard" class="tab-btn py-3 px-4 text-sm font-semibold border-b-2 border-slate-900 text-slate-900 flex items-center gap-2">
@@ -74,7 +90,7 @@
         <i data-lucide="users" class="w-4 h-4"></i> Contacts
       </button>
       <button onclick="switchTab('settings')" id="nav-d-settings" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
-        <i data-lucide="sliders" class="w-4 h-4"></i> Settings & GitHub Sync
+        <i data-lucide="sliders" class="w-4 h-4"></i> Settings & Sync
       </button>
     </div>
   </nav>
@@ -107,7 +123,6 @@
         </div>
       </div>
 
-      <!-- Quick Action Buttons -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">Quick Actions</h2>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -126,7 +141,6 @@
         </div>
       </div>
 
-      <!-- Recent Jobs Quick Queue -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wide">Recent Repair Jobs</h2>
@@ -210,8 +224,24 @@
     <section id="view-settings" class="tab-view hidden space-y-6">
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <div>
-          <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Cloud Sync</h2>
-          <p class="text-xs text-slate-500">Configure business information, Terms & Conditions, and sync data directly to GitHub.</p>
+          <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Multi-Device Sync</h2>
+          <p class="text-xs text-slate-500">Pair your mobile device via QR, sync live with GitHub, and edit shop policies.</p>
+        </div>
+
+        <!-- 1-Click Mobile QR Pairing Panel -->
+        <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="smartphone" class="w-5 h-5 text-amber-800"></i>
+              <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wide">Instant Mobile Setup (No typing on phone)</h3>
+            </div>
+            <p class="text-xs text-amber-800 mt-1 max-w-xl">
+              Scan this QR code from your Android phone camera to automatically install your GitHub token, configure cloud sync, and load all shop history in 1 second.
+            </p>
+          </div>
+          <button onclick="openPairingQRModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+            <i data-lucide="qr-code" class="w-4 h-4"></i> Show Mobile Pairing QR
+          </button>
         </div>
 
         <!-- GitHub Two-Way Cloud Sync Panel -->
@@ -219,9 +249,9 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <i data-lucide="git-branch" class="w-5 h-5 text-indigo-700"></i>
-              <h3 class="text-sm font-bold text-indigo-950 uppercase tracking-wide">GitHub Repository Sync (data/shop_data.json)</h3>
+              <h3 class="text-sm font-bold text-indigo-950 uppercase tracking-wide">GitHub Live Sync (data/shop_data.json)</h3>
             </div>
-            <span class="text-xs text-indigo-600 font-medium">Backup & Restore</span>
+            <span class="text-xs text-indigo-700 font-semibold bg-indigo-100 px-2 py-0.5 rounded">Auto-Sync Active</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
@@ -241,11 +271,11 @@
             <button onclick="saveGitHubConfig()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <i data-lucide="check" class="w-3.5 h-3.5"></i> Save Credentials
             </button>
-            <button onclick="pushToGitHub()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Data to GitHub
+            <button onclick="pushToGitHub(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Now
             </button>
-            <button onclick="pullFromGitHub()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Data from GitHub
+            <button onclick="pullFromGitHub(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Now
             </button>
           </div>
         </div>
@@ -358,7 +388,20 @@
     </button>
   </nav>
 
-  <!-- ======================= MODALS ======================= -->
+  <!-- PAIRING QR CODE MODAL -->
+  <div id="modal-pairing-qr" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-sm font-bold text-slate-800">Scan from Mobile Camera</h3>
+        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        Scan this QR with Google Lens or Camera on your Android phone. It securely links your token, downloads your database, and sets up instant sync!
+      </p>
+      <button onclick="closeModal('modal-pairing-qr')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">Done</button>
+    </div>
+  </div>
 
   <!-- 1. JOB CARD MODAL -->
   <div id="modal-job" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
@@ -370,14 +413,11 @@
         </div>
         <button onclick="closeModal('modal-job')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <input type="hidden" id="job-id">
-
-      <!-- Customer Lookup -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Name *</label>
-          <input list="contacts-datalist" id="job-cust-name" onchange="autoFillCustomer('job')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Type or select customer...">
+          <input list="contacts-datalist" id="job-cust-name" onchange="autoFillCustomer('job')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
@@ -388,8 +428,6 @@
           <input type="text" id="job-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
         </div>
       </div>
-
-      <!-- Device Details -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Device Type</label>
@@ -411,33 +449,27 @@
           <input type="text" id="job-serial-no" placeholder="Service tag / SN" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
         </div>
       </div>
-
-      <!-- Condition / Intake Image -->
       <div class="border border-dashed border-slate-300 bg-slate-50 p-3 rounded-xl space-y-2">
         <label class="block text-xs font-semibold text-slate-700 flex items-center justify-between">
-          <span>Device Intake Photo (Physical condition / Scratches)</span>
-          <span class="text-[11px] font-normal text-slate-500">Camera or Upload</span>
+          <span>Device Intake Photo</span>
+          <span class="text-[11px] font-normal text-slate-500">Camera / Upload</span>
         </label>
         <div class="flex items-center gap-3">
           <input type="file" id="job-image-input" accept="image/*" capture="environment" onchange="handleJobImageUpload(event)" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700">
-          <img id="job-image-preview" src="" alt="Intake photo preview" class="w-14 h-14 object-cover rounded-lg border border-slate-300 hidden bg-white">
+          <img id="job-image-preview" src="" alt="Intake photo" class="w-14 h-14 object-cover rounded-lg border border-slate-300 hidden bg-white">
           <button type="button" id="job-image-remove" onclick="removeJobImage()" class="text-xs text-red-500 hover:underline hidden">Remove</button>
         </div>
       </div>
-
-      <!-- Problem & Accessories -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Reported Issue / Fault *</label>
-          <textarea id="job-fault" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. No display, liquid spill, blue screen..."></textarea>
+          <textarea id="job-fault" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. No display, liquid spill..."></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Accessories Received</label>
-          <textarea id="job-accessories" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Power adapter, laptop bag, power cord..."></textarea>
+          <textarea id="job-accessories" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Power adapter, laptop bag..."></textarea>
         </div>
       </div>
-
-      <!-- Status & Estimated Cost -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
@@ -454,15 +486,13 @@
           <input type="number" id="job-cost" placeholder="₹ Estimate" class="w-full px-3 py-2 border rounded-lg text-sm">
         </div>
       </div>
-
-      <!-- Action Trio -->
       <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
         <button onclick="closeModal('modal-job')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
         <button onclick="saveJob(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
           <i data-lucide="check" class="w-4 h-4"></i> Save
         </button>
         <button onclick="saveJob(true, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
-          <i data-lucide="printer" class="w-4 h-4"></i> Save & Print Slip
+          <i data-lucide="printer" class="w-4 h-4"></i> Save & Print
         </button>
         <button onclick="saveJob(false, true)" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
           <i data-lucide="message-circle" class="w-4 h-4"></i> Save & WhatsApp
@@ -481,14 +511,11 @@
         </div>
         <button onclick="closeModal('modal-invoice')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <input type="hidden" id="inv-id">
-
-      <!-- Customer Lookup -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Name *</label>
-          <input list="contacts-datalist" id="inv-cust-name" onchange="autoFillCustomer('inv')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Type or select customer...">
+          <input list="contacts-datalist" id="inv-cust-name" onchange="autoFillCustomer('inv')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
@@ -499,8 +526,6 @@
           <input type="text" id="inv-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
         </div>
       </div>
-
-      <!-- Line Items Section -->
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Billed Items & Services</span>
@@ -515,8 +540,6 @@
         </div>
         <div id="inv-items-table" class="space-y-2"></div>
       </div>
-
-      <!-- Totals & Manual Discount Section -->
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
         <div class="flex justify-between text-sm text-slate-600">
           <span>Subtotal:</span>
@@ -531,8 +554,6 @@
           <span class="text-emerald-700 text-lg" id="inv-grand-disp">₹0.00</span>
         </div>
       </div>
-
-      <!-- Action Trio -->
       <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
         <button onclick="closeModal('modal-invoice')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
         <button onclick="saveInvoice(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
@@ -548,7 +569,7 @@
     </div>
   </div>
 
-  <!-- 3. QUOTATION MODAL WITH LIVE FORMULA PREVIEW -->
+  <!-- 3. QUOTATION MODAL -->
   <div id="modal-quote" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-2 sm:p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -558,14 +579,11 @@
         </div>
         <button onclick="closeModal('modal-quote')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <input type="hidden" id="quote-id">
-
-      <!-- Customer Lookup -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer / Client Name *</label>
-          <input list="contacts-datalist" id="quote-cust-name" onchange="autoFillCustomer('quote')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Type or select customer...">
+          <input list="contacts-datalist" id="quote-cust-name" onchange="autoFillCustomer('quote')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
@@ -576,8 +594,6 @@
           <input type="text" id="quote-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
         </div>
       </div>
-
-      <!-- Line Items Section with Exact Margin % + Tax Dropdown + Real-Time Formula Preview -->
       <div class="space-y-2">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -595,8 +611,6 @@
         </div>
         <div id="quote-items-table" class="space-y-2.5"></div>
       </div>
-
-      <!-- Totals & Manual Discount Section -->
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
         <div class="flex justify-between text-sm text-slate-600">
           <span>Subtotal:</span>
@@ -611,8 +625,6 @@
           <span class="text-blue-700 text-lg" id="quote-grand-disp">₹0.00</span>
         </div>
       </div>
-
-      <!-- Action Trio -->
       <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
         <button onclick="closeModal('modal-quote')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
         <button onclick="saveQuote(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
@@ -638,15 +650,12 @@
         </div>
         <button onclick="closeModal('modal-inventory')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <input type="hidden" id="inv-item-id">
       <input type="hidden" id="inv-item-return-target">
-
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Item / Part Name *</label>
         <input type="text" id="inv-item-name" placeholder="e.g. Kingston 512GB NVMe SSD" class="w-full px-3 py-2 border rounded-lg text-sm">
       </div>
-
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
@@ -667,8 +676,6 @@
           <input type="number" id="inv-item-qty" value="1" min="0" class="w-full px-3 py-2 border rounded-lg text-sm">
         </div>
       </div>
-
-      <!-- Pricing Formula -->
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
         <span class="block text-xs font-bold text-slate-800 uppercase tracking-wide">Pricing Formula Engine</span>
         <div class="grid grid-cols-3 gap-2">
@@ -681,7 +688,7 @@
             <input type="number" id="inv-item-margin" oninput="calcItemSellingFormula()" value="15" min="0" step="any" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white text-right">
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tax Rate (Drop-down)</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tax Rate</label>
             <select id="inv-item-tax" onchange="calcItemSellingFormula()" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white font-medium">
               <option value="18">18% Tax</option>
               <option value="5">5% Tax</option>
@@ -689,7 +696,6 @@
             </select>
           </div>
         </div>
-
         <div class="bg-indigo-50/70 border border-indigo-200 p-2.5 rounded-lg text-xs flex items-center justify-between">
           <div>
             <span class="text-[11px] text-slate-500 block">Calculation Preview:</span>
@@ -700,13 +706,11 @@
             <span id="inv-item-preview-total" class="text-sm font-bold text-indigo-900">₹0.00</span>
           </div>
         </div>
-
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Final Selling Price (₹)</label>
           <input type="number" id="inv-item-selling" value="0" min="0" step="any" class="w-full px-3 py-2 border rounded-lg text-sm font-bold text-slate-900 bg-white">
         </div>
       </div>
-
       <div class="flex justify-end gap-2 pt-3 border-t">
         <button onclick="closeModal('modal-inventory')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
         <button onclick="saveInventoryItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold">Save to Stock</button>
@@ -724,9 +728,7 @@
         </div>
         <button onclick="closeModal('modal-contact')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <input type="hidden" id="contact-id">
-
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
         <input type="text" id="contact-name" placeholder="Customer name" class="w-full px-3 py-2 border rounded-lg text-sm">
@@ -739,7 +741,6 @@
         <label class="block text-xs font-semibold text-slate-600 mb-1">Address / Location</label>
         <textarea id="contact-address" rows="2" placeholder="Customer address or landmark" class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
       </div>
-
       <div class="flex justify-end gap-2 pt-3 border-t">
         <button onclick="closeModal('modal-contact')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
         <button onclick="saveContact()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold">Save Contact</button>
@@ -754,9 +755,8 @@
         <h3 class="text-lg font-bold text-slate-800">Database Export</h3>
         <button onclick="closeModal('modal-export')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
       <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1">Select Module to Export</label>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Select Module</label>
         <select id="export-module" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
           <option value="all">All Modules (Full JSON Backup)</option>
           <option value="jobs">Job Cards</option>
@@ -766,7 +766,6 @@
           <option value="contacts">Contacts</option>
         </select>
       </div>
-
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Time Range</label>
         <select id="export-range" onchange="toggleCustomDateExport(this.value)" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
@@ -776,7 +775,6 @@
           <option value="custom">Custom Date Range</option>
         </select>
       </div>
-
       <div id="export-custom-dates" class="grid grid-cols-2 gap-3 hidden">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">From Date</label>
@@ -787,7 +785,6 @@
           <input type="date" id="export-end-date" class="w-full px-3 py-2 border rounded-lg text-sm">
         </div>
       </div>
-
       <div class="flex flex-col gap-2 pt-3 border-t">
         <button onclick="runExport('csv')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export to CSV (Excel Ready)
@@ -801,7 +798,6 @@
 
   <datalist id="contacts-datalist"></datalist>
   <datalist id="inventory-datalist"></datalist>
-
   <iframe id="print-frame"></iframe>
 
   <!-- ======================= JAVASCRIPT ======================= -->
@@ -838,6 +834,84 @@
       ]
     };
 
+    // --- PWA INSTALLATION PROMPT CONTROLLER ---
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.classList.remove('hidden');
+    });
+
+    function triggerPWAInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            document.getElementById('pwa-install-btn').classList.add('hidden');
+          }
+          deferredInstallPrompt = null;
+        });
+      } else {
+        alert("To install on Windows: Click the install icon in your address bar.\nTo install on Android: Tap Chrome Menu (...) -> 'Install app' or 'Add to Home screen'.");
+      }
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('PWA Service Worker registered successfully:', reg.scope);
+        }).catch((err) => {
+          console.log('PWA Service Worker registration skipped/offline:', err);
+        });
+      });
+    }
+
+    // Auto-pair check from URL hash on mobile launch
+    function checkURLPairing() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#pair=")) {
+        try {
+          const payload = atob(hash.replace("#pair=", ""));
+          const creds = JSON.parse(payload);
+          if (creds.token && creds.owner && creds.repo) {
+            DB.github = { ...DB.github, ...creds };
+            saveDB(false);
+            history.replaceState(null, null, window.location.pathname);
+            alert("Mobile successfully paired with GitHub! Fetching latest records...");
+            pullFromGitHub(false);
+          }
+        } catch (e) {
+          console.error("Pairing parse error:", e);
+        }
+      }
+    }
+
+    function openPairingQRModal() {
+      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
+        alert("Please save your GitHub token, owner, and repo on this computer first.");
+        return;
+      }
+      const container = document.getElementById("qrcode-container");
+      container.innerHTML = "";
+
+      const creds = { token: DB.github.token, owner: DB.github.owner, repo: DB.github.repo };
+      const encoded = btoa(JSON.stringify(creds));
+      const pairUrl = window.location.origin + window.location.pathname + "#pair=" + encoded;
+
+      new QRCode(container, {
+        text: pairUrl,
+        width: 220,
+        height: 220,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      openModal("modal-pairing-qr");
+    }
+
     function loadDB() {
       const saved = localStorage.getItem("phoenix_solutions_db");
       if (saved) {
@@ -855,21 +929,22 @@
           console.error("DB Parse error:", e);
         }
       }
-      saveDB();
+      saveDB(false);
     }
 
-    function saveDB() {
+    function saveDB(triggerCloudPush = false) {
       localStorage.setItem("phoenix_solutions_db", JSON.stringify(DB));
       updateDatalists();
+      if (triggerCloudPush && DB.github.token) {
+        pushToGitHub(false); // background silent push
+      }
     }
 
     function updateAppBranding() {
       document.getElementById("header-shop-name").innerText = DB.config.name;
       document.getElementById("header-shop-sub").innerText = DB.config.sub;
       const logoEl = document.getElementById("header-logo-img");
-      if (logoEl && DB.config.logo) {
-        logoEl.src = DB.config.logo;
-      }
+      if (logoEl && DB.config.logo) logoEl.src = DB.config.logo;
     }
 
     function formatINR(val) {
@@ -914,9 +989,7 @@
       lucide.createIcons();
     }
 
-    // --- DATALISTS AUTOFILL ---
     function updateDatalists() {
-      // Contacts datalist
       const cdl = document.getElementById("contacts-datalist");
       if (cdl) {
         cdl.innerHTML = "";
@@ -928,7 +1001,6 @@
         });
       }
 
-      // Inventory datalist
       const idl = document.getElementById("inventory-datalist");
       if (idl) {
         idl.innerHTML = "";
@@ -975,11 +1047,11 @@
       if (!existing) {
         const newCode = "CUST-" + (DB.sequences.contact++);
         DB.contacts.push({ id: newCode, name: trimmed, phone: phone || '', address: address || '' });
-        saveDB();
+        saveDB(false);
       } else if (phone || address) {
         if (!existing.phone && phone) existing.phone = phone;
         if (!existing.address && address) existing.address = address;
-        saveDB();
+        saveDB(false);
       }
     }
 
@@ -1143,7 +1215,7 @@
       record.cost = document.getElementById("job-cost").value || "0";
       record.photo = currentJobPhotoBase64;
 
-      saveDB();
+      saveDB(true);
       closeModal("modal-job");
       renderJobs();
       renderDashboard();
@@ -1367,7 +1439,7 @@
       record.discount = discount;
       record.grandTotal = grandTotal;
 
-      saveDB();
+      saveDB(true);
       closeModal("modal-invoice");
       renderInvoices();
       renderDashboard();
@@ -1451,7 +1523,7 @@
       openInvoiceModal(id);
     }
 
-    // --- 3. QUOTATIONS: EXACT (COST + MARGIN % + TAX % [18%, 5%, 0%] = SELLING PRICE) ---
+    // --- 3. QUOTATIONS MODULE ---
     function openQuoteModal(editId = null) {
       const table = document.getElementById("quote-items-table");
       table.innerHTML = "";
@@ -1625,7 +1697,7 @@
       record.discount = discount;
       record.grandTotal = grandTotal;
 
-      saveDB();
+      saveDB(true);
       closeModal("modal-quote");
       renderQuotes();
       renderDashboard();
@@ -1809,7 +1881,7 @@
       record.tax = Number(document.getElementById("inv-item-tax").value) || 0;
       record.selling = Number(document.getElementById("inv-item-selling").value) || 0;
 
-      saveDB();
+      saveDB(true);
       closeModal("modal-inventory");
       renderInventory();
       renderDashboard();
@@ -1943,7 +2015,7 @@
       record.phone = phone;
       record.address = address;
 
-      saveDB();
+      saveDB(true);
       closeModal("modal-contact");
       renderContacts();
     }
@@ -2001,7 +2073,6 @@
       document.getElementById("tab-cfg-tc-inv").value = DB.config.tcInvoice || "";
       document.getElementById("tab-cfg-tc-quote").value = DB.config.tcQuote || "";
 
-      // Load GitHub credentials
       document.getElementById("gh-token").value = DB.github.token || "";
       document.getElementById("gh-owner").value = DB.github.owner || "";
       document.getElementById("gh-repo").value = DB.github.repo || "";
@@ -2011,30 +2082,29 @@
       DB.github.token = document.getElementById("gh-token").value.trim();
       DB.github.owner = document.getElementById("gh-owner").value.trim();
       DB.github.repo = document.getElementById("gh-repo").value.trim();
-      saveDB();
+      saveDB(false);
       updateSyncStatusUI();
-      alert("GitHub credentials saved to local storage.");
+      alert("GitHub credentials saved! Now checking connection...");
+      pullFromGitHub(true);
     }
 
     function updateSyncStatusUI() {
-      const badge = document.getElementById("sync-status-badge");
       const dot = document.getElementById("sync-dot");
       const text = document.getElementById("sync-text");
-      if (!badge || !dot || !text) return;
+      if (!dot || !text) return;
 
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         dot.className = "w-2 h-2 rounded-full bg-slate-400";
         text.innerText = "Local Mode";
       } else {
         dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-        text.innerText = "GitHub Connected";
+        text.innerText = "Synced with GitHub";
       }
     }
 
-    async function pushToGitHub() {
+    async function pushToGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
-        alert("Please configure your GitHub Token, Owner, and Repo in Settings first.");
-        switchTab("settings");
+        if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
@@ -2043,12 +2113,10 @@
       const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
       const jsonStr = JSON.stringify(DB, null, 2);
-      // Clean UTF-8 base64
       const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
 
       try {
         let sha = DB.github.sha;
-        // Check if file exists to fetch sha
         const getRes = await fetch(apiUrl + `?ref=${branch || 'main'}`, {
           headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" }
         });
@@ -2058,7 +2126,7 @@
         }
 
         const bodyPayload = {
-          message: `Update Phoenix Solutions data - ${new Date().toLocaleString("en-IN")}`,
+          message: `Auto-Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
           content: contentBase64,
           branch: branch || "main"
         };
@@ -2077,22 +2145,21 @@
         if (putRes.ok) {
           const putData = await putRes.json();
           DB.github.sha = putData.content.sha;
-          saveDB();
-          alert("All shop data successfully pushed to GitHub (data/shop_data.json)!");
-        } else {
+          saveDB(false);
+          updateSyncStatusUI();
+          if (showAlert) alert("All data successfully pushed to GitHub!");
+        } else if (showAlert) {
           const err = await putRes.json();
-          alert("GitHub push failed: " + (err.message || putRes.statusText));
+          alert("GitHub push error: " + (err.message || putRes.statusText));
         }
       } catch (err) {
         console.error("Push Error:", err);
-        alert("Network error while pushing to GitHub. Check internet connection.");
       }
     }
 
-    async function pullFromGitHub() {
+    async function pullFromGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
-        alert("Please configure your GitHub Token, Owner, and Repo in Settings first.");
-        switchTab("settings");
+        if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
@@ -2106,7 +2173,7 @@
         });
 
         if (!res.ok) {
-          alert("GitHub pull error: " + res.statusText);
+          if (showAlert) alert("No data file on GitHub yet. Push from your PC first.");
           return;
         }
 
@@ -2114,20 +2181,27 @@
         const decodedContent = decodeURIComponent(escape(atob(data.content)));
         const pulledDB = JSON.parse(decodedContent);
 
-        // Keep local token intact
         const localGitHub = { ...DB.github, sha: data.sha };
         DB = { ...pulledDB, github: localGitHub };
-        saveDB();
+        saveDB(false);
         updateAppBranding();
+        updateSyncStatusUI();
         renderJobs();
         renderInvoices();
         renderQuotes();
         renderInventory();
         renderDashboard();
-        alert("Shop data successfully pulled and synchronized from GitHub!");
+        if (showAlert) alert("Successfully synchronized latest shop records from GitHub!");
       } catch (err) {
         console.error("Pull Error:", err);
-        alert("Error reading data from GitHub. Verify repository branch and file permissions.");
+      }
+    }
+
+    function manualSyncNow() {
+      if (!DB.github.token) {
+        switchTab("settings");
+      } else {
+        pullFromGitHub(true);
       }
     }
 
@@ -2139,7 +2213,7 @@
         DB.config.logo = e.target.result;
         document.getElementById("settings-tab-logo-preview").src = DB.config.logo;
         updateAppBranding();
-        saveDB();
+        saveDB(true);
       };
       reader.readAsDataURL(file);
     }
@@ -2157,8 +2231,8 @@
       DB.config.tcQuote = document.getElementById("tab-cfg-tc-quote").value.trim();
 
       updateAppBranding();
-      saveDB();
-      alert("Settings, UPI details, and Terms & Conditions saved successfully!");
+      saveDB(true);
+      alert("Settings and Policies saved & synced to GitHub!");
     }
 
     // --- 7. EXPORT ENGINE ---
@@ -2256,7 +2330,7 @@
       URL.revokeObjectURL(a.href);
     }
 
-    // --- 8. BULLET-PROOF PRINT ENGINE (NEVER BLANK) ---
+    // --- 8. PRINT ENGINE ---
     function buildShopHeaderHTML(title, docId, docDate) {
       const logoSrc = DB.config.logo || "Phoenix_Solutions_logo.png";
       return `
@@ -2318,12 +2392,10 @@
     function printJobCardSlip(jobId) {
       const j = DB.jobs.find(x => x.id === jobId);
       if (!j) return;
-
       const tc = (DB.config.tcJob || "").replace(/\n/g, "<br>");
       const html = `
         <div style="padding: 16px; max-width: 760px; margin: auto;">
           ${buildShopHeaderHTML("SERVICE JOB CARD TICKET", j.id, j.date)}
-          
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px;">
             <tr>
               <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
@@ -2340,22 +2412,18 @@
               </td>
             </tr>
           </table>
-
           <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px;">
             <strong style="color: #b91c1c;">Reported Problem / Symptoms:</strong>
             <p style="margin: 4px 0 10px 0; font-size: 13px;">${escapeHtml(j.fault)}</p>
-            
             <strong>Accessories Received:</strong>
             <p style="margin: 4px 0 0 0; color: #475569;">${escapeHtml(j.accessories || 'Device only (No accessories)')}</p>
           </div>
-
           ${j.photo ? `
             <div style="margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center;">
               <span style="font-size: 10px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px;">PHYSICAL CONDITION INTAKE PHOTO</span>
               <img src="${j.photo}" alt="Intake Photo" style="max-height: 150px; max-width: 100%; border-radius: 4px; display: inline-block;">
             </div>
           ` : ''}
-
           <table style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 14px; font-size: 12px;">
             <tr>
               <td>
@@ -2368,7 +2436,6 @@
               </td>
             </tr>
           </table>
-
           <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
             <strong style="color: #0f172a; text-transform: uppercase;">Service Terms:</strong><br>
             ${tc}
@@ -2381,19 +2448,16 @@
     function printInvoiceSlip(invId) {
       const inv = DB.invoices.find(x => x.id === invId);
       if (!inv) return;
-
       const tc = (DB.config.tcInvoice || "").replace(/\n/g, "<br>");
       const html = `
         <div style="padding: 16px; max-width: 760px; margin: auto;">
           ${buildShopHeaderHTML("INVOICE BILL", inv.id, inv.date)}
-          
           <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
             <strong style="color: #334155;">Billed To:</strong><br>
             <span style="font-size: 14px; font-weight: bold;">${escapeHtml(inv.custName)}</span><br>
             Phone: ${escapeHtml(inv.custPhone)}<br>
             ${inv.custAddress ? `Address: ${escapeHtml(inv.custAddress)}` : ''}
           </div>
-
           <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
             <thead>
               <tr style="background: #0f172a; color: white; text-align: left;">
@@ -2416,7 +2480,6 @@
               `).join('')}
             </tbody>
           </table>
-
           <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
             <tr>
               <td style="width: 50%; vertical-align: top; background: #f1f5f9; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
@@ -2433,7 +2496,6 @@
               </td>
             </tr>
           </table>
-
           <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
             <strong style="color: #0f172a; text-transform: uppercase;">Terms & Conditions:</strong><br>
             ${tc}
@@ -2446,19 +2508,16 @@
     function printQuoteSlip(quoteId) {
       const q = DB.quotes.find(x => x.id === quoteId);
       if (!q) return;
-
       const tc = (DB.config.tcQuote || "").replace(/\n/g, "<br>");
       const html = `
         <div style="padding: 16px; max-width: 760px; margin: auto;">
           ${buildShopHeaderHTML("ESTIMATE / QUOTATION", q.id, q.date)}
-          
           <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
             <strong style="color: #334155;">Quotation For:</strong><br>
             <span style="font-size: 14px; font-weight: bold;">${escapeHtml(q.custName)}</span><br>
             Phone: ${escapeHtml(q.custPhone)}<br>
             ${q.custAddress ? `Address: ${escapeHtml(q.custAddress)}` : ''}
           </div>
-
           <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
             <thead>
               <tr style="background: #0f172a; color: white; text-align: left;">
@@ -2481,7 +2540,6 @@
               `).join('')}
             </tbody>
           </table>
-
           <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
             <tr>
               <td style="width: 50%;"></td>
@@ -2494,7 +2552,6 @@
               </td>
             </tr>
           </table>
-
           <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
             <strong style="color: #0f172a; text-transform: uppercase;">Quotation Terms:</strong><br>
             ${tc}
@@ -2504,7 +2561,7 @@
       printDocumentSlip(html);
     }
 
-    // --- 9. WHATSAPP SHARING (CLEAN & DIRECT) ---
+    // --- 9. WHATSAPP SHARING ---
     function openWhatsAppURL(phone, message) {
       if (!phone) {
         alert("Customer phone number is missing.");
@@ -2519,7 +2576,6 @@
     function shareJobWhatsApp(jobId) {
       const j = DB.jobs.find(x => x.id === jobId);
       if (!j) return;
-
       const msg = 
 `*${DB.config.name}*
 *Service Job Card: ${j.id}*
@@ -2536,14 +2592,12 @@ We will notify you once diagnosis or repair is completed.
 
 Contact: ${DB.config.phone}
 Address: ${DB.config.address}`;
-
       openWhatsAppURL(j.custPhone, msg);
     }
 
     function shareInvoiceWhatsApp(invId) {
       const inv = DB.invoices.find(x => x.id === invId);
       if (!inv) return;
-
       const lines = inv.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
       const msg = 
 `*${DB.config.name}*
@@ -2560,14 +2614,12 @@ ${Number(inv.discount) > 0 ? `Discount: -${formatINR(inv.discount)}\n` : ''}*Gra
 UPI ID: ${DB.config.upi}
 Contact: ${DB.config.phone}
 Address: ${DB.config.address}`;
-
       openWhatsAppURL(inv.custPhone, msg);
     }
 
     function shareQuoteWhatsApp(quoteId) {
       const q = DB.quotes.find(x => x.id === quoteId);
       if (!q) return;
-
       const lines = q.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
       const msg = 
 `*${DB.config.name}*
@@ -2583,7 +2635,6 @@ ${Number(q.discount) > 0 ? `Discount: -${formatINR(q.discount)}\n` : ''}*Quotati
 Please confirm to proceed.
 Contact: ${DB.config.phone}
 Address: ${DB.config.address}`;
-
       openWhatsAppURL(q.custPhone, msg);
     }
 
@@ -2604,12 +2655,18 @@ Address: ${DB.config.address}`;
       });
     }
 
-    // Init App
+    // Startup flow
     window.addEventListener("DOMContentLoaded", () => {
       loadDB();
       updateAppBranding();
       updateSyncStatusUI();
+      checkURLPairing();
       switchTab("dashboard");
+
+      // Auto-pull silently on launch if credentials exist
+      if (DB.github.token && DB.github.owner && DB.github.repo) {
+        pullFromGitHub(false);
+      }
     });
   </script>
 </body>
