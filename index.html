@@ -393,7 +393,7 @@
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
       <div class="flex items-center justify-between border-b pb-2">
         <h3 class="text-sm font-bold text-slate-800">Scan from Mobile Camera</h3>
-        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
       <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
       <p class="text-xs text-slate-600 leading-relaxed">
@@ -2094,51 +2094,62 @@
       }
     }
 
-    // PUSH FUNCTION WITH GITHUB SECRET PROTECTION
+    // FIXED PUSH FUNCTION: STRIPS TOKEN SO GITHUB SECRET SCANNING NEVER BLOCKS
     async function pushToGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
-      const { token, owner, repo, branch } = DB.github;
+      const token = DB.github.token.trim();
+      const owner = DB.github.owner.trim();
+      const repo = DB.github.repo.trim();
+      const branch = DB.github.branch || "main";
       const path = "data/shop_data.json";
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?_t=${Date.now()}`;
 
-      // Clone DB and strip out token so GitHub Push Protection is satisfied
+      // 1. Deep clone DB and remove token so GitHub Secret Protection never triggers
       const safeDB = JSON.parse(JSON.stringify(DB));
       if (safeDB.github) {
         safeDB.github.token = "";
       }
 
       const jsonStr = JSON.stringify(safeDB, null, 2);
+      // Clean UTF-8 Base64 encoding
       const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
 
       try {
         let sha = "";
-        const getRes = await fetch(apiUrl, {
+        // GET latest SHA first
+        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
+        const getRes = await fetch(getUrl, {
+          method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Accept": "application/vnd.github.v3+json",
-            "Cache-Control": "no-cache"
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
           }
         });
+
         if (getRes.ok) {
           const getData = await getRes.json();
           sha = getData.sha;
+        } else if (getRes.status === 401) {
+          alert("GitHub Token is invalid or expired. Please generate a new classic token with 'repo' scope.");
+          return;
         }
 
+        // Clean PUT URL (No query params allowed on PUT by GitHub)
+        const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
         const bodyPayload = {
           message: `Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
           content: contentBase64,
-          branch: branch || "main"
+          branch: branch
         };
         if (sha) bodyPayload.sha = sha;
 
-        const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+        const putRes = await fetch(putUrl, {
           method: "PUT",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `token ${token}`,
             "Content-Type": "application/json",
             "Accept": "application/vnd.github.v3+json"
           },
@@ -2152,41 +2163,44 @@
           updateSyncStatusUI();
           if (showAlert) alert("All data successfully pushed to GitHub (data/shop_data.json)!");
         } else {
-          const err = await putRes.json();
-          if (showAlert) alert("GitHub push error: " + (err.message || putRes.statusText));
+          const err = await putRes.json().catch(() => ({}));
+          alert("GitHub push error: " + (err.message || putRes.statusText || "Status " + putRes.status));
         }
       } catch (err) {
         console.error("Push Error:", err);
-        if (showAlert) alert("Network error while pushing to GitHub.");
+        alert("Push failed: " + err.message + ". Verify token has 'repo' scope and internet is active.");
       }
     }
 
-    // PULL FUNCTION WITH CACHE-BUSTING
+    // FIXED PULL FUNCTION: NEVER CACHED
     async function pullFromGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
-      const { token, owner, repo, branch } = DB.github;
+      const token = DB.github.token.trim();
+      const owner = DB.github.owner.trim();
+      const repo = DB.github.repo.trim();
+      const branch = DB.github.branch || "main";
       const path = "data/shop_data.json";
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?_t=${Date.now()}`;
+
+      const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
 
       try {
-        const res = await fetch(apiUrl, {
+        const res = await fetch(getUrl, {
+          method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Accept": "application/vnd.github.v3+json",
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache"
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
           }
         });
 
         if (!res.ok) {
           if (res.status === 404) {
-            if (showAlert) alert("File data/shop_data.json does not exist in repo yet. Please click 'Push Now' from your PC first.");
+            if (showAlert) alert("File data/shop_data.json not found on GitHub. Click 'Push Now' first.");
           } else {
-            const err = await res.json();
+            const err = await res.json().catch(() => ({}));
             if (showAlert) alert("GitHub pull error: " + (err.message || res.statusText));
           }
           return;
@@ -2196,7 +2210,7 @@
         const decodedContent = decodeURIComponent(escape(atob(data.content)));
         const pulledDB = JSON.parse(decodedContent);
 
-        // Retain local token so it doesn't get cleared
+        // Keep local token intact so it doesn't get cleared
         const localGitHub = { ...DB.github, sha: data.sha };
         DB = { ...pulledDB, github: localGitHub };
         saveDB(false);
@@ -2210,7 +2224,7 @@
         if (showAlert) alert(`Successfully synced! Loaded ${DB.jobs.length} Job Cards from GitHub.`);
       } catch (err) {
         console.error("Pull Error:", err);
-        if (showAlert) alert("Error syncing data from GitHub.");
+        if (showAlert) alert("Pull error: " + err.message);
       }
     }
 
