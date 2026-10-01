@@ -40,7 +40,7 @@
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 rounded-lg bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
-          <img id="header-logo-img" src="Phoenix_Solutions_logo.png" alt="Phoenix Solutions" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://phoenixsudp-cpu.github.io/PS_Websit/Phoenix_Solutions_logo.png';">
+          <img id="header-logo-img" src="Phoenix_Solutions_logo.png" alt="Phoenix Solutions" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://phoenixsudp-cpu.github.io/app/Phoenix_Solutions_logo.png';">
         </div>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight tracking-wide" id="header-shop-name">Phoenix Solutions</h1>
@@ -48,7 +48,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <!-- PWA Install Button (Displays automatically on Windows / Android when available) -->
+        <!-- PWA Install Button -->
         <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
           <i data-lucide="download" class="w-3.5 h-3.5"></i>
           <span>Install App</span>
@@ -264,7 +264,7 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-600 mb-1">Repository Name</label>
-              <input type="text" id="gh-repo" placeholder="e.g. PS_Websit" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+              <input type="text" id="gh-repo" placeholder="e.g. app" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
             </div>
           </div>
           <div class="flex flex-wrap items-center gap-2 pt-1">
@@ -393,7 +393,7 @@
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
       <div class="flex items-center justify-between border-b pb-2">
         <h3 class="text-sm font-bold text-slate-800">Scan from Mobile Camera</h3>
-        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
       <p class="text-xs text-slate-600 leading-relaxed">
@@ -731,7 +731,7 @@
       <input type="hidden" id="contact-id">
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
-        <input type="text" id="contact-name" placeholder="Customer name" class="w-full px-3 py-2 border rounded-lg text-sm">
+        <input type="text" id="contact-name" placeholder="Customer name..." class="w-full px-3 py-2 border rounded-lg text-sm">
       </div>
       <div>
         <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number *</label>
@@ -817,7 +817,7 @@
 
     let DB = {
       config: { ...DEFAULT_CONFIG },
-      github: { token: "", owner: "", repo: "", branch: "main", sha: "" },
+      github: { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" },
       sequences: { job: 1001, invoice: 3001, quote: 2001, sku: 101, contact: 101 },
       jobs: [],
       invoices: [],
@@ -834,7 +834,7 @@
       ]
     };
 
-    // --- PWA INSTALLATION PROMPT CONTROLLER ---
+    // PWA Install prompt handling
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -857,13 +857,10 @@
       }
     }
 
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('PWA Service Worker registered successfully:', reg.scope);
-        }).catch((err) => {
-          console.log('PWA Service Worker registration skipped/offline:', err);
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.log('PWA Service Worker notice:', err);
         });
       });
     }
@@ -919,7 +916,7 @@
           const parsed = JSON.parse(saved);
           DB = { ...DB, ...parsed };
           if (!DB.config) DB.config = { ...DEFAULT_CONFIG };
-          if (!DB.github) DB.github = { token: "", owner: "", repo: "", branch: "main", sha: "" };
+          if (!DB.github) DB.github = { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" };
           if (!Array.isArray(DB.jobs)) DB.jobs = [];
           if (!Array.isArray(DB.invoices)) DB.invoices = [];
           if (!Array.isArray(DB.quotes)) DB.quotes = [];
@@ -936,7 +933,7 @@
       localStorage.setItem("phoenix_solutions_db", JSON.stringify(DB));
       updateDatalists();
       if (triggerCloudPush && DB.github.token) {
-        pushToGitHub(false); // background silent push
+        pushToGitHub(false);
       }
     }
 
@@ -1759,14 +1756,9 @@
           </div>
 
           <div class="flex items-center justify-between gap-2 pt-2 border-t text-xs">
-            <div class="flex gap-2">
-              <button onclick="editQuote('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
-                <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
-              </button>
-              <button onclick="convertQuoteToInvoice('${q.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded flex items-center gap-1 font-medium">
-                <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Bill It
-              </button>
-            </div>
+            <button onclick="editQuote('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+            </button>
             <div class="flex gap-2">
               <button onclick="printQuoteSlip('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
@@ -2074,17 +2066,17 @@
       document.getElementById("tab-cfg-tc-quote").value = DB.config.tcQuote || "";
 
       document.getElementById("gh-token").value = DB.github.token || "";
-      document.getElementById("gh-owner").value = DB.github.owner || "";
-      document.getElementById("gh-repo").value = DB.github.repo || "";
+      document.getElementById("gh-owner").value = DB.github.owner || "phoenixsudp-cpu";
+      document.getElementById("gh-repo").value = DB.github.repo || "app";
     }
 
     function saveGitHubConfig() {
       DB.github.token = document.getElementById("gh-token").value.trim();
-      DB.github.owner = document.getElementById("gh-owner").value.trim();
-      DB.github.repo = document.getElementById("gh-repo").value.trim();
+      DB.github.owner = document.getElementById("gh-owner").value.trim() || "phoenixsudp-cpu";
+      DB.github.repo = document.getElementById("gh-repo").value.trim() || "app";
       saveDB(false);
       updateSyncStatusUI();
-      alert("GitHub credentials saved! Now checking connection...");
+      alert("GitHub credentials saved! Now syncing with repository...");
       pullFromGitHub(true);
     }
 
@@ -2102,6 +2094,7 @@
       }
     }
 
+    // PUSH FUNCTION WITH GITHUB SECRET PROTECTION
     async function pushToGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         if (showAlert) alert("Configure GitHub credentials first.");
@@ -2110,15 +2103,25 @@
 
       const { token, owner, repo, branch } = DB.github;
       const path = "data/shop_data.json";
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?_t=${Date.now()}`;
 
-      const jsonStr = JSON.stringify(DB, null, 2);
+      // Clone DB and strip out token so GitHub Push Protection is satisfied
+      const safeDB = JSON.parse(JSON.stringify(DB));
+      if (safeDB.github) {
+        safeDB.github.token = "";
+      }
+
+      const jsonStr = JSON.stringify(safeDB, null, 2);
       const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
 
       try {
-        let sha = DB.github.sha;
-        const getRes = await fetch(apiUrl + `?ref=${branch || 'main'}`, {
-          headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" }
+        let sha = "";
+        const getRes = await fetch(apiUrl, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/vnd.github.v3+json",
+            "Cache-Control": "no-cache"
+          }
         });
         if (getRes.ok) {
           const getData = await getRes.json();
@@ -2126,16 +2129,16 @@
         }
 
         const bodyPayload = {
-          message: `Auto-Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
+          message: `Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
           content: contentBase64,
           branch: branch || "main"
         };
         if (sha) bodyPayload.sha = sha;
 
-        const putRes = await fetch(apiUrl, {
+        const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
           method: "PUT",
           headers: {
-            "Authorization": `token ${token}`,
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
             "Accept": "application/vnd.github.v3+json"
           },
@@ -2147,16 +2150,18 @@
           DB.github.sha = putData.content.sha;
           saveDB(false);
           updateSyncStatusUI();
-          if (showAlert) alert("All data successfully pushed to GitHub!");
-        } else if (showAlert) {
+          if (showAlert) alert("All data successfully pushed to GitHub (data/shop_data.json)!");
+        } else {
           const err = await putRes.json();
-          alert("GitHub push error: " + (err.message || putRes.statusText));
+          if (showAlert) alert("GitHub push error: " + (err.message || putRes.statusText));
         }
       } catch (err) {
         console.error("Push Error:", err);
+        if (showAlert) alert("Network error while pushing to GitHub.");
       }
     }
 
+    // PULL FUNCTION WITH CACHE-BUSTING
     async function pullFromGitHub(showAlert = false) {
       if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         if (showAlert) alert("Configure GitHub credentials first.");
@@ -2165,15 +2170,25 @@
 
       const { token, owner, repo, branch } = DB.github;
       const path = "data/shop_data.json";
-      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch || 'main'}`;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?_t=${Date.now()}`;
 
       try {
         const res = await fetch(apiUrl, {
-          headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" }
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/vnd.github.v3+json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache"
+          }
         });
 
         if (!res.ok) {
-          if (showAlert) alert("No data file on GitHub yet. Push from your PC first.");
+          if (res.status === 404) {
+            if (showAlert) alert("File data/shop_data.json does not exist in repo yet. Please click 'Push Now' from your PC first.");
+          } else {
+            const err = await res.json();
+            if (showAlert) alert("GitHub pull error: " + (err.message || res.statusText));
+          }
           return;
         }
 
@@ -2181,6 +2196,7 @@
         const decodedContent = decodeURIComponent(escape(atob(data.content)));
         const pulledDB = JSON.parse(decodedContent);
 
+        // Retain local token so it doesn't get cleared
         const localGitHub = { ...DB.github, sha: data.sha };
         DB = { ...pulledDB, github: localGitHub };
         saveDB(false);
@@ -2191,9 +2207,10 @@
         renderQuotes();
         renderInventory();
         renderDashboard();
-        if (showAlert) alert("Successfully synchronized latest shop records from GitHub!");
+        if (showAlert) alert(`Successfully synced! Loaded ${DB.jobs.length} Job Cards from GitHub.`);
       } catch (err) {
         console.error("Pull Error:", err);
+        if (showAlert) alert("Error syncing data from GitHub.");
       }
     }
 
@@ -2663,7 +2680,6 @@ Address: ${DB.config.address}`;
       checkURLPairing();
       switchTab("dashboard");
 
-      // Auto-pull silently on launch if credentials exist
       if (DB.github.token && DB.github.owner && DB.github.repo) {
         pullFromGitHub(false);
       }
