@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Phoenix Solutions - Computer & CCTV Sales & Service</title>
+  
+  <!-- PWA Metadata -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="Phoenix_Solutions_logo.png">
+  <link rel="apple-touch-icon" href="Phoenix_Solutions_logo.png">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phoenix ERP">
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    input, select, textarea { font-size: 15px !important; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    #print-frame {
+      position: fixed;
+      right: 100%;
+      bottom: 100%;
+      width: 0;
+      height: 0;
+      border: 0;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-24 md:pb-10 font-sans antialiased">
+
+  <!-- TOP HEADER -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-lg bg-white p-1 flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
+          <img id="header-logo-img" src="Phoenix_Solutions_logo.png" alt="Phoenix Solutions" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://phoenixsudp-cpu.github.io/app/Phoenix_Solutions_logo.png';">
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight tracking-wide" id="header-shop-name">Phoenix Solutions</h1>
+          <p class="text-[11px] sm:text-xs text-slate-300" id="header-shop-sub">Computer, Laptop & CCTV Sales and Service</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Install App</span>
+        </button>
+
+        <button onclick="manualSyncNow()" id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition">
+          <span class="w-2 h-2 rounded-full bg-slate-500" id="sync-dot"></span>
+          <span id="sync-text">Checking...</span>
+        </button>
+        <button onclick="switchTab('settings')" title="Shop Settings & Policies" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+        <button onclick="openExportModal()" title="Export Database" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+          <i data-lucide="download" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="hidden md:flex bg-white border-b border-slate-200 px-4">
+    <div class="max-w-7xl mx-auto flex gap-4 w-full">
+      <button onclick="switchTab('dashboard')" id="nav-d-dashboard" class="tab-btn py-3 px-4 text-sm font-semibold border-b-2 border-slate-900 text-slate-900 flex items-center gap-2">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+      </button>
+      <button onclick="switchTab('jobs')" id="nav-d-jobs" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="wrench" class="w-4 h-4"></i> Job Cards
+      </button>
+      <button onclick="switchTab('invoices')" id="nav-d-invoices" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="receipt" class="w-4 h-4"></i> Invoices
+      </button>
+      <button onclick="switchTab('quotes')" id="nav-d-quotes" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="file-text" class="w-4 h-4"></i> Quotations
+      </button>
+      <button onclick="switchTab('inventory')" id="nav-d-inventory" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="package" class="w-4 h-4"></i> Inventory / Parts
+      </button>
+      <button onclick="switchTab('contacts')" id="nav-d-contacts" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="users" class="w-4 h-4"></i> Contacts
+      </button>
+      <button onclick="switchTab('settings')" id="nav-d-settings" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
+        <i data-lucide="sliders" class="w-4 h-4"></i> Settings & Cloud
+      </button>
+    </div>
+  </nav>
+
+  <!-- CONTENT CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-5">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="tab-view block space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <p class="text-xs font-medium text-slate-500 uppercase">Active Jobs</p>
+          <h3 class="text-2xl font-bold text-slate-900 mt-1" id="dash-active-jobs">0</h3>
+          <p class="text-[11px] text-slate-400 mt-1">Repairs in workshop</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <p class="text-xs font-medium text-slate-500 uppercase">Low Stock</p>
+          <h3 class="text-2xl font-bold text-amber-600 mt-1" id="dash-low-stock">0</h3>
+          <p class="text-[11px] text-slate-400 mt-1">Items below threshold</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <p class="text-xs font-medium text-slate-500 uppercase">Quotations</p>
+          <h3 class="text-2xl font-bold text-blue-600 mt-1" id="dash-quotes-count">0</h3>
+          <p class="text-[11px] text-slate-400 mt-1">Estimates created</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <p class="text-xs font-medium text-slate-500 uppercase">Total Sales</p>
+          <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="dash-total-sales">₹0</h3>
+          <p class="text-[11px] text-slate-400 mt-1">Invoice billed value</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">Quick Actions</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button onclick="openJobModal()" class="flex items-center justify-center gap-2 p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-sm font-semibold transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> New Job Card
+          </button>
+          <button onclick="openInvoiceModal()" class="flex items-center justify-center gap-2 p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-sm font-semibold transition">
+            <i data-lucide="receipt" class="w-4 h-4"></i> New Invoice
+          </button>
+          <button onclick="openQuoteModal()" class="flex items-center justify-center gap-2 p-3 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold transition">
+            <i data-lucide="file-plus" class="w-4 h-4"></i> New Quote
+          </button>
+          <button onclick="openInventoryModal()" class="flex items-center justify-center gap-2 p-3 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-sm font-semibold transition">
+            <i data-lucide="package-plus" class="w-4 h-4"></i> Add Stock Item
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-slate-700 uppercase tracking-wide">Recent Repair Jobs</h2>
+          <button onclick="switchTab('jobs')" class="text-xs text-slate-700 font-semibold hover:underline">View All &rarr;</button>
+        </div>
+        <div id="dash-recent-jobs" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- 2. JOB CARDS VIEW -->
+    <section id="view-jobs" class="tab-view hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="jobs-search" oninput="renderJobs()" placeholder="Search by Job #, Customer, Phone, or Device..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-500 outline-none">
+        </div>
+        <button onclick="openJobModal()" class="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> Intake New Job
+        </button>
+      </div>
+      <div id="jobs-container" class="space-y-3"></div>
+    </section>
+
+    <!-- 3. INVOICES VIEW -->
+    <section id="view-invoices" class="tab-view hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="invoices-search" oninput="renderInvoices()" placeholder="Search by Invoice #, Customer, Phone..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-500 outline-none">
+        </div>
+        <button onclick="openInvoiceModal()" class="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> Create Invoice
+        </button>
+      </div>
+      <div id="invoices-container" class="space-y-3"></div>
+    </section>
+
+    <!-- 4. QUOTATIONS VIEW -->
+    <section id="view-quotes" class="tab-view hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="quotes-search" oninput="renderQuotes()" placeholder="Search by Quote #, Customer, Phone..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-500 outline-none">
+        </div>
+        <button onclick="openQuoteModal()" class="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> New Quotation
+        </button>
+      </div>
+      <div id="quotes-container" class="space-y-3"></div>
+    </section>
+
+    <!-- 5. INVENTORY VIEW -->
+    <section id="view-inventory" class="tab-view hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="inventory-search" oninput="renderInventory()" placeholder="Search items, SKU, category..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-500 outline-none">
+        </div>
+        <button onclick="openInventoryModal()" class="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <i data-lucide="plus" class="w-4 h-4"></i> Add Stock Item
+        </button>
+      </div>
+      <div id="inventory-container" class="space-y-3"></div>
+    </section>
+
+    <!-- 6. CONTACTS VIEW -->
+    <section id="view-contacts" class="tab-view hidden space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+          <input type="text" id="contacts-search" oninput="renderContacts()" placeholder="Search contacts by name, phone, or address..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-500 outline-none">
+        </div>
+        <button onclick="openContactModal()" class="flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Add Contact
+        </button>
+      </div>
+      <div id="contacts-container" class="space-y-3"></div>
+    </section>
+
+    <!-- 7. SETTINGS & GOOGLE DRIVE SYNC VIEW -->
+    <section id="view-settings" class="tab-view hidden space-y-6">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Google Drive Sync</h2>
+          <p class="text-xs text-slate-500">Pair devices via QR, configure Bank & Payment info, and manage automatic cloud sync.</p>
+        </div>
+
+        <!-- 1-Click Mobile QR Pairing Panel -->
+        <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="smartphone" class="w-5 h-5 text-amber-800"></i>
+              <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wide">Instant Mobile Setup</h3>
+            </div>
+            <p class="text-xs text-amber-800 mt-1 max-w-xl">
+              Scan this QR code from your mobile camera to pair your Google Drive Web App URL and load all shop history immediately.
+            </p>
+          </div>
+          <button onclick="openPairingQRModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+            <i data-lucide="qr-code" class="w-4 h-4"></i> Show Mobile Pairing QR
+          </button>
+        </div>
+
+        <!-- Google Drive Cloud Sync Panel -->
+        <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="hard-drive" class="w-5 h-5 text-blue-700"></i>
+              <h3 class="text-sm font-bold text-blue-950 uppercase tracking-wide">Google Drive Web App Sync & PDF Generator</h3>
+            </div>
+            <span class="text-xs text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded">Auto-Backup on Close Active</span>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Google Apps Script Web App URL</label>
+            <input type="text" id="gdrive-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+          </div>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button onclick="saveGDriveConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Save & Test GDrive
+            </button>
+            <button onclick="pushToGDrive(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Data to Drive
+            </button>
+            <button onclick="pullFromGDrive(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Data from Drive
+            </button>
+          </div>
+        </div>
+
+        <!-- Logo & Core Shop Details -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b pb-6">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center">
+            <div class="w-20 h-20 bg-white rounded-xl border border-slate-300 p-2 flex items-center justify-center mb-3 overflow-hidden shadow-sm">
+              <img id="settings-tab-logo-preview" src="Phoenix_Solutions_logo.png" alt="Logo preview" class="w-full h-full object-contain">
+            </div>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">Company Logo</label>
+            <input type="file" id="tab-cfg-logo-input" accept="image/*" onchange="handleTabLogoChange(event)" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700">
+          </div>
+
+          <div class="md:col-span-2 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Company Name</label>
+                <input type="text" id="tab-cfg-shop-name" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Tagline / Subtitle</label>
+                <input type="text" id="tab-cfg-shop-sub" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Shop Address</label>
+              <textarea id="tab-cfg-shop-address" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50"></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Contact Phone</label>
+                <input type="text" id="tab-cfg-shop-phone" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Contact Email</label>
+                <input type="email" id="tab-cfg-shop-email" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment & Bank Details Section -->
+        <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="credit-card" class="w-5 h-5 text-emerald-700"></i>
+            <h3 class="text-sm font-bold text-emerald-950 uppercase tracking-wide">Bank Details & UPI Payment Configuration</h3>
+          </div>
+          <p class="text-xs text-emerald-800">These details and dynamic QR codes appear automatically on invoices and quotations.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">UPI ID (VPA)</label>
+              <input type="text" id="tab-cfg-shop-upi" placeholder="e.g. 6361437694@upi" class="w-full px-3 py-2 border rounded-lg text-xs bg-white font-mono font-medium text-emerald-900">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Bank Name</label>
+              <input type="text" id="tab-cfg-bank-name" placeholder="e.g. State Bank of India" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Account Holder / Name</label>
+              <input type="text" id="tab-cfg-bank-holder" placeholder="e.g. Phoenix Solutions" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Account Number & IFSC</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <input type="text" id="tab-cfg-bank-acc" placeholder="Acc No." class="w-full px-2 py-2 border rounded-lg text-xs bg-white font-mono">
+                <input type="text" id="tab-cfg-bank-ifsc" placeholder="IFSC" class="w-full px-2 py-2 border rounded-lg text-xs bg-white font-mono">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms & Conditions Section -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Document Terms & Conditions</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <i data-lucide="wrench" class="w-4 h-4 text-slate-700"></i>
+                <h4 class="text-xs font-bold text-slate-800 uppercase">Job Card T&C</h4>
+              </div>
+              <textarea id="tab-cfg-tc-job" rows="5" class="w-full px-3 py-2 border rounded-lg text-xs leading-relaxed bg-white" placeholder="Terms for job cards..."></textarea>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <i data-lucide="receipt" class="w-4 h-4 text-emerald-700"></i>
+                <h4 class="text-xs font-bold text-slate-800 uppercase">Invoice Bill T&C</h4>
+              </div>
+              <textarea id="tab-cfg-tc-inv" rows="5" class="w-full px-3 py-2 border rounded-lg text-xs leading-relaxed bg-white" placeholder="Terms for invoices..."></textarea>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-blue-700"></i>
+                <h4 class="text-xs font-bold text-slate-800 uppercase">Quotation T&C</h4>
+              </div>
+              <textarea id="tab-cfg-tc-quote" rows="5" class="w-full px-3 py-2 border rounded-lg text-xs leading-relaxed bg-white" placeholder="Terms for quotations..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-4 border-t">
+          <button onclick="saveShopTabSettings()" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-md">
+            <i data-lucide="save" class="w-4 h-4"></i> Save Settings & Policies
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 shadow-lg px-1 py-1 flex justify-around">
+    <button onclick="switchTab('dashboard')" id="nav-m-dashboard" class="mobile-nav-btn py-1 px-2 text-slate-900 flex flex-col items-center">
+      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Home</span>
+    </button>
+    <button onclick="switchTab('jobs')" id="nav-m-jobs" class="mobile-nav-btn py-1 px-2 text-slate-500 flex flex-col items-center">
+      <i data-lucide="wrench" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Jobs</span>
+    </button>
+    <button onclick="switchTab('invoices')" id="nav-m-invoices" class="mobile-nav-btn py-1 px-2 text-slate-500 flex flex-col items-center">
+      <i data-lucide="receipt" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Billing</span>
+    </button>
+    <button onclick="switchTab('quotes')" id="nav-m-quotes" class="mobile-nav-btn py-1 px-2 text-slate-500 flex flex-col items-center">
+      <i data-lucide="file-text" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Quotes</span>
+    </button>
+    <button onclick="switchTab('inventory')" id="nav-m-inventory" class="mobile-nav-btn py-1 px-2 text-slate-500 flex flex-col items-center">
+      <i data-lucide="package" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Stock</span>
+    </button>
+    <button onclick="switchTab('settings')" id="nav-m-settings" class="mobile-nav-btn py-1 px-2 text-slate-500 flex flex-col items-center">
+      <i data-lucide="sliders" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5 font-medium">Settings</span>
+    </button>
+  </nav>
+
+  <!-- PAIRING QR CODE MODAL -->
+  <div id="modal-pairing-qr" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-sm font-bold text-slate-800">Scan from Mobile Camera</h3>
+        <button onclick="closeModal('modal-pairing-qr')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        Scan this QR with Google Lens or Camera on your Android phone to link your Google Drive sync automatically.
+      </p>
+      <button onclick="closeModal('modal-pairing-qr')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">Done</button>
+    </div>
+  </div>
+
+  <!-- 1. JOB CARD MODAL -->
+  <div id="modal-job" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="job-modal-title">New Job Card</h3>
+          <p class="text-xs text-slate-500" id="job-modal-seq">Auto Serial: JC-1001</p>
+        </div>
+        <button onclick="closeModal('modal-job')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <input type="hidden" id="job-id">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Name *</label>
+          <input list="contacts-datalist" id="job-cust-name" onchange="autoFillCustomer('job')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
+          <input type="tel" id="job-cust-phone" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="10-digit mobile number">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Address / Landmark</label>
+          <input type="text" id="job-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Device Type</label>
+          <select id="job-device-type" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+            <option value="Laptop">Laptop</option>
+            <option value="Desktop PC">Desktop PC</option>
+            <option value="CCTV DVR/NVR">CCTV DVR/NVR</option>
+            <option value="Printer">Printer</option>
+            <option value="Server">Server</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Brand & Model</label>
+          <input type="text" id="job-brand-model" placeholder="e.g. Dell Inspiron 15" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Serial / Tag No.</label>
+          <input type="text" id="job-serial-no" placeholder="Service tag / SN" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+        </div>
+      </div>
+
+      <!-- Multiple Compressed Images (Up to 4) -->
+      <div class="border border-dashed border-slate-300 bg-slate-50 p-3 rounded-xl space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="block text-xs font-semibold text-slate-700">Device Intake Photos (Up to 4 images)</label>
+          <span class="text-[11px] text-slate-500" id="job-photo-counter">0 / 4 added</span>
+        </div>
+        <input type="file" id="job-images-input" accept="image/*" multiple onchange="handleMultipleJobImages(event)" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700">
+        <div id="job-images-preview-grid" class="grid grid-cols-4 gap-2 pt-2"></div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Reported Issue / Fault *</label>
+          <textarea id="job-fault" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. No display, liquid spill..."></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Accessories Received</label>
+          <textarea id="job-accessories" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Power adapter, laptop bag..."></textarea>
+        </div>
+      </div>
+
+      <!-- Suggested Action & Estimated Return Date -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-amber-50/50 p-3 rounded-xl border border-amber-200">
+        <div>
+          <label class="block text-xs font-semibold text-amber-950 mb-1">Suggested Action / Work to be Performed</label>
+          <textarea id="job-suggested-action" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="e.g. Replace keyboard, clean heatsink, reinstall OS..."></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-amber-950 mb-1">Estimated Return Date</label>
+          <input type="date" id="job-est-return-date" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+          <p class="text-[11px] text-slate-500 mt-1">Expected completion date for client.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+          <select id="job-status" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+            <option value="Received">Received</option>
+            <option value="Under Diagnosis">Under Diagnosis</option>
+            <option value="Waiting for Parts">Waiting for Parts</option>
+            <option value="Ready for Delivery">Ready for Delivery</option>
+            <option value="Delivered & Closed">Delivered & Closed</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Estimated Cost (₹)</label>
+          <input type="number" id="job-cost" placeholder="₹ Estimate" class="w-full px-3 py-2 border rounded-lg text-sm">
+        </div>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
+        <button onclick="closeModal('modal-job')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveJob(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="check" class="w-4 h-4"></i> Save
+        </button>
+        <button onclick="saveJob(true, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="printer" class="w-4 h-4"></i> Save & Print
+        </button>
+        <button onclick="saveJob(false, true)" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Save & WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. INVOICE MODAL -->
+  <div id="modal-invoice" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="inv-modal-title">Create Invoice</h3>
+          <p class="text-xs text-slate-500" id="inv-modal-seq">Auto Serial: INV-3001</p>
+        </div>
+        <button onclick="closeModal('modal-invoice')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <input type="hidden" id="inv-id">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Name *</label>
+          <input list="contacts-datalist" id="inv-cust-name" onchange="autoFillCustomer('inv')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
+          <input type="tel" id="inv-cust-phone" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="10-digit mobile number">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Address</label>
+          <input type="text" id="inv-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Billed Items & Services</span>
+          <div class="flex gap-2">
+            <button type="button" onclick="openDirectInventoryModal('inv')" class="text-xs px-2.5 py-1 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg hover:bg-amber-100 flex items-center gap-1 font-semibold">
+              <i data-lucide="package-plus" class="w-3.5 h-3.5"></i> + New Item to Stock
+            </button>
+            <button type="button" onclick="addInvoiceRow()" class="text-xs px-2.5 py-1 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-200 flex items-center gap-1 font-semibold">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Row
+            </button>
+          </div>
+        </div>
+        <div id="inv-items-table" class="space-y-2"></div>
+      </div>
+
+      <!-- Client Note Field -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Client Note / Message (Printed on Invoice)</label>
+        <textarea id="inv-client-note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Thanks for your business. Warranty covers manufacturing defects only."></textarea>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+        <div class="flex justify-between text-sm text-slate-600">
+          <span>Subtotal:</span>
+          <span class="font-semibold" id="inv-subtotal-disp">₹0.00</span>
+        </div>
+        <div class="flex items-center justify-between text-sm text-slate-700 gap-4">
+          <span class="font-medium">Discount (₹):</span>
+          <input type="number" id="inv-discount-input" oninput="calcInvoiceTotals()" value="0" min="0" step="any" class="w-32 px-3 py-1 border rounded-lg text-sm text-right bg-white font-medium" placeholder="0.00">
+        </div>
+        <div class="flex justify-between text-base font-bold text-slate-900 border-t pt-2">
+          <span>Grand Total:</span>
+          <span class="text-emerald-700 text-lg" id="inv-grand-disp">₹0.00</span>
+        </div>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
+        <button onclick="closeModal('modal-invoice')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveInvoice(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="check" class="w-4 h-4"></i> Save
+        </button>
+        <button onclick="saveInvoice(true, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="printer" class="w-4 h-4"></i> Save & Print
+        </button>
+        <button onclick="saveInvoice(false, true)" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Save & WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. QUOTATION MODAL -->
+  <div id="modal-quote" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-2 sm:p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="quote-modal-title">New Quotation</h3>
+          <p class="text-xs text-slate-500" id="quote-modal-seq">Auto Serial: QT-2001</p>
+        </div>
+        <button onclick="closeModal('modal-quote')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <input type="hidden" id="quote-id">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer / Client Name *</label>
+          <input list="contacts-datalist" id="quote-cust-name" onchange="autoFillCustomer('quote')" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer name...">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Phone *</label>
+          <input type="tel" id="quote-cust-phone" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="10-digit mobile number">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Address</label>
+          <input type="text" id="quote-cust-address" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="Customer address">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Quotation Estimates</span>
+            <span class="block text-[11px] text-indigo-700 font-medium mt-0.5">Formula: Cost + Margin % + Tax % = Selling Price</span>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="openDirectInventoryModal('quote')" class="text-xs px-2.5 py-1 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg hover:bg-amber-100 flex items-center gap-1 font-semibold">
+              <i data-lucide="package-plus" class="w-3.5 h-3.5"></i> + New Item to Stock
+            </button>
+            <button type="button" onclick="addQuoteRow()" class="text-xs px-2.5 py-1 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 flex items-center gap-1 font-semibold">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Row
+            </button>
+          </div>
+        </div>
+        <div id="quote-items-table" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Client Note Field -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Client Note / Message (Printed on Quotation)</label>
+        <textarea id="quote-client-note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. This estimate is subject to stock availability. Prices valid for 7 days."></textarea>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+        <div class="flex justify-between text-sm text-slate-600">
+          <span>Subtotal:</span>
+          <span class="font-semibold" id="quote-subtotal-disp">₹0.00</span>
+        </div>
+        <div class="flex items-center justify-between text-sm text-slate-700 gap-4">
+          <span class="font-medium">Discount (₹):</span>
+          <input type="number" id="quote-discount-input" oninput="calcQuoteTotals()" value="0" min="0" step="any" class="w-32 px-3 py-1 border rounded-lg text-sm text-right bg-white font-medium" placeholder="0.00">
+        </div>
+        <div class="flex justify-between text-base font-bold text-slate-900 border-t pt-2">
+          <span>Quotation Total:</span>
+          <span class="text-blue-700 text-lg" id="quote-grand-disp">₹0.00</span>
+        </div>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 pt-3 border-t">
+        <button onclick="closeModal('modal-quote')" class="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveQuote(false, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="check" class="w-4 h-4"></i> Save
+        </button>
+        <button onclick="saveQuote(true, false)" class="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="printer" class="w-4 h-4"></i> Save & Print
+        </button>
+        <button onclick="saveQuote(false, true)" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Save & WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. INVENTORY / STOCK MODAL -->
+  <div id="modal-inventory" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="inv-item-modal-title">Inventory Item</h3>
+          <p class="text-xs text-slate-500" id="inv-item-modal-seq">Auto SKU: SKU-101</p>
+        </div>
+        <button onclick="closeModal('modal-inventory')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <input type="hidden" id="inv-item-id">
+      <input type="hidden" id="inv-item-return-target">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Item / Part Name *</label>
+        <input type="text" id="inv-item-name" placeholder="e.g. Kingston 512GB NVMe SSD" class="w-full px-3 py-2 border rounded-lg text-sm">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+          <select id="inv-item-cat" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+            <option value="Storage (SSD/HDD)">Storage (SSD/HDD)</option>
+            <option value="RAM / Memory">RAM / Memory</option>
+            <option value="CCTV Cameras">CCTV Cameras</option>
+            <option value="CCTV Accessories">CCTV Accessories</option>
+            <option value="Power Supply / SMPS">Power Supply / SMPS</option>
+            <option value="Motherboard & CPU">Motherboard & CPU</option>
+            <option value="Networking & Cables">Networking & Cables</option>
+            <option value="Accessories & Peripherals">Accessories & Peripherals</option>
+            <option value="Services / Labor">Services / Labor</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Quantity in Stock</label>
+          <input type="number" id="inv-item-qty" value="1" min="0" class="w-full px-3 py-2 border rounded-lg text-sm">
+        </div>
+      </div>
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
+        <span class="block text-xs font-bold text-slate-800 uppercase tracking-wide">Pricing Formula</span>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cost ₹</label>
+            <input type="number" id="inv-item-cost" oninput="calcItemSellingFormula()" value="0" min="0" step="any" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white text-right">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Margin %</label>
+            <input type="number" id="inv-item-margin" oninput="calcItemSellingFormula()" value="15" min="0" step="any" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white text-right">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tax</label>
+            <select id="inv-item-tax" onchange="calcItemSellingFormula()" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white font-medium">
+              <option value="18">18% Tax</option>
+              <option value="5">5% Tax</option>
+              <option value="0" selected>0% Tax</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Final Selling Price (₹)</label>
+          <input type="number" id="inv-item-selling" value="0" min="0" step="any" class="w-full px-3 py-2 border rounded-lg text-sm font-bold text-slate-900 bg-white">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t">
+        <button onclick="closeModal('modal-inventory')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveInventoryItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold">Save to Stock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CONTACT MODAL -->
+  <div id="modal-contact" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800" id="contact-modal-title">New Contact</h3>
+          <p class="text-xs text-slate-500" id="contact-modal-seq">Auto Code: CUST-101</p>
+        </div>
+        <button onclick="closeModal('modal-contact')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <input type="hidden" id="contact-id">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
+        <input type="text" id="contact-name" placeholder="Customer name..." class="w-full px-3 py-2 border rounded-lg text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number *</label>
+        <input type="tel" id="contact-phone" placeholder="10-digit mobile" class="w-full px-3 py-2 border rounded-lg text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Address / Location</label>
+        <textarea id="contact-address" rows="2" placeholder="Customer address or landmark" class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t">
+        <button onclick="closeModal('modal-contact')" class="px-4 py-2 border rounded-lg text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveContact()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold">Save Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. EXPORT & IMPORT MODAL -->
+  <div id="modal-export" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-lg font-bold text-slate-800">Database Backup & Restore</h3>
+        <button onclick="closeModal('modal-export')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+
+      <!-- Export Panel -->
+      <div class="space-y-3">
+        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Export Records</span>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Select Module</label>
+          <select id="export-module" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+            <option value="all">All Modules (Full JSON Backup)</option>
+            <option value="jobs">Job Cards</option>
+            <option value="invoices">Invoices</option>
+            <option value="quotes">Quotations</option>
+            <option value="inventory">Inventory / Stock</option>
+            <option value="contacts">Contacts</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Time Range</label>
+          <select id="export-range" onchange="toggleCustomDateExport(this.value)" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+            <option value="all">All Time (Complete Data)</option>
+            <option value="1m">Last 1 Month (30 Days)</option>
+            <option value="3m">Last 3 Months (90 Days)</option>
+            <option value="custom">Custom Date Range</option>
+          </select>
+        </div>
+        <div id="export-custom-dates" class="grid grid-cols-2 gap-3 hidden">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">From Date</label>
+            <input type="date" id="export-start-date" class="w-full px-3 py-2 border rounded-lg text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">To Date</label>
+            <input type="date" id="export-end-date" class="w-full px-3 py-2 border rounded-lg text-sm">
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 pt-1">
+          <button onclick="runExport('csv')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export to CSV (Excel Ready)
+          </button>
+          <button onclick="runExport('json')" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
+            <i data-lucide="file-code" class="w-4 h-4"></i> Download Full JSON Backup
+          </button>
+        </div>
+      </div>
+
+      <!-- Import Full Backup Panel -->
+      <div class="border-t pt-4 space-y-2">
+        <span class="text-xs font-bold text-red-700 uppercase tracking-wide flex items-center gap-1">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Import Full Backup (Restore)
+        </span>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Restoring replaces all current local data with the selected JSON backup. Google Drive will automatically be synced with the restored version.
+        </p>
+        <input type="file" id="import-json-file" accept=".json" onchange="handleImportFile(event)" class="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 w-full">
+      </div>
+    </div>
+  </div>
+
+  <datalist id="contacts-datalist"></datalist>
+  <datalist id="inventory-datalist"></datalist>
+  <iframe id="print-frame"></iframe>
+
+  <!-- ======================= JAVASCRIPT ======================= -->
+  <script>
+    const DEFAULT_CONFIG = {
+      name: "Phoenix Solutions",
+      sub: "Computer, Laptop & CCTV Sales and Service",
+      address: "Dashadeepa, Udupi Railway Station Rd, PO Kunjibettu, Udupi, Karnataka 576102",
+      phone: "6361437694",
+      email: "phoenixsudp@gmail.com",
+      upi: "6361437694@upi",
+      bankName: "State Bank of India",
+      bankHolder: "Phoenix Solutions",
+      bankAcc: "38920194820",
+      bankIfsc: "SBIN0001234",
+      logo: "Phoenix_Solutions_logo.png",
+      tcJob: "1. Inspection charges ₹250 applicable if service estimate is not approved.\n2. Customer is strictly responsible for data backup before handing over.\n3. Devices not collected within 30 days after repair completion will incur storage charges.",
+      tcInvoice: "1. Goods once sold will not be taken back without valid inspection.\n2. Warranty claims are subject to respective OEM manufacturer terms.\n3. Physical damage, burn marks, or liquid spills void warranty coverage.",
+      tcQuote: "1. Pricing is strictly valid for 7 calendar days from quotation date.\n2. 50% advance payment required upon purchase order confirmation.\n3. Standard OEM manufacturer warranty applies on branded equipment."
+    };
+
+    let DB = {
+      config: { ...DEFAULT_CONFIG },
+      gdrive: { url: "" },
+      sequences: { job: 1001, invoice: 3001, quote: 2001, sku: 101, contact: 101 },
+      jobs: [],
+      invoices: [],
+      quotes: [],
+      inventory: [
+        { id: "SKU-101", name: "Crucial 500GB NVMe M.2 SSD", cat: "Storage (SSD/HDD)", qty: 6, cost: 2350, margin: 15, tax: 18, selling: 3189 },
+        { id: "SKU-102", name: "DDR4 8GB 3200MHz Laptop RAM", cat: "RAM / Memory", qty: 4, cost: 1400, margin: 15, tax: 18, selling: 1899 },
+        { id: "SKU-103", name: "CP Plus 2MP IR Bullet CCTV Camera", cat: "CCTV Cameras", qty: 10, cost: 1150, margin: 15, tax: 18, selling: 1560 },
+        { id: "SKU-104", name: "Desktop SMPS 450W Power Supply", cat: "Power Supply / SMPS", qty: 2, cost: 650, margin: 15, tax: 18, selling: 882 }
+      ],
+      contacts: [
+        { id: "CUST-101", name: "Praveen Acharya", phone: "9845112233", address: "Kunjibettu, Udupi" },
+        { id: "CUST-102", name: "Manipal Tech Labs", phone: "9900887766", address: "Tiger Circle, Manipal" }
+      ]
+    };
+
+    // Current multiple job intake images memory
+    let currentJobPhotos = [];
+
+    // PWA Install Prompt
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.classList.remove('hidden');
+    });
+
+    function triggerPWAInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            document.getElementById('pwa-install-btn').classList.add('hidden');
+          }
+          deferredInstallPrompt = null;
+        });
+      } else {
+        alert("To install: Use Chrome/Edge menu (...) -> 'Install app' or 'Add to Home screen'.");
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => console.log('SW notice:', err));
+      });
+    }
+
+    // Auto-pair check from URL hash on mobile launch
+    function checkURLPairing() {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#pair=")) {
+        try {
+          const payload = atob(hash.replace("#pair=", ""));
+          const creds = JSON.parse(payload);
+          if (creds.url) {
+            DB.gdrive.url = creds.url;
+            saveDB(false);
+            history.replaceState(null, null, window.location.pathname);
+            alert("Paired with Google Drive! Fetching database...");
+            pullFromGDrive(false);
+          }
+        } catch (e) {
+          console.error("Pairing parse error:", e);
+        }
+      }
+    }
+
+    function openPairingQRModal() {
+      if (!DB.gdrive?.url) {
+        alert("Please set and save your Google Drive Apps Script URL first.");
+        return;
+      }
+      const container = document.getElementById("qrcode-container");
+      container.innerHTML = "";
+
+      const creds = { url: DB.gdrive.url };
+      const encoded = btoa(JSON.stringify(creds));
+      const pairUrl = window.location.origin + window.location.pathname + "#pair=" + encoded;
+
+      new QRCode(container, {
+        text: pairUrl,
+        width: 220,
+        height: 220,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      openModal("modal-pairing-qr");
+    }
+
+    function loadDB() {
+      const saved = localStorage.getItem("phoenix_solutions_db");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          DB = { ...DB, ...parsed };
+          if (!DB.config) DB.config = { ...DEFAULT_CONFIG };
+          if (!DB.gdrive) DB.gdrive = { url: "" };
+          if (!Array.isArray(DB.jobs)) DB.jobs = [];
+          if (!Array.isArray(DB.invoices)) DB.invoices = [];
+          if (!Array.isArray(DB.quotes)) DB.quotes = [];
+          if (!Array.isArray(DB.inventory)) DB.inventory = [];
+          if (!Array.isArray(DB.contacts)) DB.contacts = [];
+        } catch (e) {
+          console.error("DB Parse error:", e);
+        }
+      }
+      saveDB(false);
+    }
+
+    function saveDB(triggerCloudPush = false) {
+      localStorage.setItem("phoenix_solutions_db", JSON.stringify(DB));
+      updateDatalists();
+      if (triggerCloudPush && DB.gdrive?.url) {
+        pushToGDrive(false);
+      }
+    }
+
+    function updateAppBranding() {
+      document.getElementById("header-shop-name").innerText = DB.config.name;
+      document.getElementById("header-shop-sub").innerText = DB.config.sub;
+      const logoEl = document.getElementById("header-logo-img");
+      if (logoEl && DB.config.logo) logoEl.src = DB.config.logo;
+    }
+
+    function formatINR(val) {
+      const num = Number(val) || 0;
+      return "₹" + num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-view").forEach(el => el.classList.add("hidden"));
+      const target = document.getElementById("view-" + tabId);
+      if (target) target.classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(el => {
+        el.classList.remove("border-slate-900", "text-slate-900");
+        el.classList.add("border-transparent", "text-slate-600");
+      });
+      const activeDeskBtn = document.getElementById("nav-d-" + tabId);
+      if (activeDeskBtn) {
+        activeDeskBtn.classList.remove("border-transparent", "text-slate-600");
+        activeDeskBtn.classList.add("border-slate-900", "text-slate-900");
+      }
+
+      document.querySelectorAll(".mobile-nav-btn").forEach(el => {
+        el.classList.remove("text-slate-900");
+        el.classList.add("text-slate-500");
+      });
+      const activeMobBtn = document.getElementById("nav-m-" + tabId);
+      if (activeMobBtn) {
+        activeMobBtn.classList.remove("text-slate-500");
+        activeMobBtn.classList.add("text-slate-900");
+      }
+
+      if (tabId === "dashboard") renderDashboard();
+      if (tabId === "jobs") renderJobs();
+      if (tabId === "invoices") renderInvoices();
+      if (tabId === "quotes") renderQuotes();
+      if (tabId === "inventory") renderInventory();
+      if (tabId === "contacts") renderContacts();
+      if (tabId === "settings") loadSettingsTab();
+      
+      lucide.createIcons();
+    }
+
+    function updateDatalists() {
+      const cdl = document.getElementById("contacts-datalist");
+      if (cdl) {
+        cdl.innerHTML = "";
+        DB.contacts.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.name;
+          opt.label = `${c.phone} - ${c.address || ''}`;
+          cdl.appendChild(opt);
+        });
+      }
+
+      const idl = document.getElementById("inventory-datalist");
+      if (idl) {
+        idl.innerHTML = "";
+        DB.inventory.forEach(it => {
+          const opt = document.createElement("option");
+          opt.value = it.name;
+          opt.label = `SKU: ${it.id} | Cost: ₹${it.cost} | Stock: ${it.qty}`;
+          idl.appendChild(opt);
+        });
+      }
+    }
+
+    function autoFillCustomer(prefix) {
+      const nameInput = document.getElementById(`${prefix}-cust-name`);
+      if (!nameInput) return;
+      const found = DB.contacts.find(c => c.name.toLowerCase() === nameInput.value.trim().toLowerCase());
+      if (found) {
+        document.getElementById(`${prefix}-cust-phone`).value = found.phone || '';
+        document.getElementById(`${prefix}-cust-address`).value = found.address || '';
+      }
+    }
+
+    function autoFillInventoryPrice(input, target) {
+      const val = input.value.trim().toLowerCase();
+      const found = DB.inventory.find(x => x.name.toLowerCase() === val);
+      if (!found) return;
+
+      const row = input.closest(target === 'inv' ? '.inv-item-row' : '.quote-item-row');
+      if (target === 'inv') {
+        row.querySelector(".inv-row-rate").value = found.selling;
+        calcInvoiceTotals();
+      } else {
+        row.querySelector(".quote-row-cost").value = found.cost;
+        if (found.margin !== undefined) row.querySelector(".quote-row-margin").value = found.margin;
+        if (found.tax !== undefined) row.querySelector(".quote-row-tax").value = found.tax;
+        recomputeQuoteSellingPrice(row);
+      }
+    }
+
+    function ensureContactSaved(name, phone, address) {
+      if (!name || !name.trim()) return;
+      const trimmed = name.trim();
+      const existing = DB.contacts.find(c => c.name.toLowerCase() === trimmed.toLowerCase());
+      if (!existing) {
+        const newCode = "CUST-" + (DB.sequences.contact++);
+        DB.contacts.push({ id: newCode, name: trimmed, phone: phone || '', address: address || '' });
+        saveDB(false);
+      } else if (phone || address) {
+        if (!existing.phone && phone) existing.phone = phone;
+        if (!existing.address && address) existing.address = address;
+        saveDB(false);
+      }
+    }
+
+    // --- DASHBOARD RENDERING ---
+    function renderDashboard() {
+      const activeJobs = DB.jobs.filter(j => j.status !== "Delivered & Closed").length;
+      const lowStock = DB.inventory.filter(i => (Number(i.qty) || 0) <= 2).length;
+      const totalSales = DB.invoices.reduce((sum, inv) => sum + (Number(inv.grandTotal) || 0), 0);
+
+      document.getElementById("dash-active-jobs").innerText = activeJobs;
+      document.getElementById("dash-low-stock").innerText = lowStock;
+      document.getElementById("dash-quotes-count").innerText = DB.quotes.length;
+      document.getElementById("dash-total-sales").innerText = formatINR(totalSales);
+
+      const recentContainer = document.getElementById("dash-recent-jobs");
+      recentContainer.innerHTML = "";
+      const latest = [...DB.jobs].reverse().slice(0, 5);
+
+      if (latest.length === 0) {
+        recentContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No repair jobs intake yet.</p>`;
+        return;
+      }
+
+      latest.forEach(j => {
+        const item = document.createElement("div");
+        item.className = "flex items-center justify-between p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 transition";
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${j.id}</span>
+            <div>
+              <h4 class="text-sm font-semibold text-slate-800">${escapeHtml(j.custName || 'Customer')} (${escapeHtml(j.deviceType || 'Device')})</h4>
+              <p class="text-xs text-slate-500">${escapeHtml(j.fault || '')}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full ${getStatusBadgeClass(j.status)}">${j.status || 'Received'}</span>
+            <button onclick="editJob('${j.id}')" class="p-1 text-slate-400 hover:text-slate-800"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+          </div>
+        `;
+        recentContainer.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function getStatusBadgeClass(st) {
+      if (st === "Ready for Delivery") return "bg-emerald-100 text-emerald-800";
+      if (st === "Delivered & Closed") return "bg-slate-100 text-slate-600";
+      if (st === "Waiting for Parts") return "bg-amber-100 text-amber-800";
+      return "bg-slate-100 text-slate-800";
+    }
+
+    // --- 1. JOB CARDS MODULE ---
+    // Compress and resize images via HTML5 Canvas (max 900px, 0.72 quality JPEG)
+    function compressImageFile(file, maxWidth = 900, maxHeight = 900, quality = 0.72) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              }
+            } else {
+              if (height > maxHeight) {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => resolve("");
+        };
+        reader.onerror = () => resolve("");
+      });
+    }
+
+    async function handleMultipleJobImages(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      const remainingSlots = 4 - currentJobPhotos.length;
+      if (remainingSlots <= 0) {
+        alert("Maximum of 4 images allowed per job card.");
+        return;
+      }
+
+      const filesToProcess = files.slice(0, remainingSlots);
+      for (const file of filesToProcess) {
+        const compressedBase64 = await compressImageFile(file);
+        if (compressedBase64) {
+          currentJobPhotos.push(compressedBase64);
+        }
+      }
+      e.target.value = "";
+      renderJobImagePreviews();
+    }
+
+    function removeJobImageAt(index) {
+      currentJobPhotos.splice(index, 1);
+      renderJobImagePreviews();
+    }
+
+    function renderJobImagePreviews() {
+      const grid = document.getElementById("job-images-preview-grid");
+      const counter = document.getElementById("job-photo-counter");
+      if (!grid || !counter) return;
+
+      counter.innerText = `${currentJobPhotos.length} / 4 added`;
+      grid.innerHTML = "";
+
+      currentJobPhotos.forEach((src, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "relative border rounded-lg overflow-hidden h-16 bg-white";
+        wrap.innerHTML = `
+          <img src="${src}" class="w-full h-full object-cover">
+          <button type="button" onclick="removeJobImageAt(${idx})" class="absolute top-0.5 right-0.5 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">&times;</button>
+        `;
+        grid.appendChild(wrap);
+      });
+    }
+
+    function openJobModal(editId = null) {
+      currentJobPhotos = [];
+      document.getElementById("job-images-input").value = "";
+      renderJobImagePreviews();
+
+      if (editId) {
+        const j = DB.jobs.find(x => x.id === editId);
+        if (!j) return;
+        document.getElementById("job-modal-title").innerText = "Edit Job Card";
+        document.getElementById("job-modal-seq").innerText = "Serial: " + j.id;
+        document.getElementById("job-id").value = j.id;
+        document.getElementById("job-cust-name").value = j.custName || "";
+        document.getElementById("job-cust-phone").value = j.custPhone || "";
+        document.getElementById("job-cust-address").value = j.custAddress || "";
+        document.getElementById("job-device-type").value = j.deviceType || "Laptop";
+        document.getElementById("job-brand-model").value = j.brandModel || "";
+        document.getElementById("job-serial-no").value = j.serialNo || "";
+        document.getElementById("job-fault").value = j.fault || "";
+        document.getElementById("job-accessories").value = j.accessories || "";
+        document.getElementById("job-suggested-action").value = j.suggestedAction || "";
+        document.getElementById("job-est-return-date").value = j.estReturnDate || "";
+        document.getElementById("job-status").value = j.status || "Received";
+        document.getElementById("job-cost").value = j.cost || "";
+
+        if (Array.isArray(j.photos)) {
+          currentJobPhotos = [...j.photos];
+        } else if (j.photo) {
+          currentJobPhotos = [j.photo];
+        }
+        renderJobImagePreviews();
+      } else {
+        document.getElementById("job-modal-title").innerText = "New Job Card";
+        document.getElementById("job-modal-seq").innerText = "Auto Serial: JC-" + DB.sequences.job;
+        document.getElementById("job-id").value = "";
+        document.getElementById("job-cust-name").value = "";
+        document.getElementById("job-cust-phone").value = "";
+        document.getElementById("job-cust-address").value = "";
+        document.getElementById("job-brand-model").value = "";
+        document.getElementById("job-serial-no").value = "";
+        document.getElementById("job-fault").value = "";
+        document.getElementById("job-accessories").value = "";
+        document.getElementById("job-suggested-action").value = "";
+        document.getElementById("job-est-return-date").value = "";
+        document.getElementById("job-status").value = "Received";
+        document.getElementById("job-cost").value = "";
+      }
+      openModal("modal-job");
+    }
+
+    function saveJob(andPrint = false, andWhatsapp = false) {
+      const id = document.getElementById("job-id").value;
+      const custName = document.getElementById("job-cust-name").value.trim();
+      const custPhone = document.getElementById("job-cust-phone").value.trim();
+      const custAddress = document.getElementById("job-cust-address").value.trim();
+      const fault = document.getElementById("job-fault").value.trim();
+
+      if (!custName || !custPhone) {
+        alert("Please enter customer name and phone number.");
+        return;
+      }
+      if (!fault) {
+        alert("Please describe the reported fault/issue.");
+        return;
+      }
+
+      ensureContactSaved(custName, custPhone, custAddress);
+
+      let record;
+      if (id) {
+        record = DB.jobs.find(x => x.id === id);
+      } else {
+        record = {
+          id: "JC-" + (DB.sequences.job++),
+          date: new Date().toISOString()
+        };
+        DB.jobs.push(record);
+      }
+
+      record.custName = custName;
+      record.custPhone = custPhone;
+      record.custAddress = custAddress;
+      record.deviceType = document.getElementById("job-device-type").value;
+      record.brandModel = document.getElementById("job-brand-model").value;
+      record.serialNo = document.getElementById("job-serial-no").value;
+      record.fault = fault;
+      record.accessories = document.getElementById("job-accessories").value;
+      record.suggestedAction = document.getElementById("job-suggested-action").value.trim();
+      record.estReturnDate = document.getElementById("job-est-return-date").value;
+      record.status = document.getElementById("job-status").value;
+      record.cost = document.getElementById("job-cost").value || "0";
+      record.photos = [...currentJobPhotos];
+
+      saveDB(true);
+      closeModal("modal-job");
+      renderJobs();
+      renderDashboard();
+
+      if (andPrint) {
+        printJobCardSlip(record.id);
+      } else if (andWhatsapp) {
+        shareJobWhatsApp(record.id);
+      }
+    }
+
+    function renderJobs() {
+      const container = document.getElementById("jobs-container");
+      if (!container) return;
+
+      const searchInput = document.getElementById("jobs-search");
+      const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      container.innerHTML = "";
+
+      const filtered = DB.jobs.filter(j => {
+        const idMatch = (j.id || "").toLowerCase().includes(search);
+        const nameMatch = (j.custName || "").toLowerCase().includes(search);
+        const phoneMatch = (j.custPhone || "").toLowerCase().includes(search);
+        const modelMatch = (j.brandModel || "").toLowerCase().includes(search);
+        const faultMatch = (j.fault || "").toLowerCase().includes(search);
+        return idMatch || nameMatch || phoneMatch || modelMatch || faultMatch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-400 border border-slate-200">No job cards found. Click "+ Intake New Job" to create one.</div>`;
+        return;
+      }
+
+      [...filtered].reverse().forEach(j => {
+        const photos = Array.isArray(j.photos) ? j.photos : (j.photo ? [j.photo] : []);
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${j.id}</span>
+                <span class="text-xs text-slate-400">${j.date ? new Date(j.date).toLocaleDateString("en-IN") : ''}</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${getStatusBadgeClass(j.status)}">${j.status || 'Received'}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-800 mt-1">${escapeHtml(j.custName || 'Customer')} - <span class="text-sm font-medium text-slate-500">${escapeHtml(j.custPhone || '')}</span></h3>
+              <p class="text-xs text-slate-600 font-medium">${escapeHtml(j.deviceType || 'Device')} ${j.brandModel ? '• ' + escapeHtml(j.brandModel) : ''} ${j.serialNo ? '(SN: ' + escapeHtml(j.serialNo) + ')' : ''}</p>
+            </div>
+            ${photos.length ? `
+              <div class="flex gap-1">
+                ${photos.slice(0, 3).map(p => `<img src="${p}" alt="Photo" class="w-10 h-10 object-cover rounded-lg border border-slate-200">`).join('')}
+                ${photos.length > 3 ? `<div class="w-10 h-10 rounded-lg bg-slate-100 border text-[10px] font-bold flex items-center justify-center">+${photos.length - 3}</div>` : ''}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1">
+            <p><span class="font-semibold text-slate-700">Issue:</span> ${escapeHtml(j.fault || 'Not specified')}</p>
+            ${j.suggestedAction ? `<p><span class="font-semibold text-amber-800">Action:</span> ${escapeHtml(j.suggestedAction)}</p>` : ''}
+            ${j.estReturnDate ? `<p><span class="font-semibold text-slate-700">Est. Return:</span> ${new Date(j.estReturnDate).toLocaleDateString("en-IN")}</p>` : ''}
+            ${Number(j.cost) > 0 ? `<p><span class="font-semibold text-slate-700">Estimate:</span> ${formatINR(j.cost)}</p>` : ''}
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t text-xs">
+            <div class="flex gap-2">
+              <button onclick="editJob('${j.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+                <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+              </button>
+              <button onclick="convertJobToInvoice('${j.id}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded flex items-center gap-1 font-medium">
+                <i data-lucide="receipt" class="w-3.5 h-3.5"></i> Create Bill
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="uploadDocumentPDFToDrive('JobCard', '${j.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
+                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
+              </button>
+              <button onclick="printJobCardSlip('${j.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+              </button>
+              <button onclick="shareJobWhatsApp('${j.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded flex items-center gap-1 font-medium">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function editJob(id) {
+      openJobModal(id);
+    }
+
+    function convertJobToInvoice(jobId) {
+      const j = DB.jobs.find(x => x.id === jobId);
+      if (!j) return;
+      openInvoiceModal();
+      document.getElementById("inv-cust-name").value = j.custName;
+      document.getElementById("inv-cust-phone").value = j.custPhone;
+      document.getElementById("inv-cust-address").value = j.custAddress || "";
+
+      const table = document.getElementById("inv-items-table");
+      table.innerHTML = "";
+      addInvoiceRow(`Service & Repair: ${j.deviceType} (${j.fault})`, 1, Number(j.cost) || 0);
+      calcInvoiceTotals();
+    }
+
+    // --- 2. INVOICE MODULE ---
+    function openInvoiceModal(editId = null) {
+      const table = document.getElementById("inv-items-table");
+      table.innerHTML = "";
+
+      if (editId) {
+        const inv = DB.invoices.find(x => x.id === editId);
+        if (!inv) return;
+        document.getElementById("inv-modal-title").innerText = "Edit Invoice";
+        document.getElementById("inv-modal-seq").innerText = "Serial: " + inv.id;
+        document.getElementById("inv-id").value = inv.id;
+        document.getElementById("inv-cust-name").value = inv.custName;
+        document.getElementById("inv-cust-phone").value = inv.custPhone;
+        document.getElementById("inv-cust-address").value = inv.custAddress || "";
+        document.getElementById("inv-client-note").value = inv.clientNote || "";
+        document.getElementById("inv-discount-input").value = inv.discount || 0;
+
+        inv.items.forEach(it => {
+          addInvoiceRow(it.desc, it.qty, it.rate);
+        });
+      } else {
+        document.getElementById("inv-modal-title").innerText = "Create Invoice";
+        document.getElementById("inv-modal-seq").innerText = "Auto Serial: INV-" + DB.sequences.invoice;
+        document.getElementById("inv-id").value = "";
+        document.getElementById("inv-cust-name").value = "";
+        document.getElementById("inv-cust-phone").value = "";
+        document.getElementById("inv-cust-address").value = "";
+        document.getElementById("inv-client-note").value = "";
+        document.getElementById("inv-discount-input").value = 0;
+        addInvoiceRow();
+      }
+
+      calcInvoiceTotals();
+      openModal("modal-invoice");
+    }
+
+    function addInvoiceRow(desc = "", qty = 1, rate = 0) {
+      const table = document.getElementById("inv-items-table");
+      const row = document.createElement("div");
+      row.className = "inv-item-row grid grid-cols-12 gap-2 items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs";
+      
+      row.innerHTML = `
+        <div class="col-span-12 sm:col-span-6">
+          <input list="inventory-datalist" placeholder="Item name / service description" value="${escapeHtml(desc)}" class="inv-row-desc w-full px-2.5 py-1.5 border rounded text-xs bg-white" onchange="autoFillInventoryPrice(this, 'inv')">
+        </div>
+        <div class="col-span-4 sm:col-span-2">
+          <input type="number" min="1" placeholder="Qty" value="${qty}" class="inv-row-qty w-full px-2 py-1.5 border rounded text-xs text-center bg-white" oninput="calcInvoiceTotals()">
+        </div>
+        <div class="col-span-5 sm:col-span-3">
+          <input type="number" min="0" step="any" placeholder="Selling Rate ₹" value="${rate}" class="inv-row-rate w-full px-2 py-1.5 border rounded text-xs text-right bg-white font-semibold text-slate-800" oninput="calcInvoiceTotals()">
+        </div>
+        <div class="col-span-3 sm:col-span-1 flex justify-end">
+          <button type="button" onclick="this.closest('.inv-item-row').remove(); calcInvoiceTotals();" class="p-1 text-slate-400 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
+      `;
+      table.appendChild(row);
+      lucide.createIcons();
+      calcInvoiceTotals();
+    }
+
+    function calcInvoiceTotals() {
+      let subtotal = 0;
+      document.querySelectorAll(".inv-item-row").forEach(row => {
+        const qty = Number(row.querySelector(".inv-row-qty").value) || 0;
+        const rate = Number(row.querySelector(".inv-row-rate").value) || 0;
+        subtotal += (qty * rate);
+      });
+
+      const discount = Number(document.getElementById("inv-discount-input").value) || 0;
+      const grandTotal = Math.max(0, subtotal - discount);
+
+      document.getElementById("inv-subtotal-disp").innerText = formatINR(subtotal);
+      document.getElementById("inv-grand-disp").innerText = formatINR(grandTotal);
+    }
+
+    function saveInvoice(andPrint = false, andWhatsapp = false) {
+      const id = document.getElementById("inv-id").value;
+      const custName = document.getElementById("inv-cust-name").value.trim();
+      const custPhone = document.getElementById("inv-cust-phone").value.trim();
+      const custAddress = document.getElementById("inv-cust-address").value.trim();
+
+      if (!custName || !custPhone) {
+        alert("Please enter customer name and phone.");
+        return;
+      }
+
+      const items = [];
+      let subtotal = 0;
+      document.querySelectorAll(".inv-item-row").forEach(row => {
+        const desc = row.querySelector(".inv-row-desc").value.trim();
+        const qty = Number(row.querySelector(".inv-row-qty").value) || 0;
+        const rate = Number(row.querySelector(".inv-row-rate").value) || 0;
+        if (desc && qty > 0) {
+          items.push({ desc, qty, rate, total: qty * rate });
+          subtotal += (qty * rate);
+        }
+      });
+
+      if (items.length === 0) {
+        alert("Please add at least one line item.");
+        return;
+      }
+
+      const discount = Number(document.getElementById("inv-discount-input").value) || 0;
+      const grandTotal = Math.max(0, subtotal - discount);
+      const clientNote = document.getElementById("inv-client-note").value.trim();
+
+      ensureContactSaved(custName, custPhone, custAddress);
+
+      let record;
+      if (id) {
+        record = DB.invoices.find(x => x.id === id);
+      } else {
+        record = {
+          id: "INV-" + (DB.sequences.invoice++),
+          date: new Date().toISOString()
+        };
+        DB.invoices.push(record);
+      }
+
+      record.custName = custName;
+      record.custPhone = custPhone;
+      record.custAddress = custAddress;
+      record.clientNote = clientNote;
+      record.items = items;
+      record.subtotal = subtotal;
+      record.discount = discount;
+      record.grandTotal = grandTotal;
+
+      saveDB(true);
+      closeModal("modal-invoice");
+      renderInvoices();
+      renderDashboard();
+
+      if (andPrint) {
+        printInvoiceSlip(record.id);
+      } else if (andWhatsapp) {
+        shareInvoiceWhatsApp(record.id);
+      }
+    }
+
+    function renderInvoices() {
+      const container = document.getElementById("invoices-container");
+      if (!container) return;
+
+      const searchInput = document.getElementById("invoices-search");
+      const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      container.innerHTML = "";
+
+      const filtered = DB.invoices.filter(i => 
+        (i.id || "").toLowerCase().includes(search) ||
+        (i.custName || "").toLowerCase().includes(search) ||
+        (i.custPhone || "").toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-400 border border-slate-200">No invoices generated yet.</div>`;
+        return;
+      }
+
+      [...filtered].reverse().forEach(inv => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">${inv.id}</span>
+                <span class="text-xs text-slate-400">${inv.date ? new Date(inv.date).toLocaleDateString("en-IN") : ''}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-800 mt-1">${escapeHtml(inv.custName)}</h3>
+              <p class="text-xs text-slate-500">${escapeHtml(inv.custPhone)} ${inv.custAddress ? '• ' + escapeHtml(inv.custAddress) : ''}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block">Total Amount</span>
+              <span class="text-lg font-bold text-emerald-700">${formatINR(inv.grandTotal)}</span>
+              ${Number(inv.discount) > 0 ? `<span class="text-[10px] text-red-500 block">Discount: -${formatINR(inv.discount)}</span>` : ''}
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1">
+            <span class="font-semibold text-slate-600 block mb-1">Items (${inv.items.length}):</span>
+            ${inv.items.map(it => `
+              <div class="flex justify-between text-slate-700">
+                <span>${escapeHtml(it.desc)} &times; ${it.qty}</span>
+                <span class="font-medium">${formatINR(it.total)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          ${inv.clientNote ? `<p class="text-xs text-slate-600 italic bg-slate-50 p-2 rounded">Note: ${escapeHtml(inv.clientNote)}</p>` : ''}
+
+          <div class="flex items-center justify-between gap-2 pt-2 border-t text-xs">
+            <button onclick="editInvoice('${inv.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <div class="flex gap-2">
+              <button onclick="uploadDocumentPDFToDrive('Invoice', '${inv.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
+                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
+              </button>
+              <button onclick="printInvoiceSlip('${inv.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+              </button>
+              <button onclick="shareInvoiceWhatsApp('${inv.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded flex items-center gap-1 font-medium">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function editInvoice(id) {
+      openInvoiceModal(id);
+    }
+
+    // --- 3. QUOTATIONS MODULE ---
+    function openQuoteModal(editId = null) {
+      const table = document.getElementById("quote-items-table");
+      table.innerHTML = "";
+
+      if (editId) {
+        const q = DB.quotes.find(x => x.id === editId);
+        if (!q) return;
+        document.getElementById("quote-modal-title").innerText = "Edit Quotation";
+        document.getElementById("quote-modal-seq").innerText = "Serial: " + q.id;
+        document.getElementById("quote-id").value = q.id;
+        document.getElementById("quote-cust-name").value = q.custName;
+        document.getElementById("quote-cust-phone").value = q.custPhone;
+        document.getElementById("quote-cust-address").value = q.custAddress || "";
+        document.getElementById("quote-client-note").value = q.clientNote || "";
+        document.getElementById("quote-discount-input").value = q.discount || 0;
+
+        q.items.forEach(it => {
+          addQuoteRow(it.desc, it.qty, it.cost || 0, it.margin !== undefined ? it.margin : 15, it.tax !== undefined ? it.tax : 0, it.rate || 0);
+        });
+      } else {
+        document.getElementById("quote-modal-title").innerText = "New Quotation";
+        document.getElementById("quote-modal-seq").innerText = "Auto Serial: QT-" + DB.sequences.quote;
+        document.getElementById("quote-id").value = "";
+        document.getElementById("quote-cust-name").value = "";
+        document.getElementById("quote-cust-phone").value = "";
+        document.getElementById("quote-cust-address").value = "";
+        document.getElementById("quote-client-note").value = "";
+        document.getElementById("quote-discount-input").value = 0;
+        addQuoteRow();
+      }
+
+      calcQuoteTotals();
+      openModal("modal-quote");
+    }
+
+    function addQuoteRow(desc = "", qty = 1, cost = 0, margin = 15, tax = 0, rate = 0) {
+      const table = document.getElementById("quote-items-table");
+      const row = document.createElement("div");
+      row.className = "quote-item-row bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2";
+
+      row.innerHTML = `
+        <div class="grid grid-cols-12 gap-2 items-center">
+          <div class="col-span-12 sm:col-span-4">
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Item / Service Description</label>
+            <input list="inventory-datalist" placeholder="Item name..." value="${escapeHtml(desc)}" class="quote-row-desc w-full px-2.5 py-1.5 border rounded text-xs bg-white" onchange="autoFillInventoryPrice(this, 'quote')">
+          </div>
+          <div class="col-span-3 sm:col-span-1">
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Qty</label>
+            <input type="number" min="1" placeholder="Qty" value="${qty}" class="quote-row-qty w-full px-2 py-1.5 border rounded text-xs text-center bg-white" oninput="calcQuoteTotals()">
+          </div>
+          <div class="col-span-4 sm:col-span-2">
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Cost ₹</label>
+            <input type="number" min="0" step="any" placeholder="Cost ₹" value="${cost}" class="quote-row-cost w-full px-2 py-1.5 border rounded text-xs text-right bg-white" oninput="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
+          </div>
+          <div class="col-span-5 sm:col-span-2">
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Margin %</label>
+            <input type="number" min="0" step="any" placeholder="Margin %" value="${margin}" class="quote-row-margin w-full px-2 py-1.5 border rounded text-xs text-right bg-white font-medium" oninput="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
+          </div>
+          <div class="col-span-6 sm:col-span-2">
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Tax</label>
+            <select class="quote-row-tax w-full px-2 py-1.5 border rounded text-xs bg-white font-medium text-slate-700" onchange="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
+              <option value="18" ${tax == 18 ? 'selected' : ''}>18% Tax</option>
+              <option value="5" ${tax == 5 ? 'selected' : ''}>5% Tax</option>
+              <option value="0" ${tax == 0 ? 'selected' : ''}>0% Tax</option>
+            </select>
+          </div>
+          <div class="col-span-6 sm:col-span-1 flex items-end justify-end pb-0.5">
+            <button type="button" onclick="this.closest('.quote-item-row').remove(); calcQuoteTotals();" class="p-1.5 text-slate-400 hover:text-red-500 bg-white border border-slate-200 rounded" title="Remove item"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+
+        <div class="bg-indigo-50/70 border border-indigo-100 px-3 py-1.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-[11px]">
+          <div class="flex items-center gap-1.5 flex-wrap font-mono text-slate-600">
+            <span class="quote-prev-formula">Cost ₹${cost} + ${margin}% margin + ${tax}% tax</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500 font-medium">Selling Rate:</span>
+            <input type="number" min="0" step="any" placeholder="Selling ₹" value="${rate}" class="quote-row-rate w-28 px-2 py-0.5 border rounded text-xs text-right bg-white font-bold text-indigo-900" oninput="calcQuoteTotals()">
+          </div>
+        </div>
+      `;
+      table.appendChild(row);
+      lucide.createIcons();
+      recomputeQuoteSellingPrice(row);
+    }
+
+    function recomputeQuoteSellingPrice(row) {
+      const cost = Number(row.querySelector(".quote-row-cost").value) || 0;
+      const marginPct = Number(row.querySelector(".quote-row-margin").value) || 0;
+      const taxPct = Number(row.querySelector(".quote-row-tax").value) || 0;
+
+      const marginAmt = cost * (marginPct / 100);
+      const taxablePrice = cost + marginAmt;
+      const taxAmt = taxablePrice * (taxPct / 100);
+      const finalSelling = Math.round(taxablePrice + taxAmt);
+
+      const rateInput = row.querySelector(".quote-row-rate");
+      rateInput.value = finalSelling;
+
+      const previewText = row.querySelector(".quote-prev-formula");
+      previewText.innerHTML = `Cost: <strong>₹${cost}</strong> &rarr; +${marginPct}% Margin &rarr; +${taxPct}% Tax`;
+
+      calcQuoteTotals();
+    }
+
+    function calcQuoteTotals() {
+      let subtotal = 0;
+      document.querySelectorAll(".quote-item-row").forEach(row => {
+        const qty = Number(row.querySelector(".quote-row-qty").value) || 0;
+        const rate = Number(row.querySelector(".quote-row-rate").value) || 0;
+        subtotal += (qty * rate);
+      });
+
+      const discount = Number(document.getElementById("quote-discount-input").value) || 0;
+      const grandTotal = Math.max(0, subtotal - discount);
+
+      document.getElementById("quote-subtotal-disp").innerText = formatINR(subtotal);
+      document.getElementById("quote-grand-disp").innerText = formatINR(grandTotal);
+    }
+
+    function saveQuote(andPrint = false, andWhatsapp = false) {
+      const id = document.getElementById("quote-id").value;
+      const custName = document.getElementById("quote-cust-name").value.trim();
+      const custPhone = document.getElementById("quote-cust-phone").value.trim();
+      const custAddress = document.getElementById("quote-cust-address").value.trim();
+
+      if (!custName || !custPhone) {
+        alert("Please enter customer name and phone.");
+        return;
+      }
+
+      const items = [];
+      let subtotal = 0;
+      document.querySelectorAll(".quote-item-row").forEach(row => {
+        const desc = row.querySelector(".quote-row-desc").value.trim();
+        const qty = Number(row.querySelector(".quote-row-qty").value) || 0;
+        const cost = Number(row.querySelector(".quote-row-cost").value) || 0;
+        const margin = Number(row.querySelector(".quote-row-margin").value) || 0;
+        const tax = Number(row.querySelector(".quote-row-tax").value) || 0;
+        const rate = Number(row.querySelector(".quote-row-rate").value) || 0;
+        if (desc && qty > 0) {
+          items.push({ desc, qty, cost, margin, tax, rate, total: qty * rate });
+          subtotal += (qty * rate);
+        }
+      });
+
+      if (items.length === 0) {
+        alert("Please add at least one line item.");
+        return;
+      }
+
+      const discount = Number(document.getElementById("quote-discount-input").value) || 0;
+      const grandTotal = Math.max(0, subtotal - discount);
+      const clientNote = document.getElementById("quote-client-note").value.trim();
+
+      ensureContactSaved(custName, custPhone, custAddress);
+
+      let record;
+      if (id) {
+        record = DB.quotes.find(x => x.id === id);
+      } else {
+        record = {
+          id: "QT-" + (DB.sequences.quote++),
+          date: new Date().toISOString()
+        };
+        DB.quotes.push(record);
+      }
+
+      record.custName = custName;
+      record.custPhone = custPhone;
+      record.custAddress = custAddress;
+      record.clientNote = clientNote;
+      record.items = items;
+      record.subtotal = subtotal;
+      record.discount = discount;
+      record.grandTotal = grandTotal;
+
+      saveDB(true);
+      closeModal("modal-quote");
+      renderQuotes();
+      renderDashboard();
+
+      if (andPrint) {
+        printQuoteSlip(record.id);
+      } else if (andWhatsapp) {
+        shareQuoteWhatsApp(record.id);
+      }
+    }
+
+    function renderQuotes() {
+      const container = document.getElementById("quotes-container");
+      if (!container) return;
+
+      const searchInput = document.getElementById("quotes-search");
+      const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      container.innerHTML = "";
+
+      const filtered = DB.quotes.filter(q => 
+        (q.id || "").toLowerCase().includes(search) ||
+        (q.custName || "").toLowerCase().includes(search) ||
+        (q.custPhone || "").toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-400 border border-slate-200">No quotations found.</div>`;
+        return;
+      }
+
+      [...filtered].reverse().forEach(q => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded">${q.id}</span>
+                <span class="text-xs text-slate-400">${q.date ? new Date(q.date).toLocaleDateString("en-IN") : ''}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-800 mt-1">${escapeHtml(q.custName)}</h3>
+              <p class="text-xs text-slate-500">${escapeHtml(q.custPhone)} ${q.custAddress ? '• ' + escapeHtml(q.custAddress) : ''}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block">Estimate Total</span>
+              <span class="text-lg font-bold text-blue-700">${formatINR(q.grandTotal)}</span>
+              ${Number(q.discount) > 0 ? `<span class="text-[10px] text-red-500 block">Discount: -${formatINR(q.discount)}</span>` : ''}
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1">
+            <span class="font-semibold text-slate-600 block mb-1">Quoted Items (${q.items.length}):</span>
+            ${q.items.map(it => `
+              <div class="flex justify-between text-slate-700">
+                <span>${escapeHtml(it.desc)} &times; ${it.qty}</span>
+                <span class="font-medium">${formatINR(it.total)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          ${q.clientNote ? `<p class="text-xs text-slate-600 italic bg-slate-50 p-2 rounded">Note: ${escapeHtml(q.clientNote)}</p>` : ''}
+
+          <div class="flex items-center justify-between gap-2 pt-2 border-t text-xs">
+            <button onclick="editQuote('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+            </button>
+            <div class="flex gap-2">
+              <button onclick="uploadDocumentPDFToDrive('Quotation', '${q.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
+                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
+              </button>
+              <button onclick="printQuoteSlip('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+              </button>
+              <button onclick="shareQuoteWhatsApp('${q.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded flex items-center gap-1 font-medium">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function editQuote(id) {
+      openQuoteModal(id);
+    }
+
+    // --- 4. INVENTORY / STOCK MODULE ---
+    function openInventoryModal(editId = null, returnTarget = null) {
+      document.getElementById("inv-item-return-target").value = returnTarget || "";
+
+      if (editId) {
+        const item = DB.inventory.find(x => x.id === editId);
+        if (!item) return;
+        document.getElementById("inv-item-modal-title").innerText = "Edit Stock Item";
+        document.getElementById("inv-item-modal-seq").innerText = "SKU: " + item.id;
+        document.getElementById("inv-item-id").value = item.id;
+        document.getElementById("inv-item-name").value = item.name;
+        document.getElementById("inv-item-cat").value = item.cat;
+        document.getElementById("inv-item-qty").value = item.qty;
+        document.getElementById("inv-item-cost").value = item.cost;
+        document.getElementById("inv-item-margin").value = item.margin !== undefined ? item.margin : 15;
+        document.getElementById("inv-item-tax").value = item.tax !== undefined ? item.tax : 0;
+        document.getElementById("inv-item-selling").value = item.selling;
+      } else {
+        document.getElementById("inv-item-modal-title").innerText = "Add Stock Item";
+        document.getElementById("inv-item-modal-seq").innerText = "Auto SKU: SKU-" + DB.sequences.sku;
+        document.getElementById("inv-item-id").value = "";
+        document.getElementById("inv-item-name").value = "";
+        document.getElementById("inv-item-cat").value = "Storage (SSD/HDD)";
+        document.getElementById("inv-item-qty").value = "1";
+        document.getElementById("inv-item-cost").value = "0";
+        document.getElementById("inv-item-margin").value = "15";
+        document.getElementById("inv-item-tax").value = "0";
+        document.getElementById("inv-item-selling").value = "0";
+      }
+      calcItemSellingFormula();
+      openModal("modal-inventory");
+    }
+
+    function openDirectInventoryModal(target) {
+      openInventoryModal(null, target);
+    }
+
+    function calcItemSellingFormula() {
+      const cost = Number(document.getElementById("inv-item-cost").value) || 0;
+      const marginPct = Number(document.getElementById("inv-item-margin").value) || 0;
+      const taxPct = Number(document.getElementById("inv-item-tax").value) || 0;
+
+      const marginAmt = cost * (marginPct / 100);
+      const taxable = cost + marginAmt;
+      const taxAmt = taxable * (taxPct / 100);
+      const selling = Math.round(taxable + taxAmt);
+
+      document.getElementById("inv-item-selling").value = selling;
+    }
+
+    function saveInventoryItem() {
+      const id = document.getElementById("inv-item-id").value;
+      const name = document.getElementById("inv-item-name").value.trim();
+      const returnTarget = document.getElementById("inv-item-return-target").value;
+
+      if (!name) {
+        alert("Please enter the item / part name.");
+        return;
+      }
+
+      let record;
+      if (id) {
+        record = DB.inventory.find(x => x.id === id);
+      } else {
+        record = { id: "SKU-" + (DB.sequences.sku++) };
+        DB.inventory.push(record);
+      }
+
+      record.name = name;
+      record.cat = document.getElementById("inv-item-cat").value;
+      record.qty = Number(document.getElementById("inv-item-qty").value) || 0;
+      record.cost = Number(document.getElementById("inv-item-cost").value) || 0;
+      record.margin = Number(document.getElementById("inv-item-margin").value) || 0;
+      record.tax = Number(document.getElementById("inv-item-tax").value) || 0;
+      record.selling = Number(document.getElementById("inv-item-selling").value) || 0;
+
+      saveDB(true);
+      closeModal("modal-inventory");
+      renderInventory();
+      renderDashboard();
+
+      if (returnTarget === "inv") {
+        addInvoiceRow(record.name, 1, record.selling);
+      } else if (returnTarget === "quote") {
+        addQuoteRow(record.name, 1, record.cost, record.margin, record.tax, record.selling);
+      }
+    }
+
+    function renderInventory() {
+      const container = document.getElementById("inventory-container");
+      if (!container) return;
+
+      const searchInput = document.getElementById("inventory-search");
+      const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      container.innerHTML = "";
+
+      const filtered = DB.inventory.filter(i => 
+        (i.id || "").toLowerCase().includes(search) ||
+        (i.name || "").toLowerCase().includes(search) ||
+        (i.cat || "").toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-400 border border-slate-200">No stock items found.</div>`;
+        return;
+      }
+
+      filtered.forEach(it => {
+        const isLow = it.qty <= 2;
+        const card = document.createElement("div");
+        card.className = "bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">${it.id}</span>
+              <span class="text-xs text-slate-500">${it.cat}</span>
+              ${isLow ? `<span class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Low Stock</span>` : ''}
+            </div>
+            <h4 class="text-sm font-bold text-slate-800 mt-1">${escapeHtml(it.name)}</h4>
+            <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5 flex-wrap">
+              <span>Qty: <strong class="text-slate-800">${it.qty}</strong></span>
+              <span>Cost: ${formatINR(it.cost)}</span>
+              <span>Selling: <strong class="text-slate-900 font-semibold">${formatINR(it.selling)}</strong></span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 text-xs">
+            <button onclick="directBillItem('${it.id}')" title="Create Invoice" class="px-2 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded font-semibold hover:bg-emerald-100">
+              + Bill
+            </button>
+            <button onclick="directQuoteItem('${it.id}')" title="Add to Quote" class="px-2 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded font-semibold hover:bg-blue-100">
+              + Quote
+            </button>
+            <button onclick="openInventoryModal('${it.id}')" class="p-1.5 text-slate-400 hover:text-slate-700">
+              <i data-lucide="edit" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function directBillItem(skuId) {
+      const it = DB.inventory.find(x => x.id === skuId);
+      if (!it) return;
+      openInvoiceModal();
+      const table = document.getElementById("inv-items-table");
+      table.innerHTML = "";
+      addInvoiceRow(it.name, 1, it.selling);
+      calcInvoiceTotals();
+    }
+
+    function directQuoteItem(skuId) {
+      const it = DB.inventory.find(x => x.id === skuId);
+      if (!it) return;
+      openQuoteModal();
+      const table = document.getElementById("quote-items-table");
+      table.innerHTML = "";
+      addQuoteRow(it.name, 1, it.cost, it.margin || 15, it.tax || 0, it.selling);
+      calcQuoteTotals();
+    }
+
+    // --- 5. CONTACTS MODULE ---
+    function openContactModal(editId = null) {
+      if (editId) {
+        const c = DB.contacts.find(x => x.id === editId);
+        if (!c) return;
+        document.getElementById("contact-modal-title").innerText = "Edit Contact";
+        document.getElementById("contact-modal-seq").innerText = "Code: " + c.id;
+        document.getElementById("contact-id").value = c.id;
+        document.getElementById("contact-name").value = c.name;
+        document.getElementById("contact-phone").value = c.phone;
+        document.getElementById("contact-address").value = c.address || "";
+      } else {
+        document.getElementById("contact-modal-title").innerText = "New Contact";
+        document.getElementById("contact-modal-seq").innerText = "Auto Code: CUST-" + DB.sequences.contact;
+        document.getElementById("contact-id").value = "";
+        document.getElementById("contact-name").value = "";
+        document.getElementById("contact-phone").value = "";
+        document.getElementById("contact-address").value = "";
+      }
+      openModal("modal-contact");
+    }
+
+    function saveContact() {
+      const id = document.getElementById("contact-id").value;
+      const name = document.getElementById("contact-name").value.trim();
+      const phone = document.getElementById("contact-phone").value.trim();
+      const address = document.getElementById("contact-address").value.trim();
+
+      if (!name || !phone) {
+        alert("Please enter contact name and phone number.");
+        return;
+      }
+
+      let record;
+      if (id) {
+        record = DB.contacts.find(x => x.id === id);
+      } else {
+        record = { id: "CUST-" + (DB.sequences.contact++) };
+        DB.contacts.push(record);
+      }
+
+      record.name = name;
+      record.phone = phone;
+      record.address = address;
+
+      saveDB(true);
+      closeModal("modal-contact");
+      renderContacts();
+    }
+
+    function renderContacts() {
+      const container = document.getElementById("contacts-container");
+      if (!container) return;
+
+      const searchInput = document.getElementById("contacts-search");
+      const search = searchInput ? searchInput.value.trim().toLowerCase() : "";
+      container.innerHTML = "";
+
+      const filtered = DB.contacts.filter(c => 
+        (c.name || "").toLowerCase().includes(search) ||
+        (c.phone || "").toLowerCase().includes(search) ||
+        (c.address || "").toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 rounded-xl text-center text-slate-400 border border-slate-200">No contacts saved.</div>`;
+        return;
+      }
+
+      filtered.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">${c.id}</span>
+              <h4 class="text-sm font-bold text-slate-800">${escapeHtml(c.name)}</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">${escapeHtml(c.phone)} ${c.address ? '• ' + escapeHtml(c.address) : ''}</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="shareContactWhatsApp('${c.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs flex items-center gap-1 font-medium shadow-sm" title="Share via WhatsApp">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
+            </button>
+            <button onclick="openContactModal('${c.id}')" class="p-1.5 text-slate-400 hover:text-slate-700">
+              <i data-lucide="edit" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function shareContactWhatsApp(contactId) {
+      const c = DB.contacts.find(x => x.id === contactId);
+      if (!c) return;
+
+      const activeJobs = DB.jobs.filter(j => (j.custPhone === c.phone || j.custName.toLowerCase() === c.name.toLowerCase()) && j.status !== 'Delivered & Closed');
+      let statusText = "No active repairs on file.";
+      if (activeJobs.length > 0) {
+        statusText = activeJobs.map(j => `• Job #${j.id}: ${j.deviceType} (${j.status})`).join("\n");
+      }
+
+      const msg = 
+`*${DB.config.name}*
+*Customer Profile: ${c.name}*
+------------------------------
+Hello ${c.name},
+
+Here is your current record with us:
+*Phone:* ${c.phone}
+${c.address ? `*Address:* ${c.address}\n` : ''}
+*Active Repair Status:*
+${statusText}
+
+For any inquiries, feel free to reach out!
+Phone: ${DB.config.phone}
+Address: ${DB.config.address}`;
+
+      openWhatsAppURL(c.phone, msg);
+    }
+
+    // --- 6. GOOGLE DRIVE SYNC & APPS SCRIPT ENGINE ---
+    function loadSettingsTab() {
+      document.getElementById("tab-cfg-shop-name").value = DB.config.name;
+      document.getElementById("tab-cfg-shop-sub").value = DB.config.sub;
+      document.getElementById("tab-cfg-shop-address").value = DB.config.address;
+      document.getElementById("tab-cfg-shop-phone").value = DB.config.phone;
+      document.getElementById("tab-cfg-shop-email").value = DB.config.email;
+      document.getElementById("tab-cfg-shop-upi").value = DB.config.upi;
+
+      document.getElementById("tab-cfg-bank-name").value = DB.config.bankName || "";
+      document.getElementById("tab-cfg-bank-holder").value = DB.config.bankHolder || "";
+      document.getElementById("tab-cfg-bank-acc").value = DB.config.bankAcc || "";
+      document.getElementById("tab-cfg-bank-ifsc").value = DB.config.bankIfsc || "";
+
+      document.getElementById("settings-tab-logo-preview").src = DB.config.logo;
+
+      document.getElementById("tab-cfg-tc-job").value = DB.config.tcJob || "";
+      document.getElementById("tab-cfg-tc-inv").value = DB.config.tcInvoice || "";
+      document.getElementById("tab-cfg-tc-quote").value = DB.config.tcQuote || "";
+
+      document.getElementById("gdrive-url").value = DB.gdrive?.url || "";
+    }
+
+    function saveGDriveConfig() {
+      DB.gdrive = DB.gdrive || {};
+      DB.gdrive.url = document.getElementById("gdrive-url").value.trim();
+      saveDB(false);
+      updateSyncStatusUI();
+      alert("Google Drive Web App URL saved! Testing pull from Drive...");
+      pullFromGDrive(true);
+    }
+
+    function updateSyncStatusUI() {
+      const dot = document.getElementById("sync-dot");
+      const text = document.getElementById("sync-text");
+      if (!dot || !text) return;
+
+      if (!DB.gdrive?.url) {
+        dot.className = "w-2 h-2 rounded-full bg-slate-400";
+        text.innerText = "Local Mode";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+        text.innerText = "GDrive Connected";
+      }
+    }
+
+    async function pushToGDrive(showAlert = false) {
+      if (!DB.gdrive?.url) {
+        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
+        return;
+      }
+
+      try {
+        const payload = {
+          action: "save_db",
+          data: DB
+        };
+
+        const res = await fetch(DB.gdrive.url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.status === "success") {
+          updateSyncStatusUI();
+          if (showAlert) alert("Data successfully saved to Google Drive!");
+        } else {
+          alert("Drive Push Error: " + data.message);
+        }
+      } catch (err) {
+        console.error("GDrive Push Error:", err);
+        if (showAlert) alert("Push to Drive failed: " + err.message);
+      }
+    }
+
+    async function pullFromGDrive(showAlert = false) {
+      if (!DB.gdrive?.url) {
+        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${DB.gdrive.url}?_t=${Date.now()}`);
+        const result = await res.json();
+
+        if (result.status === "success" && result.data) {
+          const currentUrl = DB.gdrive.url;
+          DB = { ...result.data };
+          DB.gdrive = { url: currentUrl };
+          saveDB(false);
+          updateAppBranding();
+          updateSyncStatusUI();
+          renderJobs();
+          renderInvoices();
+          renderQuotes();
+          renderInventory();
+          renderDashboard();
+          if (showAlert) alert(`Synced! Loaded ${DB.jobs.length} jobs and ${DB.invoices.length} invoices from Google Drive.`);
+        } else if (result.status === "success" && !result.data) {
+          if (showAlert) alert("No database file found on Google Drive yet. Pushing current data now...");
+          pushToGDrive(true);
+        } else {
+          if (showAlert) alert("Pull error: " + result.message);
+        }
+      } catch (err) {
+        console.error("GDrive Pull Error:", err);
+        if (showAlert) alert("Pull from Drive failed: " + err.message);
+      }
+    }
+
+    function manualSyncNow() {
+      if (!DB.gdrive?.url) {
+        switchTab("settings");
+      } else {
+        pullFromGDrive(true);
+      }
+    }
+
+    // AUTOMATIC BACKGROUND GDRIVE SYNC ON WINDOW CLOSE / NAVIGATION
+    function triggerAutoSyncOnClose() {
+      if (!DB.gdrive?.url) return;
+      try {
+        const payload = JSON.stringify({ action: "save_db", data: DB });
+        if (navigator.sendBeacon)
