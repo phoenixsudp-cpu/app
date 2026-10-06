@@ -14,9 +14,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Phoenix ERP">
 
-  <!-- Tailwind CSS & Lucide Icons -->
+  <!-- Tailwind CSS & Resilient CDNs -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
@@ -55,7 +55,7 @@
 
         <button onclick="manualSyncNow()" id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition">
           <span class="w-2 h-2 rounded-full bg-slate-500" id="sync-dot"></span>
-          <span id="sync-text">Checking...</span>
+          <span id="sync-text">Local Mode</span>
         </button>
         <button onclick="switchTab('settings')" title="Shop Settings & Policies" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
           <i data-lucide="settings" class="w-5 h-5"></i>
@@ -250,7 +250,7 @@
               <i data-lucide="hard-drive" class="w-5 h-5 text-blue-700"></i>
               <h3 class="text-sm font-bold text-blue-950 uppercase tracking-wide">Google Drive Web App Sync & PDF Generator</h3>
             </div>
-            <span class="text-xs text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded">Auto-Backup on Close Active</span>
+            <span class="text-xs text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded">Auto-Backup Active</span>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Google Apps Script Web App URL</label>
@@ -313,7 +313,6 @@
             <i data-lucide="credit-card" class="w-5 h-5 text-emerald-700"></i>
             <h3 class="text-sm font-bold text-emerald-950 uppercase tracking-wide">Bank Details & UPI Payment Configuration</h3>
           </div>
-          <p class="text-xs text-emerald-800">These details and dynamic QR codes appear automatically on invoices and quotations.</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">UPI ID (VPA)</label>
@@ -418,7 +417,7 @@
     </div>
   </div>
 
-  <!-- 1. JOB CARD MODAL -->
+  <!-- JOB CARD MODAL -->
   <div id="modal-job" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -489,13 +488,12 @@
       <!-- Suggested Action & Estimated Return Date -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-amber-50/50 p-3 rounded-xl border border-amber-200">
         <div>
-          <label class="block text-xs font-semibold text-amber-950 mb-1">Suggested Action / Work to be Performed</label>
+          <label class="block text-xs font-semibold text-amber-950 mb-1">Suggested Action / Recommended Work</label>
           <textarea id="job-suggested-action" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="e.g. Replace keyboard, clean heatsink, reinstall OS..."></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-amber-950 mb-1">Estimated Return Date</label>
           <input type="date" id="job-est-return-date" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-          <p class="text-[11px] text-slate-500 mt-1">Expected completion date for client.</p>
         </div>
       </div>
 
@@ -530,7 +528,7 @@
     </div>
   </div>
 
-  <!-- 2. INVOICE MODAL -->
+  <!-- INVOICE MODAL -->
   <div id="modal-invoice" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -605,7 +603,7 @@
     </div>
   </div>
 
-  <!-- 3. QUOTATION MODAL -->
+  <!-- QUOTATION MODAL -->
   <div id="modal-quote" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-2 sm:p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -683,7 +681,7 @@
     </div>
   </div>
 
-  <!-- 4. INVENTORY / STOCK MODAL -->
+  <!-- INVENTORY / STOCK MODAL -->
   <div id="modal-inventory" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -751,7 +749,7 @@
     </div>
   </div>
 
-  <!-- 5. CONTACT MODAL -->
+  <!-- CONTACT MODAL -->
   <div id="modal-contact" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -781,7 +779,7 @@
     </div>
   </div>
 
-  <!-- 6. EXPORT & IMPORT MODAL -->
+  <!-- EXPORT & IMPORT MODAL -->
   <div id="modal-export" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -838,7 +836,7 @@
           <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Import Full Backup (Restore)
         </span>
         <p class="text-xs text-slate-500 leading-relaxed">
-          Restoring replaces all current local data with the selected JSON backup. Google Drive will automatically be synced with the restored version.
+          Restoring replaces current local data with the selected JSON backup. Google Drive will automatically sync with the restored data.
         </p>
         <input type="file" id="import-json-file" accept=".json" onchange="handleImportFile(event)" class="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 w-full">
       </div>
@@ -887,8 +885,14 @@
       ]
     };
 
-    // Current multiple job intake images memory
     let currentJobPhotos = [];
+
+    // Safe Lucide render
+    function renderIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
 
     // PWA Install Prompt
     let deferredInstallPrompt = null;
@@ -992,8 +996,10 @@
     }
 
     function updateAppBranding() {
-      document.getElementById("header-shop-name").innerText = DB.config.name;
-      document.getElementById("header-shop-sub").innerText = DB.config.sub;
+      const n = document.getElementById("header-shop-name");
+      const s = document.getElementById("header-shop-sub");
+      if (n) n.innerText = DB.config.name;
+      if (s) s.innerText = DB.config.sub;
       const logoEl = document.getElementById("header-logo-img");
       if (logoEl && DB.config.logo) logoEl.src = DB.config.logo;
     }
@@ -1003,7 +1009,7 @@
       return "₹" + num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // --- TAB SWITCHING ---
+    // TAB SWITCHING
     function switchTab(tabId) {
       document.querySelectorAll(".tab-view").forEach(el => el.classList.add("hidden"));
       const target = document.getElementById("view-" + tabId);
@@ -1037,7 +1043,7 @@
       if (tabId === "contacts") renderContacts();
       if (tabId === "settings") loadSettingsTab();
       
-      lucide.createIcons();
+      renderIcons();
     }
 
     function updateDatalists() {
@@ -1106,18 +1112,24 @@
       }
     }
 
-    // --- DASHBOARD RENDERING ---
+    // DASHBOARD RENDERING
     function renderDashboard() {
       const activeJobs = DB.jobs.filter(j => j.status !== "Delivered & Closed").length;
       const lowStock = DB.inventory.filter(i => (Number(i.qty) || 0) <= 2).length;
       const totalSales = DB.invoices.reduce((sum, inv) => sum + (Number(inv.grandTotal) || 0), 0);
 
-      document.getElementById("dash-active-jobs").innerText = activeJobs;
-      document.getElementById("dash-low-stock").innerText = lowStock;
-      document.getElementById("dash-quotes-count").innerText = DB.quotes.length;
-      document.getElementById("dash-total-sales").innerText = formatINR(totalSales);
+      const dJobs = document.getElementById("dash-active-jobs");
+      const dStock = document.getElementById("dash-low-stock");
+      const dQuotes = document.getElementById("dash-quotes-count");
+      const dSales = document.getElementById("dash-total-sales");
+
+      if (dJobs) dJobs.innerText = activeJobs;
+      if (dStock) dStock.innerText = lowStock;
+      if (dQuotes) dQuotes.innerText = DB.quotes.length;
+      if (dSales) dSales.innerText = formatINR(totalSales);
 
       const recentContainer = document.getElementById("dash-recent-jobs");
+      if (!recentContainer) return;
       recentContainer.innerHTML = "";
       const latest = [...DB.jobs].reverse().slice(0, 5);
 
@@ -1144,7 +1156,7 @@
         `;
         recentContainer.appendChild(item);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function getStatusBadgeClass(st) {
@@ -1154,8 +1166,7 @@
       return "bg-slate-100 text-slate-800";
     }
 
-    // --- 1. JOB CARDS MODULE ---
-    // Compress and resize images via HTML5 Canvas (max 900px, 0.72 quality JPEG)
+    // 1. JOB CARDS MODULE
     function compressImageFile(file, maxWidth = 900, maxHeight = 900, quality = 0.72) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1416,7 +1427,7 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function editJob(id) {
@@ -1437,7 +1448,7 @@
       calcInvoiceTotals();
     }
 
-    // --- 2. INVOICE MODULE ---
+    // 2. INVOICE MODULE
     function openInvoiceModal(editId = null) {
       const table = document.getElementById("inv-items-table");
       table.innerHTML = "";
@@ -1493,7 +1504,7 @@
         </div>
       `;
       table.appendChild(row);
-      lucide.createIcons();
+      renderIcons();
       calcInvoiceTotals();
     }
 
@@ -1648,14 +1659,14 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function editInvoice(id) {
       openInvoiceModal(id);
     }
 
-    // --- 3. QUOTATIONS MODULE ---
+    // 3. QUOTATIONS MODULE
     function openQuoteModal(editId = null) {
       const table = document.getElementById("quote-items-table");
       table.innerHTML = "";
@@ -1729,7 +1740,7 @@
 
         <div class="bg-indigo-50/70 border border-indigo-100 px-3 py-1.5 rounded-lg flex flex-wrap items-center justify-between gap-2 text-[11px]">
           <div class="flex items-center gap-1.5 flex-wrap font-mono text-slate-600">
-            <span class="quote-prev-formula">Cost ₹${cost} + ${margin}% margin + ${tax}% tax</span>
+            <span class="quote-prev-formula">Cost ₹${cost} + ${margin}% margin +${tax}% tax</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-slate-500 font-medium">Selling Rate:</span>
@@ -1738,7 +1749,7 @@
         </div>
       `;
       table.appendChild(row);
-      lucide.createIcons();
+      renderIcons();
       recomputeQuoteSellingPrice(row);
     }
 
@@ -1756,7 +1767,7 @@
       rateInput.value = finalSelling;
 
       const previewText = row.querySelector(".quote-prev-formula");
-      previewText.innerHTML = `Cost: <strong>₹${cost}</strong> &rarr; +${marginPct}% Margin &rarr; +${taxPct}% Tax`;
+      previewText.innerHTML = `Cost: <strong>₹${cost}</strong> &rarr; +${marginPct}\% Margin &rarr; +${taxPct}% Tax`;
 
       calcQuoteTotals();
     }
@@ -1875,18 +1886,16 @@
                 <span class="text-xs text-slate-400">${q.date ? new Date(q.date).toLocaleDateString("en-IN") : ''}</span>
               </div>
               <h3 class="text-base font-bold text-slate-800 mt-1">${escapeHtml(q.custName)}</h3>
-              <p class="text-xs text-slate-500">${escapeHtml(q.custPhone)} ${q.custAddress ? '• ' + escapeHtml(q.custAddress) : ''}</p>
+              <p class="text-xs text-slate-500">${escapeHtml(q.custPhone)}${q.custAddress ? '• ' + escapeHtml(q.custAddress) : ''}</p>
             </div>
             <div class="text-right">
               <span class="text-xs text-slate-400 block">Estimate Total</span>
-              <span class="text-lg font-bold text-blue-700">${formatINR(q.grandTotal)}</span>
-              ${Number(q.discount) > 0 ? `<span class="text-[10px] text-red-500 block">Discount: -${formatINR(q.discount)}</span>` : ''}
+              <span class="text-lg font-bold text-blue-700">${formatINR(q.grandTotal)}</span>${Number(q.discount) > 0 ? `<span class="text-[10px] text-red-500 block">Discount: -${formatINR(q.discount)}</span>` : ''}
             </div>
           </div>
 
           <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1">
-            <span class="font-semibold text-slate-600 block mb-1">Quoted Items (${q.items.length}):</span>
-            ${q.items.map(it => `
+            <span class="font-semibold text-slate-600 block mb-1">Quoted Items (${q.items.length}):</span>${q.items.map(it => `
               <div class="flex justify-between text-slate-700">
                 <span>${escapeHtml(it.desc)} &times; ${it.qty}</span>
                 <span class="font-medium">${formatINR(it.total)}</span>
@@ -1915,14 +1924,14 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function editQuote(id) {
       openQuoteModal(id);
     }
 
-    // --- 4. INVENTORY / STOCK MODULE ---
+    // 4. INVENTORY MODULE
     function openInventoryModal(editId = null, returnTarget = null) {
       document.getElementById("inv-item-return-target").value = returnTarget || "";
 
@@ -2037,8 +2046,7 @@
           <div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">${it.id}</span>
-              <span class="text-xs text-slate-500">${it.cat}</span>
-              ${isLow ? `<span class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Low Stock</span>` : ''}
+              <span class="text-xs text-slate-500">${it.cat}</span>${isLow ? `<span class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Low Stock</span>` : ''}
             </div>
             <h4 class="text-sm font-bold text-slate-800 mt-1">${escapeHtml(it.name)}</h4>
             <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5 flex-wrap">
@@ -2062,7 +2070,7 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function directBillItem(skuId) {
@@ -2085,7 +2093,7 @@
       calcQuoteTotals();
     }
 
-    // --- 5. CONTACTS MODULE ---
+    // 5. CONTACTS MODULE
     function openContactModal(editId = null) {
       if (editId) {
         const c = DB.contacts.find(x => x.id === editId);
@@ -2163,7 +2171,7 @@
               <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">${c.id}</span>
               <h4 class="text-sm font-bold text-slate-800">${escapeHtml(c.name)}</h4>
             </div>
-            <p class="text-xs text-slate-600 mt-1">${escapeHtml(c.phone)} ${c.address ? '• ' + escapeHtml(c.address) : ''}</p>
+            <p class="text-xs text-slate-600 mt-1">${escapeHtml(c.phone)}${c.address ? '• ' + escapeHtml(c.address) : ''}</p>
           </div>
           <div class="flex items-center gap-1.5">
             <button onclick="shareContactWhatsApp('${c.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs flex items-center gap-1 font-medium shadow-sm" title="Share via WhatsApp">
@@ -2176,7 +2184,7 @@
         `;
         container.appendChild(card);
       });
-      lucide.createIcons();
+      renderIcons();
     }
 
     function shareContactWhatsApp(contactId) {
@@ -2196,8 +2204,7 @@
 Hello ${c.name},
 
 Here is your current record with us:
-*Phone:* ${c.phone}
-${c.address ? `*Address:* ${c.address}\n` : ''}
+*Phone:* ${c.phone}${c.address ? `*Address:* ${c.address}\n` : ''}
 *Active Repair Status:*
 ${statusText}
 
@@ -2208,7 +2215,7 @@ Address: ${DB.config.address}`;
       openWhatsAppURL(c.phone, msg);
     }
 
-    // --- 6. GOOGLE DRIVE SYNC & APPS SCRIPT ENGINE ---
+    // 6. GOOGLE DRIVE SYNC & SETTINGS
     function loadSettingsTab() {
       document.getElementById("tab-cfg-shop-name").value = DB.config.name;
       document.getElementById("tab-cfg-shop-sub").value = DB.config.sub;
@@ -2307,7 +2314,7 @@ Address: ${DB.config.address}`;
           renderQuotes();
           renderInventory();
           renderDashboard();
-          if (showAlert) alert(`Synced! Loaded ${DB.jobs.length} jobs and ${DB.invoices.length} invoices from Google Drive.`);
+          if (showAlert) alert(`Synced! Loaded ${DB.jobs.length} jobs and${DB.invoices.length} invoices from Google Drive.`);
         } else if (result.status === "success" && !result.data) {
           if (showAlert) alert("No database file found on Google Drive yet. Pushing current data now...");
           pushToGDrive(true);
@@ -2328,9 +2335,448 @@ Address: ${DB.config.address}`;
       }
     }
 
-    // AUTOMATIC BACKGROUND GDRIVE SYNC ON WINDOW CLOSE / NAVIGATION
     function triggerAutoSyncOnClose() {
       if (!DB.gdrive?.url) return;
       try {
         const payload = JSON.stringify({ action: "save_db", data: DB });
-        if (navigator.sendBeacon)
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(DB.gdrive.url, payload);
+        } else {
+          fetch(DB.gdrive.url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: payload,
+            keepalive: true
+          });
+        }
+      } catch (err) {
+        console.warn("Background auto-sync skipped:", err);
+      }
+    }
+
+    window.addEventListener("beforeunload", triggerAutoSyncOnClose);
+    window.addEventListener("pagehide", triggerAutoSyncOnClose);
+
+    async function uploadDocumentPDFToDrive(docType, docId) {
+      if (!DB.gdrive?.url) {
+        alert("Please configure your Google Drive Web App URL in Settings first.");
+        switchTab("settings");
+        return;
+      }
+
+      let htmlContent = "";
+      if (docType === "JobCard") {
+        htmlContent = getJobCardSlipHTML(docId);
+      } else if (docType === "Invoice") {
+        htmlContent = getInvoiceSlipHTML(docId);
+      } else if (docType === "Quotation") {
+        htmlContent = getQuoteSlipHTML(docId);
+      }
+
+      if (!htmlContent) return;
+
+      const badge = document.getElementById("sync-text");
+      if (badge) badge.innerText = "Generating PDF...";
+
+      try {
+        const payload = {
+          action: "generate_pdf",
+          docType: docType,
+          docId: docId,
+          html: htmlContent
+        };
+
+        const res = await fetch(DB.gdrive.url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        updateSyncStatusUI();
+
+        if (data.status === "success" && data.url) {
+          const openNow = confirm(`PDF successfully generated and saved to Google Drive!\n\nDocument: ${docType}_${docId}.pdf\n\nClick OK to open the PDF.`);
+          if (openNow) window.open(data.url, "_blank");
+        } else {
+          alert("PDF Generation Error: " + (data.message || "Failed to generate"));
+        }
+      } catch (err) {
+        console.error("PDF Upload Error:", err);
+        updateSyncStatusUI();
+        alert("PDF Generation failed: " + err.message);
+      }
+    }
+
+    function handleTabLogoChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        DB.config.logo = e.target.result;
+        document.getElementById("settings-tab-logo-preview").src = DB.config.logo;
+        updateAppBranding();
+        saveDB(true);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveShopTabSettings() {
+      DB.config.name = document.getElementById("tab-cfg-shop-name").value.trim() || DEFAULT_CONFIG.name;
+      DB.config.sub = document.getElementById("tab-cfg-shop-sub").value.trim() || DEFAULT_CONFIG.sub;
+      DB.config.address = document.getElementById("tab-cfg-shop-address").value.trim() || DEFAULT_CONFIG.address;
+      DB.config.phone = document.getElementById("tab-cfg-shop-phone").value.trim() || DEFAULT_CONFIG.phone;
+      DB.config.email = document.getElementById("tab-cfg-shop-email").value.trim() || DEFAULT_CONFIG.email;
+      DB.config.upi = document.getElementById("tab-cfg-shop-upi").value.trim() || DEFAULT_CONFIG.upi;
+
+      DB.config.bankName = document.getElementById("tab-cfg-bank-name").value.trim();
+      DB.config.bankHolder = document.getElementById("tab-cfg-bank-holder").value.trim();
+      DB.config.bankAcc = document.getElementById("tab-cfg-bank-acc").value.trim();
+      DB.config.bankIfsc = document.getElementById("tab-cfg-bank-ifsc").value.trim();
+
+      DB.config.tcJob = document.getElementById("tab-cfg-tc-job").value.trim();
+      DB.config.tcInvoice = document.getElementById("tab-cfg-tc-inv").value.trim();
+      DB.config.tcQuote = document.getElementById("tab-cfg-tc-quote").value.trim();
+
+      updateAppBranding();
+      saveDB(true);
+      alert("Settings and Policies saved & synced to Google Drive!");
+    }
+
+    // 7. EXPORT & RESTORE ENGINE
+    function openExportModal() {
+      openModal("modal-export");
+    }
+
+    function toggleCustomDateExport(val) {
+      const box = document.getElementById("export-custom-dates");
+      if (val === "custom") box.classList.remove("hidden");
+      else box.classList.add("hidden");
+    }
+
+    function filterByDateRange(records, rangeVal) {
+      if (rangeVal === "all") return records;
+      const now = new Date();
+      let cutoff = new Date();
+
+      if (rangeVal === "1m") {
+        cutoff.setDate(now.getDate() - 30);
+        return records.filter(r => new Date(r.date || 0) >= cutoff);
+      } else if (rangeVal === "3m") {
+        cutoff.setDate(now.getDate() - 90);
+        return records.filter(r => new Date(r.date || 0) >= cutoff);
+      } else if (rangeVal === "custom") {
+        const start = document.getElementById("export-start-date").value;
+        const end = document.getElementById("export-end-date").value;
+        if (!start || !end) return records;
+        const sDate = new Date(start);
+        const eDate = new Date(end);
+        eDate.setHours(23, 59, 59);
+        return records.filter(r => {
+          const d = new Date(r.date || 0);
+          return d >= sDate && d <= eDate;
+        });
+      }
+      return records;
+    }
+
+    function runExport(format) {
+      const module = document.getElementById("export-module").value;
+      const range = document.getElementById("export-range").value;
+
+      if (format === "json") {
+        const dump = JSON.stringify(DB, null, 2);
+        downloadFile(dump, `Phoenix_Solutions_Backup_${new Date().toISOString().slice(0,10)}.json`, "application/json");
+        closeModal("modal-export");
+        return;
+      }
+
+      let rows = [];
+      let filename = `Phoenix_${module}_${range}.csv`;
+
+      if (module === "jobs") {
+        const filtered = filterByDateRange(DB.jobs, range);
+        rows.push(["Job ID", "Date", "Customer", "Phone", "Device", "Fault", "Suggested Action", "Status", "Estimated Cost"]);
+        filtered.forEach(j => {
+          rows.push([j.id, j.date ? j.date.slice(0,10) : '', j.custName, j.custPhone, j.deviceType, j.fault, j.suggestedAction || '', j.status, j.cost]);
+        });
+      } else if (module === "invoices") {
+        const filtered = filterByDateRange(DB.invoices, range);
+        rows.push(["Invoice ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total", "Client Note"]);
+        filtered.forEach(i => {
+          rows.push([i.id, i.date ? i.date.slice(0,10) : '', i.custName, i.custPhone, i.subtotal, i.discount || 0, i.grandTotal, i.clientNote || '']);
+        });
+      } else if (module === "quotes") {
+        const filtered = filterByDateRange(DB.quotes, range);
+        rows.push(["Quote ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total", "Client Note"]);
+        filtered.forEach(q => {
+          rows.push([q.id, q.date ? q.date.slice(0,10) : '', q.custName, q.custPhone, q.subtotal, q.discount || 0, q.grandTotal, q.clientNote || '']);
+        });
+      } else if (module === "inventory") {
+        rows.push(["SKU", "Item Name", "Category", "Quantity", "Cost Price", "Margin %", "Tax %", "Selling Price"]);
+        DB.inventory.forEach(it => {
+          rows.push([it.id, it.name, it.cat, it.qty, it.cost, it.margin || 0, it.tax || 0, it.selling]);
+        });
+      } else if (module === "contacts") {
+        rows.push(["Customer Code", "Name", "Phone", "Address"]);
+        DB.contacts.forEach(c => {
+          rows.push([c.id, c.name, c.phone, c.address]);
+        });
+      }
+
+      const csvContent = rows.map(r => r.map(cell => `"${String(cell || '').replace(/"/g, '""')}"`).join(",")).join("\n");
+      downloadFile(csvContent, filename, "text/csv;charset=utf-8;");
+      closeModal("modal-export");
+    }
+
+    function handleImportFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          
+          if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.jobs) || !Array.isArray(parsed.invoices)) {
+            alert("Invalid Backup File: The selected JSON is not a valid Phoenix ERP backup dump.");
+            event.target.value = "";
+            return;
+          }
+
+          const confirmed = confirm(
+            `⚠️ CAUTION: RESTORE FULL BACKUP\n\n` +
+            `This will replace all current data with:\n` +
+            `• ${parsed.jobs.length} Job Cards\n` +
+            `• ${parsed.invoices.length} Invoices\n` +
+            `• ${(parsed.quotes || []).length} Quotations\n` +
+            `• ${(parsed.inventory || []).length} Stock Items\n` +
+            `• ${(parsed.contacts || []).length} Contacts\n\n` +
+            `Do you wish to proceed with this restore?`
+          );
+
+          if (!confirmed) {
+            event.target.value = "";
+            return;
+          }
+
+          const currentUrl = DB.gdrive?.url || "";
+          DB = { ...parsed };
+          if (!DB.gdrive) DB.gdrive = {};
+          if (currentUrl && !DB.gdrive.url) DB.gdrive.url = currentUrl;
+
+          saveDB(true);
+          updateAppBranding();
+          updateSyncStatusUI();
+          renderJobs();
+          renderInvoices();
+          renderQuotes();
+          renderInventory();
+          renderDashboard();
+          closeModal("modal-export");
+          alert("Database successfully restored and synced to Google Drive!");
+        } catch (err) {
+          console.error("Import error:", err);
+          alert("Corrupted file error: Could not parse JSON backup.");
+        }
+        event.target.value = "";
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadFile(content, fileName, contentType) {
+      const a = document.createElement("a");
+      const file = new Blob([content], { type: contentType });
+      a.href = URL.createObjectURL(file);
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // 8. DYNAMIC UPI QR CODE
+    function generateDynamicUPIQRCodeDataURL(amount, docId) {
+      if (!DB.config.upi) return "";
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(DB.config.upi)}&pn=${encodeURIComponent(DB.config.name)}&am=${Number(amount \vert{}\vert{} 0).toFixed(2)}&cu=INR&tn=${encodeURIComponent(docId)}`;
+      
+      const tempDiv = document.createElement("div");
+      new QRCode(tempDiv, {
+        text: upiUrl,
+        width: 90,
+        height: 90,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      const qrCanvas = tempDiv.querySelector("canvas");
+      if (qrCanvas) return qrCanvas.toDataURL("image/png");
+      const qrImg = tempDiv.querySelector("img");
+      return qrImg ? qrImg.src : "";
+    }
+
+    // 9. PRINT ENGINE (PARSER-SAFE SCRIPT TAG GENERATION)
+    function buildShopHeaderHTML(title, docId, docDate) {
+      const logoSrc = DB.config.logo || "Phoenix_Solutions_logo.png";
+      return `
+        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 65px;">
+                <img src="${logoSrc}" alt="Logo" style="height: 55px; width: 55px; object-fit: contain;">
+              </td>
+              <td style="vertical-align: top; padding-left: 10px;">
+                <h1 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase;">${escapeHtml(DB.config.name)}</h1>
+                <p style="font-size: 11px; color: #334155; font-weight: 600; margin: 2px 0;">${escapeHtml(DB.config.sub)}</p>
+                <p style="font-size: 10px; color: #475569; margin: 3px 0 0 0; line-height: 1.3;">
+                  ${escapeHtml(DB.config.address)}<br>
+                  <strong>PH:</strong> ${escapeHtml(DB.config.phone)} \vert{} <strong>Email:</strong>${escapeHtml(DB.config.email)}
+                </p>
+              </td>
+              <td style="vertical-align: top; text-align: right; width: 180px;">
+                <span style="display: inline-block; padding: 4px 10px; background: #0f172a; color: white; font-weight: bold; font-size: 12px; border-radius: 4px;">${title}</span>
+                <p style="font-size: 12px; font-weight: bold; margin: 6px 0 0 0; color: #0f172a;">${docId}</p>
+                <p style="font-size: 10px; color: #64748b; margin: 2px 0 0 0;">Date: ${new Date(docDate).toLocaleDateString("en-IN")}</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+
+    function buildPaymentSectionHTML(amount, docId) {
+      const qrDataUrl = generateDynamicUPIQRCodeDataURL(amount, docId);
+      const bank = DB.config;
+      return `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 11px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 65%;">
+                <strong style="color: #0f172a; font-size: 12px; text-transform: uppercase;">Bank & UPI Payment Options:</strong>
+                <div style="margin-top: 4px; line-height: 1.4; color: #334155;">
+                  ${bank.bankName ? `<div>Bank: <strong>${escapeHtml(bank.bankName)}</strong></div>` : ''}
+                  ${bank.bankHolder ? `<div>Account Name: <strong>${escapeHtml(bank.bankHolder)}</strong></div>` : ''}
+                  ${bank.bankAcc ? `<div>A/C No: <strong style="font-family: monospace;">${escapeHtml(bank.bankAcc)}</strong></div>` : ''}
+                  ${bank.bankIfsc ? `<div>IFSC: <strong style="font-family: monospace;">${escapeHtml(bank.bankIfsc)}</strong></div>` : ''}
+                  <div style="margin-top: 3px;">UPI ID: <strong style="color: #047857; font-family: monospace;">${escapeHtml(bank.upi)}</strong></div>
+                </div>
+              </td>
+              ${qrDataUrl ? `
+                <td style="vertical-align: top; text-align: center; width: 35%; border-left: 1px dashed #cbd5e1; padding-left: 10px;">
+                  <img src="${qrDataUrl}" style="width: 80px; height: 80px; display: inline-block;">
+                  <span style="display: block; font-size: 9px; font-weight: bold; color: #047857; margin-top: 3px;">SCAN & PAY VIA UPI</span>
+                </td>
+              ` : ''}
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+
+    function getJobCardSlipHTML(jobId) {
+      const j = DB.jobs.find(x => x.id === jobId);
+      if (!j) return "";
+      const tc = (DB.config.tcJob || "").replace(/\n/g, "<br>");
+      const photos = Array.isArray(j.photos) ? j.photos : (j.photo ? [j.photo] : []);
+
+      return `
+        <div style="padding: 16px; max-width: 760px; margin: auto;">
+          ${buildShopHeaderHTML("SERVICE JOB CARD TICKET", j.id, j.date)}
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px;">
+            <tr>
+              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <strong style="color: #334155;">Customer Information:</strong><br>
+                <span style="font-size: 14px; font-weight: bold;">${escapeHtml(j.custName)}</span><br>
+                Phone: ${escapeHtml(j.custPhone)}<br>${j.custAddress ? `Address: ${escapeHtml(j.custAddress)}` : ''}
+              </td>
+              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <strong style="color: #334155;">Device Information:</strong><br>
+                Type: <strong>${escapeHtml(j.deviceType || 'Device')}</strong><br>
+                Model: ${escapeHtml(j.brandModel || 'N/A')}<br>
+                Serial / Tag: ${escapeHtml(j.serialNo || 'N/A')}
+              </td>
+            </tr>
+          </table>
+
+          <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px;">
+            <strong style="color: #b91c1c;">Reported Problem / Symptoms:</strong>
+            <p style="margin: 4px 0 10px 0; font-size: 13px;">${escapeHtml(j.fault)}</p>${j.suggestedAction ? `
+              <strong style="color: #d97706;">Suggested Action / Recommended Work:</strong>
+              <p style="margin: 4px 0 10px 0; color: #334155;">${escapeHtml(j.suggestedAction)}</p>
+            ` : ''}
+            <strong>Accessories Received:</strong>
+            <p style="margin: 4px 0 0 0; color: #475569;">${escapeHtml(j.accessories || 'Device only (No accessories)')}</p>
+          </div>
+
+          ${photos.length ? `
+            <div style="margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px;">
+              <span style="font-size: 10px; font-weight: bold; color: #475569; display: block; margin-bottom: 6px; text-transform: uppercase;">Intake Condition Photos (${photos.length})</span>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  ${photos.map(p => `
+                    <td style="padding: 4px; text-align: center;">
+                      <img src="${p}" style="max-height: 105px; max-width: 100%; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    </td>
+                  `).join('')}
+                </tr>
+              </table>
+            </div>
+          ` : ''}
+
+          <table style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 14px; font-size: 12px;">
+            <tr>
+              <td>
+                Status: <strong>${j.status || 'Received'}</strong><br>
+                Estimated Cost: <strong>${Number(j.cost) > 0 ? formatINR(j.cost) : 'To be diagnosed'}</strong><br>
+                ${j.estReturnDate ? `Estimated Return: <strong style="color: #047857;">${new Date(j.estReturnDate).toLocaleDateString("en-IN")}</strong>` : ''}
+              </td>
+              <td style="text-align: right; width: 200px;">
+                <br><br>
+                <div style="border-top: 1px dashed #64748b; font-size: 11px;">Customer Signature</div>
+              </td>
+            </tr>
+          </table>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
+            <strong style="color: #0f172a; text-transform: uppercase;">Service Terms:</strong><br>
+            ${tc}
+          </div>
+        </div>
+      `;
+    }
+
+    function getInvoiceSlipHTML(invId) {
+      const inv = DB.invoices.find(x => x.id === invId);
+      if (!inv) return "";
+      const tc = (DB.config.tcInvoice || "").replace(/\n/g, "<br>");
+      return `
+        <div style="padding: 16px; max-width: 760px; margin: auto;">
+          ${buildShopHeaderHTML("INVOICE BILL", inv.id, inv.date)}
+          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
+            <strong style="color: #334155;">Billed To:</strong><br>
+            <span style="font-size: 14px; font-weight: bold;">${escapeHtml(inv.custName)}</span><br>
+            Phone: ${escapeHtml(inv.custPhone)}<br>${inv.custAddress ? `Address: ${escapeHtml(inv.custAddress)}` : ''}
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
+            <thead>
+              <tr style="background: #0f172a; color: white; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1; width: 30px;">#</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">Item Description / Service</th>
+                <th style="padding: 8px; text-align: center; border: 1px solid #cbd5e1; width: 60px;">Qty</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 90px;">Rate</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 100px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${inv.items.map((it, idx) => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${idx + 1}</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${escapeHtml(it.desc)}</td>
+                  <td style="padding: 8px; text-align: center; border: 1px solid #cbd5e1;">${it.qty}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">${formatINR(it.rate)}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">${formatINR(it.total)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <table style="width: 100%; margin-bottom: 10px; font-size: 12px
