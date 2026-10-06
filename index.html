@@ -14,9 +14,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Phoenix ERP">
 
-  <!-- Tailwind CSS & Resilient CDNs -->
+  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
@@ -31,8 +31,6 @@
       height: 0;
       border: 0;
     }
-    /* Ensure cursor pointer on all clickable buttons */
-    button { cursor: pointer; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 pb-24 md:pb-10 font-sans antialiased">
@@ -57,7 +55,7 @@
 
         <button onclick="manualSyncNow()" id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition">
           <span class="w-2 h-2 rounded-full bg-slate-500" id="sync-dot"></span>
-          <span id="sync-text">Local Mode</span>
+          <span id="sync-text">Checking...</span>
         </button>
         <button onclick="switchTab('settings')" title="Shop Settings & Policies" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
           <i data-lucide="settings" class="w-5 h-5"></i>
@@ -91,7 +89,7 @@
         <i data-lucide="users" class="w-4 h-4"></i> Contacts
       </button>
       <button onclick="switchTab('settings')" id="nav-d-settings" class="tab-btn py-3 px-4 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 flex items-center gap-2">
-        <i data-lucide="sliders" class="w-4 h-4"></i> Settings & Cloud
+        <i data-lucide="sliders" class="w-4 h-4"></i> Settings & Sync
       </button>
     </div>
   </nav>
@@ -221,12 +219,12 @@
       <div id="contacts-container" class="space-y-3"></div>
     </section>
 
-    <!-- 7. SETTINGS & GOOGLE DRIVE SYNC VIEW -->
+    <!-- 7. SETTINGS & GITHUB SYNC VIEW -->
     <section id="view-settings" class="tab-view hidden space-y-6">
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <div>
-          <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Google Drive Sync</h2>
-          <p class="text-xs text-slate-500">Pair devices via QR, configure Bank & Payment info, and manage automatic cloud sync.</p>
+          <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Multi-Device Sync</h2>
+          <p class="text-xs text-slate-500">Pair your mobile device via QR, sync live with GitHub, and edit shop policies.</p>
         </div>
 
         <!-- 1-Click Mobile QR Pairing Panel -->
@@ -234,10 +232,10 @@
           <div>
             <div class="flex items-center gap-2">
               <i data-lucide="smartphone" class="w-5 h-5 text-amber-800"></i>
-              <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wide">Instant Mobile Setup</h3>
+              <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wide">Instant Mobile Setup (No typing on phone)</h3>
             </div>
             <p class="text-xs text-amber-800 mt-1 max-w-xl">
-              Scan this QR code from your mobile camera to pair your Google Drive Web App URL and load all shop history immediately.
+              Scan this QR code from your Android phone camera to automatically install your GitHub token, configure cloud sync, and load all shop history in 1 second.
             </p>
           </div>
           <button onclick="openPairingQRModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm whitespace-nowrap">
@@ -245,28 +243,38 @@
           </button>
         </div>
 
-        <!-- Google Drive Cloud Sync Panel -->
-        <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 space-y-3">
+        <!-- GitHub Two-Way Cloud Sync Panel -->
+        <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <i data-lucide="hard-drive" class="w-5 h-5 text-blue-700"></i>
-              <h3 class="text-sm font-bold text-blue-950 uppercase tracking-wide">Google Drive Web App Sync & PDF Generator</h3>
+              <i data-lucide="git-branch" class="w-5 h-5 text-indigo-700"></i>
+              <h3 class="text-sm font-bold text-indigo-950 uppercase tracking-wide">GitHub Live Sync (data/shop_data.json)</h3>
             </div>
-            <span class="text-xs text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded">Auto-Backup Active</span>
+            <span class="text-xs text-indigo-700 font-semibold bg-indigo-100 px-2 py-0.5 rounded">Auto-Sync Active</span>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Google Apps Script Web App URL</label>
-            <input type="text" id="gdrive-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">GitHub Personal Access Token</label>
+              <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Repo Owner (Username)</label>
+              <input type="text" id="gh-owner" placeholder="e.g. phoenixsudp-cpu" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Repository Name</label>
+              <input type="text" id="gh-repo" placeholder="e.g. app" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
+            </div>
           </div>
           <div class="flex flex-wrap items-center gap-2 pt-1">
-            <button onclick="saveGDriveConfig()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i> Save & Test GDrive
+            <button onclick="saveGitHubConfig()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Save Credentials
             </button>
-            <button onclick="pushToGDrive(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Data to Drive
+            <button onclick="pushToGitHub(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Now
             </button>
-            <button onclick="pullFromGDrive(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Data from Drive
+            <button onclick="pullFromGitHub(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Now
             </button>
           </div>
         </div>
@@ -306,34 +314,9 @@
                 <input type="email" id="tab-cfg-shop-email" class="w-full px-3 py-2 border rounded-lg text-sm bg-slate-50">
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Payment & Bank Details Section -->
-        <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-3">
-          <div class="flex items-center gap-2">
-            <i data-lucide="credit-card" class="w-5 h-5 text-emerald-700"></i>
-            <h3 class="text-sm font-bold text-emerald-950 uppercase tracking-wide">Bank Details & UPI Payment Configuration</h3>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">UPI ID (VPA)</label>
-              <input type="text" id="tab-cfg-shop-upi" placeholder="e.g. 6361437694@upi" class="w-full px-3 py-2 border rounded-lg text-xs bg-white font-mono font-medium text-emerald-900">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Bank Name</label>
-              <input type="text" id="tab-cfg-bank-name" placeholder="e.g. State Bank of India" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Account Holder / Name</label>
-              <input type="text" id="tab-cfg-bank-holder" placeholder="e.g. Phoenix Solutions" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Account Number & IFSC</label>
-              <div class="grid grid-cols-2 gap-1.5">
-                <input type="text" id="tab-cfg-bank-acc" placeholder="Acc No." class="w-full px-2 py-2 border rounded-lg text-xs bg-white font-mono">
-                <input type="text" id="tab-cfg-bank-ifsc" placeholder="IFSC" class="w-full px-2 py-2 border rounded-lg text-xs bg-white font-mono">
-              </div>
+            <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
+              <label class="block text-xs font-bold text-emerald-900 mb-1">Manual UPI ID (for Print Slips & WhatsApp)</label>
+              <input type="text" id="tab-cfg-shop-upi" placeholder="e.g. 6361437694@upi" class="w-full px-3 py-2 border rounded-lg text-sm bg-white font-mono font-medium text-emerald-900">
             </div>
           </div>
         </div>
@@ -404,8 +387,8 @@
     </button>
   </nav>
 
-  <!-- PAIRING QR CODE MODAL (STRICTLY HIDDEN BY DEFAULT) -->
-  <div id="modal-pairing-qr" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- PAIRING QR CODE MODAL -->
+  <div id="modal-pairing-qr" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
       <div class="flex items-center justify-between border-b pb-2">
         <h3 class="text-sm font-bold text-slate-800">Scan from Mobile Camera</h3>
@@ -413,14 +396,14 @@
       </div>
       <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
       <p class="text-xs text-slate-600 leading-relaxed">
-        Scan this QR with Google Lens or Camera on your Android phone to link your Google Drive sync automatically.
+        Scan this QR with Google Lens or Camera on your Android phone. It securely links your token, downloads your database, and sets up instant sync!
       </p>
       <button onclick="closeModal('modal-pairing-qr')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">Done</button>
     </div>
   </div>
 
-  <!-- JOB CARD MODAL -->
-  <div id="modal-job" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- 1. JOB CARD MODAL -->
+  <div id="modal-job" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <div>
@@ -465,40 +448,27 @@
           <input type="text" id="job-serial-no" placeholder="Service tag / SN" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
         </div>
       </div>
-
-      <!-- Multiple Compressed Images (Up to 4) -->
       <div class="border border-dashed border-slate-300 bg-slate-50 p-3 rounded-xl space-y-2">
-        <div class="flex items-center justify-between">
-          <label class="block text-xs font-semibold text-slate-700">Device Intake Photos (Up to 4 images)</label>
-          <span class="text-[11px] text-slate-500" id="job-photo-counter">0 / 4 added</span>
+        <label class="block text-xs font-semibold text-slate-700 flex items-center justify-between">
+          <span>Device Intake Photo</span>
+          <span class="text-[11px] font-normal text-slate-500">Camera / Upload</span>
+        </label>
+        <div class="flex items-center gap-3">
+          <input type="file" id="job-image-input" accept="image/*" capture="environment" onchange="handleJobImageUpload(event)" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700">
+          <img id="job-image-preview" src="" alt="Intake photo" class="w-14 h-14 object-cover rounded-lg border border-slate-300 hidden bg-white">
+          <button type="button" id="job-image-remove" onclick="removeJobImage()" class="text-xs text-red-500 hover:underline hidden">Remove</button>
         </div>
-        <input type="file" id="job-images-input" accept="image/*" multiple onchange="handleMultipleJobImages(event)" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700">
-        <div id="job-images-preview-grid" class="grid grid-cols-4 gap-2 pt-2"></div>
       </div>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Reported Issue / Fault *</label>
-          <textarea id="job-fault" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. No display, liquid spill..."></textarea>
+          <textarea id="job-fault" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. No display, liquid spill..."></textarea>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Accessories Received</label>
-          <textarea id="job-accessories" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Power adapter, laptop bag..."></textarea>
+          <textarea id="job-accessories" rows="3" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Power adapter, laptop bag..."></textarea>
         </div>
       </div>
-
-      <!-- Suggested Action & Estimated Return Date -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-amber-50/50 p-3 rounded-xl border border-amber-200">
-        <div>
-          <label class="block text-xs font-semibold text-amber-950 mb-1">Suggested Action / Work to be Performed</label>
-          <textarea id="job-suggested-action" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm bg-white" placeholder="e.g. Replace keyboard, clean heatsink, reinstall OS..."></textarea>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-amber-950 mb-1">Estimated Return Date</label>
-          <input type="date" id="job-est-return-date" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-        </div>
-      </div>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
@@ -530,8 +500,8 @@
     </div>
   </div>
 
-  <!-- INVOICE MODAL -->
-  <div id="modal-invoice" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- 2. INVOICE MODAL -->
+  <div id="modal-invoice" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <div>
@@ -569,13 +539,6 @@
         </div>
         <div id="inv-items-table" class="space-y-2"></div>
       </div>
-
-      <!-- Client Note Field -->
-      <div>
-        <label class="block text-xs font-semibold text-slate-700 mb-1">Client Note / Message (Printed on Invoice)</label>
-        <textarea id="inv-client-note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Thanks for your business. Warranty covers manufacturing defects only."></textarea>
-      </div>
-
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
         <div class="flex justify-between text-sm text-slate-600">
           <span>Subtotal:</span>
@@ -605,8 +568,8 @@
     </div>
   </div>
 
-  <!-- QUOTATION MODAL -->
-  <div id="modal-quote" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-2 sm:p-3 overflow-y-auto">
+  <!-- 3. QUOTATION MODAL -->
+  <div id="modal-quote" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-2 sm:p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <div>
@@ -634,7 +597,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Quotation Estimates</span>
-            <span class="block text-[11px] text-indigo-700 font-medium mt-0.5">Formula: Cost + Margin % + Tax % = Selling Price</span>
+            <span class="block text-[11px] text-indigo-700 font-medium mt-0.5">Formula: Cost + Margin % (entered) + Tax % (18%, 5%, 0%) = Selling Price</span>
           </div>
           <div class="flex gap-2">
             <button type="button" onclick="openDirectInventoryModal('quote')" class="text-xs px-2.5 py-1 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg hover:bg-amber-100 flex items-center gap-1 font-semibold">
@@ -647,13 +610,6 @@
         </div>
         <div id="quote-items-table" class="space-y-2.5"></div>
       </div>
-
-      <!-- Client Note Field -->
-      <div>
-        <label class="block text-xs font-semibold text-slate-700 mb-1">Client Note / Message (Printed on Quotation)</label>
-        <textarea id="quote-client-note" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. This estimate is subject to stock availability. Prices valid for 7 days."></textarea>
-      </div>
-
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
         <div class="flex justify-between text-sm text-slate-600">
           <span>Subtotal:</span>
@@ -683,8 +639,8 @@
     </div>
   </div>
 
-  <!-- INVENTORY / STOCK MODAL -->
-  <div id="modal-inventory" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- 4. INVENTORY / STOCK MODAL -->
+  <div id="modal-inventory" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <div>
@@ -720,23 +676,33 @@
         </div>
       </div>
       <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
-        <span class="block text-xs font-bold text-slate-800 uppercase tracking-wide">Pricing Formula</span>
+        <span class="block text-xs font-bold text-slate-800 uppercase tracking-wide">Pricing Formula Engine</span>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cost ₹</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cost ₹ (Manual)</label>
             <input type="number" id="inv-item-cost" oninput="calcItemSellingFormula()" value="0" min="0" step="any" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white text-right">
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Margin %</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Margin % (Entered)</label>
             <input type="number" id="inv-item-margin" oninput="calcItemSellingFormula()" value="15" min="0" step="any" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white text-right">
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tax</label>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tax Rate</label>
             <select id="inv-item-tax" onchange="calcItemSellingFormula()" class="w-full px-2 py-1.5 border rounded-lg text-xs bg-white font-medium">
               <option value="18">18% Tax</option>
               <option value="5">5% Tax</option>
               <option value="0" selected>0% Tax</option>
             </select>
+          </div>
+        </div>
+        <div class="bg-indigo-50/70 border border-indigo-200 p-2.5 rounded-lg text-xs flex items-center justify-between">
+          <div>
+            <span class="text-[11px] text-slate-500 block">Calculation Preview:</span>
+            <span id="inv-item-preview-text" class="text-xs font-mono font-medium text-slate-700">₹0 + 15% margin + 0% tax</span>
+          </div>
+          <div class="text-right">
+            <span class="text-[11px] text-slate-500 block">Selling Price:</span>
+            <span id="inv-item-preview-total" class="text-sm font-bold text-indigo-900">₹0.00</span>
           </div>
         </div>
         <div>
@@ -751,8 +717,8 @@
     </div>
   </div>
 
-  <!-- CONTACT MODAL -->
-  <div id="modal-contact" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- 5. CONTACT MODAL -->
+  <div id="modal-contact" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
         <div>
@@ -781,66 +747,50 @@
     </div>
   </div>
 
-  <!-- EXPORT & IMPORT MODAL -->
-  <div id="modal-export" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-center justify-center p-3 overflow-y-auto">
+  <!-- 6. MULTI-RANGE EXPORT MODAL -->
+  <div id="modal-export" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-lg font-bold text-slate-800">Database Backup & Restore</h3>
+        <h3 class="text-lg font-bold text-slate-800">Database Export</h3>
         <button onclick="closeModal('modal-export')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
       </div>
-
-      <!-- Export Panel -->
-      <div class="space-y-3">
-        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide">Export Records</span>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Select Module</label>
+        <select id="export-module" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+          <option value="all">All Modules (Full JSON Backup)</option>
+          <option value="jobs">Job Cards</option>
+          <option value="invoices">Invoices</option>
+          <option value="quotes">Quotations</option>
+          <option value="inventory">Inventory / Stock</option>
+          <option value="contacts">Contacts</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Time Range</label>
+        <select id="export-range" onchange="toggleCustomDateExport(this.value)" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+          <option value="all">All Time (Complete Data)</option>
+          <option value="1m">Last 1 Month (30 Days)</option>
+          <option value="3m">Last 3 Months (90 Days)</option>
+          <option value="custom">Custom Date Range</option>
+        </select>
+      </div>
+      <div id="export-custom-dates" class="grid grid-cols-2 gap-3 hidden">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Select Module</label>
-          <select id="export-module" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            <option value="all">All Modules (Full JSON Backup)</option>
-            <option value="jobs">Job Cards</option>
-            <option value="invoices">Invoices</option>
-            <option value="quotes">Quotations</option>
-            <option value="inventory">Inventory / Stock</option>
-            <option value="contacts">Contacts</option>
-          </select>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">From Date</label>
+          <input type="date" id="export-start-date" class="w-full px-3 py-2 border rounded-lg text-sm">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Time Range</label>
-          <select id="export-range" onchange="toggleCustomDateExport(this.value)" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            <option value="all">All Time (Complete Data)</option>
-            <option value="1m">Last 1 Month (30 Days)</option>
-            <option value="3m">Last 3 Months (90 Days)</option>
-            <option value="custom">Custom Date Range</option>
-          </select>
-        </div>
-        <div id="export-custom-dates" class="grid grid-cols-2 gap-3 hidden">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">From Date</label>
-            <input type="date" id="export-start-date" class="w-full px-3 py-2 border rounded-lg text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">To Date</label>
-            <input type="date" id="export-end-date" class="w-full px-3 py-2 border rounded-lg text-sm">
-          </div>
-        </div>
-        <div class="flex flex-col gap-2 pt-1">
-          <button onclick="runExport('csv')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
-            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export to CSV (Excel Ready)
-          </button>
-          <button onclick="runExport('json')" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
-            <i data-lucide="file-code" class="w-4 h-4"></i> Download Full JSON Backup
-          </button>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">To Date</label>
+          <input type="date" id="export-end-date" class="w-full px-3 py-2 border rounded-lg text-sm">
         </div>
       </div>
-
-      <!-- Import Full Backup Panel -->
-      <div class="border-t pt-4 space-y-2">
-        <span class="text-xs font-bold text-red-700 uppercase tracking-wide flex items-center gap-1">
-          <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Import Full Backup (Restore)
-        </span>
-        <p class="text-xs text-slate-500 leading-relaxed">
-          Restoring replaces current local data with the selected JSON backup. Google Drive will automatically sync with the restored data.
-        </p>
-        <input type="file" id="import-json-file" accept=".json" onchange="handleImportFile(event)" class="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 w-full">
+      <div class="flex flex-col gap-2 pt-3 border-t">
+        <button onclick="runExport('csv')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export to CSV (Excel Ready)
+        </button>
+        <button onclick="runExport('json')" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2">
+          <i data-lucide="file-code" class="w-4 h-4"></i> Export Full JSON Dump
+        </button>
       </div>
     </div>
   </div>
@@ -858,10 +808,6 @@
       phone: "6361437694",
       email: "phoenixsudp@gmail.com",
       upi: "6361437694@upi",
-      bankName: "State Bank of India",
-      bankHolder: "Phoenix Solutions",
-      bankAcc: "38920194820",
-      bankIfsc: "SBIN0001234",
       logo: "Phoenix_Solutions_logo.png",
       tcJob: "1. Inspection charges ₹250 applicable if service estimate is not approved.\n2. Customer is strictly responsible for data backup before handing over.\n3. Devices not collected within 30 days after repair completion will incur storage charges.",
       tcInvoice: "1. Goods once sold will not be taken back without valid inspection.\n2. Warranty claims are subject to respective OEM manufacturer terms.\n3. Physical damage, burn marks, or liquid spills void warranty coverage.",
@@ -870,7 +816,7 @@
 
     let DB = {
       config: { ...DEFAULT_CONFIG },
-      gdrive: { url: "" },
+      github: { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" },
       sequences: { job: 1001, invoice: 3001, quote: 2001, sku: 101, contact: 101 },
       jobs: [],
       invoices: [],
@@ -887,20 +833,7 @@
       ]
     };
 
-    let currentJobPhotos = [];
-
-    // Safe Lucide render
-    function renderIcons() {
-      try {
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
-        }
-      } catch (err) {
-        console.warn("Lucide render error:", err);
-      }
-    }
-
-    // PWA Install Prompt
+    // PWA Install prompt handling
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -919,13 +852,15 @@
           deferredInstallPrompt = null;
         });
       } else {
-        alert("To install: Use Chrome/Edge menu (...) -> 'Install app' or 'Add to Home screen'.");
+        alert("To install on Windows: Click the install icon in your address bar.\nTo install on Android: Tap Chrome Menu (...) -> 'Install app' or 'Add to Home screen'.");
       }
     }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch((err) => console.log('SW notice:', err));
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.log('PWA Service Worker notice:', err);
+        });
       });
     }
 
@@ -936,12 +871,12 @@
         try {
           const payload = atob(hash.replace("#pair=", ""));
           const creds = JSON.parse(payload);
-          if (creds.url) {
-            DB.gdrive.url = creds.url;
+          if (creds.token && creds.owner && creds.repo) {
+            DB.github = { ...DB.github, ...creds };
             saveDB(false);
             history.replaceState(null, null, window.location.pathname);
-            alert("Paired with Google Drive! Fetching database...");
-            pullFromGDrive(false);
+            alert("Mobile successfully paired with GitHub! Fetching latest records...");
+            pullFromGitHub(false);
           }
         } catch (e) {
           console.error("Pairing parse error:", e);
@@ -950,14 +885,14 @@
     }
 
     function openPairingQRModal() {
-      if (!DB.gdrive?.url) {
-        alert("Please set and save your Google Drive Apps Script URL first.");
+      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
+        alert("Please save your GitHub token, owner, and repo on this computer first.");
         return;
       }
       const container = document.getElementById("qrcode-container");
       container.innerHTML = "";
 
-      const creds = { url: DB.gdrive.url };
+      const creds = { token: DB.github.token, owner: DB.github.owner, repo: DB.github.repo };
       const encoded = btoa(JSON.stringify(creds));
       const pairUrl = window.location.origin + window.location.pathname + "#pair=" + encoded;
 
@@ -980,7 +915,7 @@
           const parsed = JSON.parse(saved);
           DB = { ...DB, ...parsed };
           if (!DB.config) DB.config = { ...DEFAULT_CONFIG };
-          if (!DB.gdrive) DB.gdrive = { url: "" };
+          if (!DB.github) DB.github = { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" };
           if (!Array.isArray(DB.jobs)) DB.jobs = [];
           if (!Array.isArray(DB.invoices)) DB.invoices = [];
           if (!Array.isArray(DB.quotes)) DB.quotes = [];
@@ -996,16 +931,14 @@
     function saveDB(triggerCloudPush = false) {
       localStorage.setItem("phoenix_solutions_db", JSON.stringify(DB));
       updateDatalists();
-      if (triggerCloudPush && DB.gdrive?.url) {
-        pushToGDrive(false);
+      if (triggerCloudPush && DB.github.token) {
+        pushToGitHub(false);
       }
     }
 
     function updateAppBranding() {
-      const n = document.getElementById("header-shop-name");
-      const s = document.getElementById("header-shop-sub");
-      if (n) n.innerText = DB.config.name;
-      if (s) s.innerText = DB.config.sub;
+      document.getElementById("header-shop-name").innerText = DB.config.name;
+      document.getElementById("header-shop-sub").innerText = DB.config.sub;
       const logoEl = document.getElementById("header-logo-img");
       if (logoEl && DB.config.logo) logoEl.src = DB.config.logo;
     }
@@ -1015,57 +948,41 @@
       return "₹" + num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    // --- TAB SWITCHING (ERROR-SAFE) ---
+    // --- TAB SWITCHING ---
     function switchTab(tabId) {
-      try {
-        // Hide all views
-        document.querySelectorAll(".tab-view").forEach(el => {
-          el.classList.add("hidden");
-          el.classList.remove("block");
-        });
+      document.querySelectorAll(".tab-view").forEach(el => el.classList.add("hidden"));
+      const target = document.getElementById("view-" + tabId);
+      if (target) target.classList.remove("hidden");
 
-        // Show target view
-        const target = document.getElementById("view-" + tabId);
-        if (target) {
-          target.classList.remove("hidden");
-          target.classList.add("block");
-        }
-
-        // Reset desktop tabs
-        document.querySelectorAll(".tab-btn").forEach(el => {
-          el.classList.remove("border-slate-900", "text-slate-900");
-          el.classList.add("border-transparent", "text-slate-600");
-        });
-        const activeDeskBtn = document.getElementById("nav-d-" + tabId);
-        if (activeDeskBtn) {
-          activeDeskBtn.classList.remove("border-transparent", "text-slate-600");
-          activeDeskBtn.classList.add("border-slate-900", "text-slate-900");
-        }
-
-        // Reset mobile tabs
-        document.querySelectorAll(".mobile-nav-btn").forEach(el => {
-          el.classList.remove("text-slate-900");
-          el.classList.add("text-slate-500");
-        });
-        const activeMobBtn = document.getElementById("nav-m-" + tabId);
-        if (activeMobBtn) {
-          activeMobBtn.classList.remove("text-slate-500");
-          activeMobBtn.classList.add("text-slate-900");
-        }
-
-        // Render appropriate view safely
-        if (tabId === "dashboard") renderDashboard();
-        else if (tabId === "jobs") renderJobs();
-        else if (tabId === "invoices") renderInvoices();
-        else if (tabId === "quotes") renderQuotes();
-        else if (tabId === "inventory") renderInventory();
-        else if (tabId === "contacts") renderContacts();
-        else if (tabId === "settings") loadSettingsTab();
-
-        renderIcons();
-      } catch (err) {
-        console.error("Tab switch error:", err);
+      document.querySelectorAll(".tab-btn").forEach(el => {
+        el.classList.remove("border-slate-900", "text-slate-900");
+        el.classList.add("border-transparent", "text-slate-600");
+      });
+      const activeDeskBtn = document.getElementById("nav-d-" + tabId);
+      if (activeDeskBtn) {
+        activeDeskBtn.classList.remove("border-transparent", "text-slate-600");
+        activeDeskBtn.classList.add("border-slate-900", "text-slate-900");
       }
+
+      document.querySelectorAll(".mobile-nav-btn").forEach(el => {
+        el.classList.remove("text-slate-900");
+        el.classList.add("text-slate-500");
+      });
+      const activeMobBtn = document.getElementById("nav-m-" + tabId);
+      if (activeMobBtn) {
+        activeMobBtn.classList.remove("text-slate-500");
+        activeMobBtn.classList.add("text-slate-900");
+      }
+
+      if (tabId === "dashboard") renderDashboard();
+      if (tabId === "jobs") renderJobs();
+      if (tabId === "invoices") renderInvoices();
+      if (tabId === "quotes") renderQuotes();
+      if (tabId === "inventory") renderInventory();
+      if (tabId === "contacts") renderContacts();
+      if (tabId === "settings") loadSettingsTab();
+      
+      lucide.createIcons();
     }
 
     function updateDatalists() {
@@ -1134,55 +1051,45 @@
       }
     }
 
-    // DASHBOARD RENDERING
+    // --- DASHBOARD RENDERING ---
     function renderDashboard() {
-      try {
-        const activeJobs = DB.jobs.filter(j => j.status !== "Delivered & Closed").length;
-        const lowStock = DB.inventory.filter(i => (Number(i.qty) || 0) <= 2).length;
-        const totalSales = DB.invoices.reduce((sum, inv) => sum + (Number(inv.grandTotal) || 0), 0);
+      const activeJobs = DB.jobs.filter(j => j.status !== "Delivered & Closed").length;
+      const lowStock = DB.inventory.filter(i => (Number(i.qty) || 0) <= 2).length;
+      const totalSales = DB.invoices.reduce((sum, inv) => sum + (Number(inv.grandTotal) || 0), 0);
 
-        const dJobs = document.getElementById("dash-active-jobs");
-        const dStock = document.getElementById("dash-low-stock");
-        const dQuotes = document.getElementById("dash-quotes-count");
-        const dSales = document.getElementById("dash-total-sales");
+      document.getElementById("dash-active-jobs").innerText = activeJobs;
+      document.getElementById("dash-low-stock").innerText = lowStock;
+      document.getElementById("dash-quotes-count").innerText = DB.quotes.length;
+      document.getElementById("dash-total-sales").innerText = formatINR(totalSales);
 
-        if (dJobs) dJobs.innerText = activeJobs;
-        if (dStock) dStock.innerText = lowStock;
-        if (dQuotes) dQuotes.innerText = DB.quotes.length;
-        if (dSales) dSales.innerText = formatINR(totalSales);
+      const recentContainer = document.getElementById("dash-recent-jobs");
+      recentContainer.innerHTML = "";
+      const latest = [...DB.jobs].reverse().slice(0, 5);
 
-        const recentContainer = document.getElementById("dash-recent-jobs");
-        if (!recentContainer) return;
-        recentContainer.innerHTML = "";
-        const latest = [...DB.jobs].reverse().slice(0, 5);
-
-        if (latest.length === 0) {
-          recentContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No repair jobs intake yet.</p>`;
-          return;
-        }
-
-        latest.forEach(j => {
-          const item = document.createElement("div");
-          item.className = "flex items-center justify-between p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 transition";
-          item.innerHTML = `
-            <div class="flex items-center gap-3">
-              <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${j.id}</span>
-              <div>
-                <h4 class="text-sm font-semibold text-slate-800">${escapeHtml(j.custName || 'Customer')} (${escapeHtml(j.deviceType || 'Device')})</h4>
-                <p class="text-xs text-slate-500">${escapeHtml(j.fault || '')}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-medium px-2 py-0.5 rounded-full ${getStatusBadgeClass(j.status)}">${j.status || 'Received'}</span>
-              <button onclick="editJob('${j.id}')" class="p-1 text-slate-400 hover:text-slate-800"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-            </div>
-          `;
-          recentContainer.appendChild(item);
-        });
-        renderIcons();
-      } catch (err) {
-        console.error("Dashboard render error:", err);
+      if (latest.length === 0) {
+        recentContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center">No repair jobs intake yet.</p>`;
+        return;
       }
+
+      latest.forEach(j => {
+        const item = document.createElement("div");
+        item.className = "flex items-center justify-between p-2.5 rounded-lg border border-slate-100 hover:bg-slate-50 transition";
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">${j.id}</span>
+            <div>
+              <h4 class="text-sm font-semibold text-slate-800">${escapeHtml(j.custName || 'Customer')} (${escapeHtml(j.deviceType || 'Device')})</h4>
+              <p class="text-xs text-slate-500">${escapeHtml(j.fault || '')}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full ${getStatusBadgeClass(j.status)}">${j.status || 'Received'}</span>
+            <button onclick="editJob('${j.id}')" class="p-1 text-slate-400 hover:text-slate-800"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+          </div>
+        `;
+        recentContainer.appendChild(item);
+      });
+      lucide.createIcons();
     }
 
     function getStatusBadgeClass(st) {
@@ -1192,92 +1099,14 @@
       return "bg-slate-100 text-slate-800";
     }
 
-    // 1. JOB CARDS MODULE
-    function compressImageFile(file, maxWidth = 900, maxHeight = 900, quality = 0.72) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-              if (width > maxWidth) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-              }
-            } else {
-              if (height > maxHeight) {
-                width = Math.round((width * maxHeight) / height);
-                height = maxHeight;
-              }
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', quality));
-          };
-          img.onerror = () => resolve("");
-        };
-        reader.onerror = () => resolve("");
-      });
-    }
-
-    async function handleMultipleJobImages(e) {
-      const files = Array.from(e.target.files);
-      if (!files.length) return;
-
-      const remainingSlots = 4 - currentJobPhotos.length;
-      if (remainingSlots <= 0) {
-        alert("Maximum of 4 images allowed per job card.");
-        return;
-      }
-
-      const filesToProcess = files.slice(0, remainingSlots);
-      for (const file of filesToProcess) {
-        const compressedBase64 = await compressImageFile(file);
-        if (compressedBase64) {
-          currentJobPhotos.push(compressedBase64);
-        }
-      }
-      e.target.value = "";
-      renderJobImagePreviews();
-    }
-
-    function removeJobImageAt(index) {
-      currentJobPhotos.splice(index, 1);
-      renderJobImagePreviews();
-    }
-
-    function renderJobImagePreviews() {
-      const grid = document.getElementById("job-images-preview-grid");
-      const counter = document.getElementById("job-photo-counter");
-      if (!grid || !counter) return;
-
-      counter.innerText = `${currentJobPhotos.length} / 4 added`;
-      grid.innerHTML = "";
-
-      currentJobPhotos.forEach((src, idx) => {
-        const wrap = document.createElement("div");
-        wrap.className = "relative border rounded-lg overflow-hidden h-16 bg-white";
-        wrap.innerHTML = `
-          <img src="${src}" class="w-full h-full object-cover">
-          <button type="button" onclick="removeJobImageAt(${idx})" class="absolute top-0.5 right-0.5 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">&times;</button>
-        `;
-        grid.appendChild(wrap);
-      });
-    }
+    // --- 1. JOB CARDS MODULE ---
+    let currentJobPhotoBase64 = "";
 
     function openJobModal(editId = null) {
-      currentJobPhotos = [];
-      const imgInp = document.getElementById("job-images-input");
-      if (imgInp) imgInp.value = "";
-      renderJobImagePreviews();
+      currentJobPhotoBase64 = "";
+      document.getElementById("job-image-input").value = "";
+      document.getElementById("job-image-preview").classList.add("hidden");
+      document.getElementById("job-image-remove").classList.add("hidden");
 
       if (editId) {
         const j = DB.jobs.find(x => x.id === editId);
@@ -1293,17 +1122,16 @@
         document.getElementById("job-serial-no").value = j.serialNo || "";
         document.getElementById("job-fault").value = j.fault || "";
         document.getElementById("job-accessories").value = j.accessories || "";
-        document.getElementById("job-suggested-action").value = j.suggestedAction || "";
-        document.getElementById("job-est-return-date").value = j.estReturnDate || "";
         document.getElementById("job-status").value = j.status || "Received";
         document.getElementById("job-cost").value = j.cost || "";
 
-        if (Array.isArray(j.photos)) {
-          currentJobPhotos = [...j.photos];
-        } else if (j.photo) {
-          currentJobPhotos = [j.photo];
+        if (j.photo) {
+          currentJobPhotoBase64 = j.photo;
+          const prev = document.getElementById("job-image-preview");
+          prev.src = j.photo;
+          prev.classList.remove("hidden");
+          document.getElementById("job-image-remove").classList.remove("hidden");
         }
-        renderJobImagePreviews();
       } else {
         document.getElementById("job-modal-title").innerText = "New Job Card";
         document.getElementById("job-modal-seq").innerText = "Auto Serial: JC-" + DB.sequences.job;
@@ -1315,12 +1143,31 @@
         document.getElementById("job-serial-no").value = "";
         document.getElementById("job-fault").value = "";
         document.getElementById("job-accessories").value = "";
-        document.getElementById("job-suggested-action").value = "";
-        document.getElementById("job-est-return-date").value = "";
         document.getElementById("job-status").value = "Received";
         document.getElementById("job-cost").value = "";
       }
       openModal("modal-job");
+    }
+
+    function handleJobImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        currentJobPhotoBase64 = event.target.result;
+        const prev = document.getElementById("job-image-preview");
+        prev.src = currentJobPhotoBase64;
+        prev.classList.remove("hidden");
+        document.getElementById("job-image-remove").classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeJobImage() {
+      currentJobPhotoBase64 = "";
+      document.getElementById("job-image-input").value = "";
+      document.getElementById("job-image-preview").classList.add("hidden");
+      document.getElementById("job-image-remove").classList.add("hidden");
     }
 
     function saveJob(andPrint = false, andWhatsapp = false) {
@@ -1360,11 +1207,9 @@
       record.serialNo = document.getElementById("job-serial-no").value;
       record.fault = fault;
       record.accessories = document.getElementById("job-accessories").value;
-      record.suggestedAction = document.getElementById("job-suggested-action").value.trim();
-      record.estReturnDate = document.getElementById("job-est-return-date").value;
       record.status = document.getElementById("job-status").value;
       record.cost = document.getElementById("job-cost").value || "0";
-      record.photos = [...currentJobPhotos];
+      record.photo = currentJobPhotoBase64;
 
       saveDB(true);
       closeModal("modal-job");
@@ -1401,7 +1246,6 @@
       }
 
       [...filtered].reverse().forEach(j => {
-        const photos = Array.isArray(j.photos) ? j.photos : (j.photo ? [j.photo] : []);
         const card = document.createElement("div");
         card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
         card.innerHTML = `
@@ -1415,18 +1259,12 @@
               <h3 class="text-base font-bold text-slate-800 mt-1">${escapeHtml(j.custName || 'Customer')} - <span class="text-sm font-medium text-slate-500">${escapeHtml(j.custPhone || '')}</span></h3>
               <p class="text-xs text-slate-600 font-medium">${escapeHtml(j.deviceType || 'Device')} ${j.brandModel ? '• ' + escapeHtml(j.brandModel) : ''} ${j.serialNo ? '(SN: ' + escapeHtml(j.serialNo) + ')' : ''}</p>
             </div>
-            ${photos.length ? `
-              <div class="flex gap-1">
-                ${photos.slice(0, 3).map(p => `<img src="${p}" alt="Photo" class="w-10 h-10 object-cover rounded-lg border border-slate-200">`).join('')}
-                ${photos.length > 3 ? `<div class="w-10 h-10 rounded-lg bg-slate-100 border text-[10px] font-bold flex items-center justify-center">+${photos.length - 3}</div>` : ''}
-              </div>
-            ` : ''}
+            ${j.photo ? `<img src="${j.photo}" alt="Device intake" class="w-12 h-12 object-cover rounded-lg border border-slate-300">` : ''}
           </div>
 
           <div class="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1">
             <p><span class="font-semibold text-slate-700">Issue:</span> ${escapeHtml(j.fault || 'Not specified')}</p>
-            ${j.suggestedAction ? `<p><span class="font-semibold text-amber-800">Action:</span> ${escapeHtml(j.suggestedAction)}</p>` : ''}
-            ${j.estReturnDate ? `<p><span class="font-semibold text-slate-700">Est. Return:</span> ${new Date(j.estReturnDate).toLocaleDateString("en-IN")}</p>` : ''}
+            ${j.accessories ? `<p><span class="font-semibold text-slate-700">Accessories:</span> ${escapeHtml(j.accessories)}</p>` : ''}
             ${Number(j.cost) > 0 ? `<p><span class="font-semibold text-slate-700">Estimate:</span> ${formatINR(j.cost)}</p>` : ''}
           </div>
 
@@ -1440,11 +1278,8 @@
               </button>
             </div>
             <div class="flex gap-2">
-              <button onclick="uploadDocumentPDFToDrive('JobCard', '${j.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
-                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
-              </button>
               <button onclick="printJobCardSlip('${j.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
-                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Slip
               </button>
               <button onclick="shareJobWhatsApp('${j.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded flex items-center gap-1 font-medium">
                 <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
@@ -1454,7 +1289,7 @@
         `;
         container.appendChild(card);
       });
-      renderIcons();
+      lucide.createIcons();
     }
 
     function editJob(id) {
@@ -1475,7 +1310,7 @@
       calcInvoiceTotals();
     }
 
-    // 2. INVOICE MODULE
+    // --- 2. INVOICE MODULE ---
     function openInvoiceModal(editId = null) {
       const table = document.getElementById("inv-items-table");
       table.innerHTML = "";
@@ -1489,7 +1324,6 @@
         document.getElementById("inv-cust-name").value = inv.custName;
         document.getElementById("inv-cust-phone").value = inv.custPhone;
         document.getElementById("inv-cust-address").value = inv.custAddress || "";
-        document.getElementById("inv-client-note").value = inv.clientNote || "";
         document.getElementById("inv-discount-input").value = inv.discount || 0;
 
         inv.items.forEach(it => {
@@ -1502,7 +1336,6 @@
         document.getElementById("inv-cust-name").value = "";
         document.getElementById("inv-cust-phone").value = "";
         document.getElementById("inv-cust-address").value = "";
-        document.getElementById("inv-client-note").value = "";
         document.getElementById("inv-discount-input").value = 0;
         addInvoiceRow();
       }
@@ -1531,7 +1364,7 @@
         </div>
       `;
       table.appendChild(row);
-      renderIcons();
+      lucide.createIcons();
       calcInvoiceTotals();
     }
 
@@ -1580,7 +1413,6 @@
 
       const discount = Number(document.getElementById("inv-discount-input").value) || 0;
       const grandTotal = Math.max(0, subtotal - discount);
-      const clientNote = document.getElementById("inv-client-note").value.trim();
 
       ensureContactSaved(custName, custPhone, custAddress);
 
@@ -1598,7 +1430,6 @@
       record.custName = custName;
       record.custPhone = custPhone;
       record.custAddress = custAddress;
-      record.clientNote = clientNote;
       record.items = items;
       record.subtotal = subtotal;
       record.discount = discount;
@@ -1665,16 +1496,11 @@
             `).join('')}
           </div>
 
-          ${inv.clientNote ? `<p class="text-xs text-slate-600 italic bg-slate-50 p-2 rounded">Note: ${escapeHtml(inv.clientNote)}</p>` : ''}
-
           <div class="flex items-center justify-between gap-2 pt-2 border-t text-xs">
             <button onclick="editInvoice('${inv.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
               <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
             </button>
             <div class="flex gap-2">
-              <button onclick="uploadDocumentPDFToDrive('Invoice', '${inv.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
-                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
-              </button>
               <button onclick="printInvoiceSlip('${inv.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
               </button>
@@ -1686,14 +1512,14 @@
         `;
         container.appendChild(card);
       });
-      renderIcons();
+      lucide.createIcons();
     }
 
     function editInvoice(id) {
       openInvoiceModal(id);
     }
 
-    // 3. QUOTATIONS MODULE
+    // --- 3. QUOTATIONS MODULE ---
     function openQuoteModal(editId = null) {
       const table = document.getElementById("quote-items-table");
       table.innerHTML = "";
@@ -1707,7 +1533,6 @@
         document.getElementById("quote-cust-name").value = q.custName;
         document.getElementById("quote-cust-phone").value = q.custPhone;
         document.getElementById("quote-cust-address").value = q.custAddress || "";
-        document.getElementById("quote-client-note").value = q.clientNote || "";
         document.getElementById("quote-discount-input").value = q.discount || 0;
 
         q.items.forEach(it => {
@@ -1720,7 +1545,6 @@
         document.getElementById("quote-cust-name").value = "";
         document.getElementById("quote-cust-phone").value = "";
         document.getElementById("quote-cust-address").value = "";
-        document.getElementById("quote-client-note").value = "";
         document.getElementById("quote-discount-input").value = 0;
         addQuoteRow();
       }
@@ -1745,15 +1569,15 @@
             <input type="number" min="1" placeholder="Qty" value="${qty}" class="quote-row-qty w-full px-2 py-1.5 border rounded text-xs text-center bg-white" oninput="calcQuoteTotals()">
           </div>
           <div class="col-span-4 sm:col-span-2">
-            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Cost ₹</label>
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Cost ₹ (Manual)</label>
             <input type="number" min="0" step="any" placeholder="Cost ₹" value="${cost}" class="quote-row-cost w-full px-2 py-1.5 border rounded text-xs text-right bg-white" oninput="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
           </div>
           <div class="col-span-5 sm:col-span-2">
-            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Margin %</label>
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Margin % (Manual)</label>
             <input type="number" min="0" step="any" placeholder="Margin %" value="${margin}" class="quote-row-margin w-full px-2 py-1.5 border rounded text-xs text-right bg-white font-medium" oninput="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
           </div>
           <div class="col-span-6 sm:col-span-2">
-            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Tax</label>
+            <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Tax (Drop-down)</label>
             <select class="quote-row-tax w-full px-2 py-1.5 border rounded text-xs bg-white font-medium text-slate-700" onchange="recomputeQuoteSellingPrice(this.closest('.quote-item-row'))">
               <option value="18" ${tax == 18 ? 'selected' : ''}>18% Tax</option>
               <option value="5" ${tax == 5 ? 'selected' : ''}>5% Tax</option>
@@ -1770,13 +1594,13 @@
             <span class="quote-prev-formula">Cost ₹${cost} + ${margin}% margin + ${tax}% tax</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-slate-500 font-medium">Selling Rate:</span>
+            <span class="text-slate-500 font-medium">Calculated Selling Rate:</span>
             <input type="number" min="0" step="any" placeholder="Selling ₹" value="${rate}" class="quote-row-rate w-28 px-2 py-0.5 border rounded text-xs text-right bg-white font-bold text-indigo-900" oninput="calcQuoteTotals()">
           </div>
         </div>
       `;
       table.appendChild(row);
-      renderIcons();
+      lucide.createIcons();
       recomputeQuoteSellingPrice(row);
     }
 
@@ -1794,7 +1618,7 @@
       rateInput.value = finalSelling;
 
       const previewText = row.querySelector(".quote-prev-formula");
-      previewText.innerHTML = `Cost: <strong>₹${cost}</strong> &rarr; +${marginPct}% Margin &rarr; +${taxPct}% Tax`;
+      previewText.innerHTML = `Cost: <strong>₹${cost}</strong> &rarr; +${marginPct}% Margin (₹${Math.round(marginAmt)}) &rarr; Taxable: <strong>₹${Math.round(taxablePrice)}</strong> &rarr; +${taxPct}% Tax (₹${Math.round(taxAmt)})`;
 
       calcQuoteTotals();
     }
@@ -1847,7 +1671,6 @@
 
       const discount = Number(document.getElementById("quote-discount-input").value) || 0;
       const grandTotal = Math.max(0, subtotal - discount);
-      const clientNote = document.getElementById("quote-client-note").value.trim();
 
       ensureContactSaved(custName, custPhone, custAddress);
 
@@ -1865,7 +1688,6 @@
       record.custName = custName;
       record.custPhone = custPhone;
       record.custAddress = custAddress;
-      record.clientNote = clientNote;
       record.items = items;
       record.subtotal = subtotal;
       record.discount = discount;
@@ -1932,16 +1754,11 @@
             `).join('')}
           </div>
 
-          ${q.clientNote ? `<p class="text-xs text-slate-600 italic bg-slate-50 p-2 rounded">Note: ${escapeHtml(q.clientNote)}</p>` : ''}
-
           <div class="flex items-center justify-between gap-2 pt-2 border-t text-xs">
             <button onclick="editQuote('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
               <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
             </button>
             <div class="flex gap-2">
-              <button onclick="uploadDocumentPDFToDrive('Quotation', '${q.id}')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded flex items-center gap-1 font-medium" title="Upload PDF to Drive">
-                <i data-lucide="file-up" class="w-3.5 h-3.5"></i> PDF to Drive
-              </button>
               <button onclick="printQuoteSlip('${q.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded flex items-center gap-1 font-medium">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
               </button>
@@ -1953,14 +1770,31 @@
         `;
         container.appendChild(card);
       });
-      renderIcons();
+      lucide.createIcons();
     }
 
     function editQuote(id) {
       openQuoteModal(id);
     }
 
-    // 4. INVENTORY MODULE
+    function convertQuoteToInvoice(quoteId) {
+      const q = DB.quotes.find(x => x.id === quoteId);
+      if (!q) return;
+      openInvoiceModal();
+      document.getElementById("inv-cust-name").value = q.custName;
+      document.getElementById("inv-cust-phone").value = q.custPhone;
+      document.getElementById("inv-cust-address").value = q.custAddress || "";
+      document.getElementById("inv-discount-input").value = q.discount || 0;
+
+      const table = document.getElementById("inv-items-table");
+      table.innerHTML = "";
+      q.items.forEach(it => {
+        addInvoiceRow(it.desc, it.qty, it.rate);
+      });
+      calcInvoiceTotals();
+    }
+
+    // --- 4. INVENTORY / STOCK MODULE ---
     function openInventoryModal(editId = null, returnTarget = null) {
       document.getElementById("inv-item-return-target").value = returnTarget || "";
 
@@ -2008,6 +1842,8 @@
       const selling = Math.round(taxable + taxAmt);
 
       document.getElementById("inv-item-selling").value = selling;
+      document.getElementById("inv-item-preview-text").innerHTML = `Cost: ₹${cost} &rarr; +${marginPct}% Margin (₹${Math.round(marginAmt)}) &rarr; +${taxPct}% Tax (₹${Math.round(taxAmt)})`;
+      document.getElementById("inv-item-preview-total").innerText = formatINR(selling);
     }
 
     function saveInventoryItem() {
@@ -2082,15 +1918,17 @@
             <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5 flex-wrap">
               <span>Qty: <strong class="text-slate-800">${it.qty}</strong></span>
               <span>Cost: ${formatINR(it.cost)}</span>
+              <span>Margin: <strong>+${it.margin || 0}%</strong></span>
+              <span>Tax: <strong>${it.tax || 0}%</strong></span>
               <span>Selling: <strong class="text-slate-900 font-semibold">${formatINR(it.selling)}</strong></span>
             </div>
           </div>
 
           <div class="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 text-xs">
-            <button onclick="directBillItem('${it.id}')" title="Create Invoice" class="px-2 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded font-semibold hover:bg-emerald-100">
+            <button onclick="directBillItem('${it.id}')" title="Create Invoice with this item" class="px-2 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded font-semibold hover:bg-emerald-100">
               + Bill
             </button>
-            <button onclick="directQuoteItem('${it.id}')" title="Add to Quote" class="px-2 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded font-semibold hover:bg-blue-100">
+            <button onclick="directQuoteItem('${it.id}')" title="Add to Quotation" class="px-2 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded font-semibold hover:bg-blue-100">
               + Quote
             </button>
             <button onclick="openInventoryModal('${it.id}')" class="p-1.5 text-slate-400 hover:text-slate-700">
@@ -2100,7 +1938,7 @@
         `;
         container.appendChild(card);
       });
-      renderIcons();
+      lucide.createIcons();
     }
 
     function directBillItem(skuId) {
@@ -2123,7 +1961,7 @@
       calcQuoteTotals();
     }
 
-    // 5. CONTACTS MODULE
+    // --- 5. CONTACTS MODULE ---
     function openContactModal(editId = null) {
       if (editId) {
         const c = DB.contacts.find(x => x.id === editId);
@@ -2203,94 +2041,42 @@
             </div>
             <p class="text-xs text-slate-600 mt-1">${escapeHtml(c.phone)} ${c.address ? '• ' + escapeHtml(c.address) : ''}</p>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="shareContactWhatsApp('${c.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs flex items-center gap-1 font-medium shadow-sm" title="Share via WhatsApp">
-              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> WhatsApp
-            </button>
-            <button onclick="openContactModal('${c.id}')" class="p-1.5 text-slate-400 hover:text-slate-700">
-              <i data-lucide="edit" class="w-4 h-4"></i>
-            </button>
-          </div>
+          <button onclick="openContactModal('${c.id}')" class="p-1.5 text-slate-400 hover:text-slate-700">
+            <i data-lucide="edit" class="w-4 h-4"></i>
+          </button>
         `;
         container.appendChild(card);
       });
-      renderIcons();
+      lucide.createIcons();
     }
 
-    function shareContactWhatsApp(contactId) {
-      const c = DB.contacts.find(x => x.id === contactId);
-      if (!c) return;
-
-      const activeJobs = DB.jobs.filter(j => (j.custPhone === c.phone || j.custName.toLowerCase() === c.name.toLowerCase()) && j.status !== 'Delivered & Closed');
-      let statusText = "No active repairs on file.";
-      if (activeJobs.length > 0) {
-        statusText = activeJobs.map(j => `• Job #${j.id}: ${j.deviceType} (${j.status})`).join("\n");
-      }
-
-      const msg = 
-`*${DB.config.name}*
-*Customer Profile: ${c.name}*
-------------------------------
-Hello ${c.name},
-
-Here is your current record with us:
-*Phone:* ${c.phone}
-${c.address ? `*Address:* ${c.address}\n` : ''}
-*Active Repair Status:*
-${statusText}
-
-For any inquiries, feel free to reach out!
-Phone: ${DB.config.phone}
-Address: ${DB.config.address}`;
-
-      openWhatsAppURL(c.phone, msg);
-    }
-
-    // 6. GOOGLE DRIVE SYNC & SETTINGS
+    // --- 6. SETTINGS & GITHUB REST API SYNC ---
     function loadSettingsTab() {
-      const n = document.getElementById("tab-cfg-shop-name");
-      if (n) n.value = DB.config.name;
-      const s = document.getElementById("tab-cfg-shop-sub");
-      if (s) s.value = DB.config.sub;
-      const a = document.getElementById("tab-cfg-shop-address");
-      if (a) a.value = DB.config.address;
-      const p = document.getElementById("tab-cfg-shop-phone");
-      if (p) p.value = DB.config.phone;
-      const e = document.getElementById("tab-cfg-shop-email");
-      if (e) e.value = DB.config.email;
-      const u = document.getElementById("tab-cfg-shop-upi");
-      if (u) u.value = DB.config.upi;
+      document.getElementById("tab-cfg-shop-name").value = DB.config.name;
+      document.getElementById("tab-cfg-shop-sub").value = DB.config.sub;
+      document.getElementById("tab-cfg-shop-address").value = DB.config.address;
+      document.getElementById("tab-cfg-shop-phone").value = DB.config.phone;
+      document.getElementById("tab-cfg-shop-email").value = DB.config.email;
+      document.getElementById("tab-cfg-shop-upi").value = DB.config.upi;
+      document.getElementById("settings-tab-logo-preview").src = DB.config.logo;
 
-      const bn = document.getElementById("tab-cfg-bank-name");
-      if (bn) bn.value = DB.config.bankName || "";
-      const bh = document.getElementById("tab-cfg-bank-holder");
-      if (bh) bh.value = DB.config.bankHolder || "";
-      const ba = document.getElementById("tab-cfg-bank-acc");
-      if (ba) ba.value = DB.config.bankAcc || "";
-      const bi = document.getElementById("tab-cfg-bank-ifsc");
-      if (bi) bi.value = DB.config.bankIfsc || "";
+      document.getElementById("tab-cfg-tc-job").value = DB.config.tcJob || "";
+      document.getElementById("tab-cfg-tc-inv").value = DB.config.tcInvoice || "";
+      document.getElementById("tab-cfg-tc-quote").value = DB.config.tcQuote || "";
 
-      const lp = document.getElementById("settings-tab-logo-preview");
-      if (lp) lp.src = DB.config.logo;
-
-      const tj = document.getElementById("tab-cfg-tc-job");
-      if (tj) tj.value = DB.config.tcJob || "";
-      const ti = document.getElementById("tab-cfg-tc-inv");
-      if (ti) ti.value = DB.config.tcInvoice || "";
-      const tq = document.getElementById("tab-cfg-tc-quote");
-      if (tq) tq.value = DB.config.tcQuote || "";
-
-      const gu = document.getElementById("gdrive-url");
-      if (gu) gu.value = DB.gdrive?.url || "";
+      document.getElementById("gh-token").value = DB.github.token || "";
+      document.getElementById("gh-owner").value = DB.github.owner || "phoenixsudp-cpu";
+      document.getElementById("gh-repo").value = DB.github.repo || "app";
     }
 
-    function saveGDriveConfig() {
-      DB.gdrive = DB.gdrive || {};
-      DB.gdrive.url = document.getElementById("gdrive-url").value.trim();
+    function saveGitHubConfig() {
+      DB.github.token = document.getElementById("gh-token").value.trim();
+      DB.github.owner = document.getElementById("gh-owner").value.trim() || "phoenixsudp-cpu";
+      DB.github.repo = document.getElementById("gh-repo").value.trim() || "app";
       saveDB(false);
       updateSyncStatusUI();
-      alert("Google Drive Web App URL saved! Testing pull from Drive...");
-      pullFromGDrive(true);
+      alert("GitHub credentials saved! Now syncing with repository...");
+      pullFromGitHub(true);
     }
 
     function updateSyncStatusUI() {
@@ -2298,160 +2084,147 @@ Address: ${DB.config.address}`;
       const text = document.getElementById("sync-text");
       if (!dot || !text) return;
 
-      if (!DB.gdrive?.url) {
+      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
         dot.className = "w-2 h-2 rounded-full bg-slate-400";
         text.innerText = "Local Mode";
       } else {
         dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-        text.innerText = "GDrive Connected";
+        text.innerText = "Synced with GitHub";
       }
     }
 
-    async function pushToGDrive(showAlert = false) {
-      if (!DB.gdrive?.url) {
-        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
+    async function pushToGitHub(showAlert = false) {
+      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
+        if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
-      try {
-        const payload = {
-          action: "save_db",
-          data: DB
-        };
+      const token = DB.github.token.trim();
+      const owner = DB.github.owner.trim();
+      const repo = DB.github.repo.trim();
+      const branch = DB.github.branch || "main";
+      const path = "data/shop_data.json";
 
-        const res = await fetch(DB.gdrive.url, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
+      const safeDB = JSON.parse(JSON.stringify(DB));
+      if (safeDB.github) {
+        safeDB.github.token = "";
+      }
+
+      const jsonStr = JSON.stringify(safeDB, null, 2);
+      const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
+
+      try {
+        let sha = "";
+        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
+        const getRes = await fetch(getUrl, {
+          method: "GET",
+          headers: {
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
         });
 
-        const data = await res.json();
-        if (data.status === "success") {
+        if (getRes.ok) {
+          const getData = await getRes.json();
+          sha = getData.sha;
+        } else if (getRes.status === 401) {
+          alert("GitHub Token is invalid or expired. Please generate a new classic token with 'repo' scope.");
+          return;
+        }
+
+        const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+        const bodyPayload = {
+          message: `Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
+          content: contentBase64,
+          branch: branch
+        };
+        if (sha) bodyPayload.sha = sha;
+
+        const putRes = await fetch(putUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `token ${token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify(bodyPayload)
+        });
+
+        if (putRes.ok) {
+          const putData = await putRes.json();
+          DB.github.sha = putData.content.sha;
+          saveDB(false);
           updateSyncStatusUI();
-          if (showAlert) alert("Data successfully saved to Google Drive!");
+          if (showAlert) alert("All data successfully pushed to GitHub (data/shop_data.json)!");
         } else {
-          alert("Drive Push Error: " + data.message);
+          const err = await putRes.json().catch(() => ({}));
+          alert("GitHub push error: " + (err.message || putRes.statusText || "Status " + putRes.status));
         }
       } catch (err) {
-        console.error("GDrive Push Error:", err);
-        if (showAlert) alert("Push to Drive failed: " + err.message);
+        console.error("Push Error:", err);
+        alert("Push failed: " + err.message + ". Verify token has 'repo' scope and internet is active.");
       }
     }
 
-    async function pullFromGDrive(showAlert = false) {
-      if (!DB.gdrive?.url) {
-        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
+    async function pullFromGitHub(showAlert = false) {
+      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
+        if (showAlert) alert("Configure GitHub credentials first.");
         return;
       }
 
-      try {
-        const res = await fetch(`${DB.gdrive.url}?_t=${Date.now()}`);
-        const result = await res.json();
+      const token = DB.github.token.trim();
+      const owner = DB.github.owner.trim();
+      const repo = DB.github.repo.trim();
+      const branch = DB.github.branch || "main";
+      const path = "data/shop_data.json";
 
-        if (result.status === "success" && result.data) {
-          const currentUrl = DB.gdrive.url;
-          DB = { ...result.data };
-          DB.gdrive = { url: currentUrl };
-          saveDB(false);
-          updateAppBranding();
-          updateSyncStatusUI();
-          renderJobs();
-          renderInvoices();
-          renderQuotes();
-          renderInventory();
-          renderDashboard();
-          if (showAlert) alert(`Synced! Loaded ${DB.jobs.length} jobs and ${DB.invoices.length} invoices from Google Drive.`);
-        } else if (result.status === "success" && !result.data) {
-          if (showAlert) alert("No database file found on Google Drive yet. Pushing current data now...");
-          pushToGDrive(true);
-        } else {
-          if (showAlert) alert("Pull error: " + result.message);
+      const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
+
+      try {
+        const res = await fetch(getUrl, {
+          method: "GET",
+          headers: {
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
+        });
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            if (showAlert) alert("File data/shop_data.json not found on GitHub. Click 'Push Now' first.");
+          } else {
+            const err = await res.json().catch(() => ({}));
+            if (showAlert) alert("GitHub pull error: " + (err.message || res.statusText));
+          }
+          return;
         }
+
+        const data = await res.json();
+        const decodedContent = decodeURIComponent(escape(atob(data.content)));
+        const pulledDB = JSON.parse(decodedContent);
+
+        const localGitHub = { ...DB.github, sha: data.sha };
+        DB = { ...pulledDB, github: localGitHub };
+        saveDB(false);
+        updateAppBranding();
+        updateSyncStatusUI();
+        renderJobs();
+        renderInvoices();
+        renderQuotes();
+        renderInventory();
+        renderDashboard();
+        if (showAlert) alert(`Successfully synced! Loaded ${DB.jobs.length} Job Cards from GitHub.`);
       } catch (err) {
-        console.error("GDrive Pull Error:", err);
-        if (showAlert) alert("Pull from Drive failed: " + err.message);
+        console.error("Pull Error:", err);
+        if (showAlert) alert("Pull error: " + err.message);
       }
     }
 
     function manualSyncNow() {
-      if (!DB.gdrive?.url) {
+      if (!DB.github.token) {
         switchTab("settings");
       } else {
-        pullFromGDrive(true);
-      }
-    }
-
-    function triggerAutoSyncOnClose() {
-      if (!DB.gdrive?.url) return;
-      try {
-        const payload = JSON.stringify({ action: "save_db", data: DB });
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(DB.gdrive.url, payload);
-        } else {
-          fetch(DB.gdrive.url, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: payload,
-            keepalive: true
-          });
-        }
-      } catch (err) {
-        console.warn("Background auto-sync skipped:", err);
-      }
-    }
-
-    window.addEventListener("beforeunload", triggerAutoSyncOnClose);
-    window.addEventListener("pagehide", triggerAutoSyncOnClose);
-
-    async function uploadDocumentPDFToDrive(docType, docId) {
-      if (!DB.gdrive?.url) {
-        alert("Please configure your Google Drive Web App URL in Settings first.");
-        switchTab("settings");
-        return;
-      }
-
-      let htmlContent = "";
-      if (docType === "JobCard") {
-        htmlContent = getJobCardSlipHTML(docId);
-      } else if (docType === "Invoice") {
-        htmlContent = getInvoiceSlipHTML(docId);
-      } else if (docType === "Quotation") {
-        htmlContent = getQuoteSlipHTML(docId);
-      }
-
-      if (!htmlContent) return;
-
-      const badge = document.getElementById("sync-text");
-      if (badge) badge.innerText = "Generating PDF...";
-
-      try {
-        const payload = {
-          action: "generate_pdf",
-          docType: docType,
-          docId: docId,
-          html: htmlContent
-        };
-
-        const res = await fetch(DB.gdrive.url, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        updateSyncStatusUI();
-
-        if (data.status === "success" && data.url) {
-          const openNow = confirm(`PDF successfully generated and saved to Google Drive!\n\nDocument: ${docType}_${docId}.pdf\n\nClick OK to open the PDF.`);
-          if (openNow) window.open(data.url, "_blank");
-        } else {
-          alert("PDF Generation Error: " + (data.message || "Failed to generate"));
-        }
-      } catch (err) {
-        console.error("PDF Upload Error:", err);
-        updateSyncStatusUI();
-        alert("PDF Generation failed: " + err.message);
+        pullFromGitHub(true);
       }
     }
 
@@ -2476,21 +2249,16 @@ Address: ${DB.config.address}`;
       DB.config.email = document.getElementById("tab-cfg-shop-email").value.trim() || DEFAULT_CONFIG.email;
       DB.config.upi = document.getElementById("tab-cfg-shop-upi").value.trim() || DEFAULT_CONFIG.upi;
 
-      DB.config.bankName = document.getElementById("tab-cfg-bank-name").value.trim();
-      DB.config.bankHolder = document.getElementById("tab-cfg-bank-holder").value.trim();
-      DB.config.bankAcc = document.getElementById("tab-cfg-bank-acc").value.trim();
-      DB.config.bankIfsc = document.getElementById("tab-cfg-bank-ifsc").value.trim();
-
       DB.config.tcJob = document.getElementById("tab-cfg-tc-job").value.trim();
       DB.config.tcInvoice = document.getElementById("tab-cfg-tc-inv").value.trim();
       DB.config.tcQuote = document.getElementById("tab-cfg-tc-quote").value.trim();
 
       updateAppBranding();
       saveDB(true);
-      alert("Settings and Policies saved & synced to Google Drive!");
+      alert("Settings and Policies saved & synced to GitHub!");
     }
 
-    // 7. EXPORT & RESTORE ENGINE
+    // --- 7. EXPORT ENGINE ---
     function openExportModal() {
       openModal("modal-export");
     }
@@ -2543,21 +2311,21 @@ Address: ${DB.config.address}`;
 
       if (module === "jobs") {
         const filtered = filterByDateRange(DB.jobs, range);
-        rows.push(["Job ID", "Date", "Customer", "Phone", "Device", "Fault", "Suggested Action", "Status", "Estimated Cost"]);
+        rows.push(["Job ID", "Date", "Customer", "Phone", "Device", "Fault", "Status", "Estimated Cost"]);
         filtered.forEach(j => {
-          rows.push([j.id, j.date ? j.date.slice(0,10) : '', j.custName, j.custPhone, j.deviceType, j.fault, j.suggestedAction || '', j.status, j.cost]);
+          rows.push([j.id, j.date ? j.date.slice(0,10) : '', j.custName, j.custPhone, j.deviceType, j.fault, j.status, j.cost]);
         });
       } else if (module === "invoices") {
         const filtered = filterByDateRange(DB.invoices, range);
-        rows.push(["Invoice ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total", "Client Note"]);
+        rows.push(["Invoice ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total"]);
         filtered.forEach(i => {
-          rows.push([i.id, i.date ? i.date.slice(0,10) : '', i.custName, i.custPhone, i.subtotal, i.discount || 0, i.grandTotal, i.clientNote || '']);
+          rows.push([i.id, i.date ? i.date.slice(0,10) : '', i.custName, i.custPhone, i.subtotal, i.discount || 0, i.grandTotal]);
         });
       } else if (module === "quotes") {
         const filtered = filterByDateRange(DB.quotes, range);
-        rows.push(["Quote ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total", "Client Note"]);
+        rows.push(["Quote ID", "Date", "Customer", "Phone", "Subtotal", "Discount", "Grand Total"]);
         filtered.forEach(q => {
-          rows.push([q.id, q.date ? q.date.slice(0,10) : '', q.custName, q.custPhone, q.subtotal, q.discount || 0, q.grandTotal, q.clientNote || '']);
+          rows.push([q.id, q.date ? q.date.slice(0,10) : '', q.custName, q.custPhone, q.subtotal, q.discount || 0, q.grandTotal]);
         });
       } else if (module === "inventory") {
         rows.push(["SKU", "Item Name", "Category", "Quantity", "Cost Price", "Margin %", "Tax %", "Selling Price"]);
@@ -2576,61 +2344,6 @@ Address: ${DB.config.address}`;
       closeModal("modal-export");
     }
 
-    function handleImportFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          
-          if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.jobs) || !Array.isArray(parsed.invoices)) {
-            alert("Invalid Backup File: The selected JSON is not a valid Phoenix ERP backup dump.");
-            event.target.value = "";
-            return;
-          }
-
-          const confirmed = confirm(
-            `⚠️ CAUTION: RESTORE FULL BACKUP\n\n` +
-            `This will replace all current data with:\n` +
-            `• ${parsed.jobs.length} Job Cards\n` +
-            `• ${parsed.invoices.length} Invoices\n` +
-            `• ${(parsed.quotes || []).length} Quotations\n` +
-            `• ${(parsed.inventory || []).length} Stock Items\n` +
-            `• ${(parsed.contacts || []).length} Contacts\n\n` +
-            `Do you wish to proceed with this restore?`
-          );
-
-          if (!confirmed) {
-            event.target.value = "";
-            return;
-          }
-
-          const currentUrl = DB.gdrive?.url || "";
-          DB = { ...parsed };
-          if (!DB.gdrive) DB.gdrive = {};
-          if (currentUrl && !DB.gdrive.url) DB.gdrive.url = currentUrl;
-
-          saveDB(true);
-          updateAppBranding();
-          updateSyncStatusUI();
-          renderJobs();
-          renderInvoices();
-          renderQuotes();
-          renderInventory();
-          renderDashboard();
-          closeModal("modal-export");
-          alert("Database successfully restored and synced to Google Drive!");
-        } catch (err) {
-          console.error("Import error:", err);
-          alert("Corrupted file error: Could not parse JSON backup.");
-        }
-        event.target.value = "";
-      };
-      reader.readAsText(file);
-    }
-
     function downloadFile(content, fileName, contentType) {
       const a = document.createElement("a");
       const file = new Blob([content], { type: contentType });
@@ -2640,15 +2353,343 @@ Address: ${DB.config.address}`;
       URL.revokeObjectURL(a.href);
     }
 
-    // 8. DYNAMIC UPI QR CODE
-    function generateDynamicUPIQRCodeDataURL(amount, docId) {
-      if (!DB.config.upi) return "";
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(DB.config.upi)}&pn=${encodeURIComponent(DB.config.name)}&am=${Number(amount || 0).toFixed(2)}&cu=INR&tn=${encodeURIComponent(docId)}`;
-      
-      const tempDiv = document.createElement("div");
-      new QRCode(tempDiv, {
-        text: upiUrl,
-        width: 90,
-        height: 90,
-        colorDark: "#0f172a",
-        colorLight
+    // --- 8. PRINT ENGINE ---
+    function buildShopHeaderHTML(title, docId, docDate) {
+      const logoSrc = DB.config.logo || "Phoenix_Solutions_logo.png";
+      return `
+        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="vertical-align: top; width: 65px;">
+                <img src="${logoSrc}" alt="Logo" style="height: 55px; width: 55px; object-fit: contain;">
+              </td>
+              <td style="vertical-align: top; padding-left: 10px;">
+                <h1 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase;">${escapeHtml(DB.config.name)}</h1>
+                <p style="font-size: 11px; color: #334155; font-weight: 600; margin: 2px 0;">${escapeHtml(DB.config.sub)}</p>
+                <p style="font-size: 10px; color: #475569; margin: 3px 0 0 0; line-height: 1.3;">
+                  ${escapeHtml(DB.config.address)}<br>
+                  <strong>PH:</strong> ${escapeHtml(DB.config.phone)} | <strong>Email:</strong> ${escapeHtml(DB.config.email)}
+                </p>
+              </td>
+              <td style="vertical-align: top; text-align: right; width: 180px;">
+                <span style="display: inline-block; padding: 4px 10px; background: #0f172a; color: white; font-weight: bold; font-size: 12px; border-radius: 4px;">${title}</span>
+                <p style="font-size: 12px; font-weight: bold; margin: 6px 0 0 0; color: #0f172a;">${docId}</p>
+                <p style="font-size: 10px; color: #64748b; margin: 2px 0 0 0;">Date: ${new Date(docDate).toLocaleDateString("en-IN")}</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+
+    function printDocumentSlip(htmlContent) {
+      const frame = document.getElementById("print-frame");
+      if (!frame) return;
+      const frameDoc = frame.contentWindow || frame.contentDocument;
+      const doc = frameDoc.document || frameDoc;
+      doc.open();
+      doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Print Slip</title>
+          <style>
+            @page { size: A4 portrait; margin: 10mm; }
+            body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #ffffff; color: #0f172a; }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+          <script>
+            window.onload = function() {
+              window.focus();
+              window.print();
+            };
+          <\/script>
+        </body>
+        </html>
+      `);
+      doc.close();
+    }
+
+    function printJobCardSlip(jobId) {
+      const j = DB.jobs.find(x => x.id === jobId);
+      if (!j) return;
+      const tc = (DB.config.tcJob || "").replace(/\n/g, "<br>");
+      const html = `
+        <div style="padding: 16px; max-width: 760px; margin: auto;">
+          ${buildShopHeaderHTML("SERVICE JOB CARD TICKET", j.id, j.date)}
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px;">
+            <tr>
+              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <strong style="color: #334155;">Customer Information:</strong><br>
+                <span style="font-size: 14px; font-weight: bold;">${escapeHtml(j.custName)}</span><br>
+                Phone: ${escapeHtml(j.custPhone)}<br>
+                ${j.custAddress ? `Address: ${escapeHtml(j.custAddress)}` : ''}
+              </td>
+              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <strong style="color: #334155;">Device Information:</strong><br>
+                Type: <strong>${escapeHtml(j.deviceType || 'Device')}</strong><br>
+                Model: ${escapeHtml(j.brandModel || 'N/A')}<br>
+                Serial / Tag: ${escapeHtml(j.serialNo || 'N/A')}
+              </td>
+            </tr>
+          </table>
+          <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px;">
+            <strong style="color: #b91c1c;">Reported Problem / Symptoms:</strong>
+            <p style="margin: 4px 0 10px 0; font-size: 13px;">${escapeHtml(j.fault)}</p>
+            <strong>Accessories Received:</strong>
+            <p style="margin: 4px 0 0 0; color: #475569;">${escapeHtml(j.accessories || 'Device only (No accessories)')}</p>
+          </div>
+          ${j.photo ? `
+            <div style="margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center;">
+              <span style="font-size: 10px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px;">PHYSICAL CONDITION INTAKE PHOTO</span>
+              <img src="${j.photo}" alt="Intake Photo" style="max-height: 150px; max-width: 100%; border-radius: 4px; display: inline-block;">
+            </div>
+          ` : ''}
+          <table style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 14px; font-size: 12px;">
+            <tr>
+              <td>
+                Status: <strong>${j.status || 'Received'}</strong><br>
+                Estimated Cost: <strong>${Number(j.cost) > 0 ? formatINR(j.cost) : 'To be diagnosed'}</strong>
+              </td>
+              <td style="text-align: right; width: 200px;">
+                <br><br>
+                <div style="border-top: 1px dashed #64748b; font-size: 11px;">Customer Signature</div>
+              </td>
+            </tr>
+          </table>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
+            <strong style="color: #0f172a; text-transform: uppercase;">Service Terms:</strong><br>
+            ${tc}
+          </div>
+        </div>
+      `;
+      printDocumentSlip(html);
+    }
+
+    function printInvoiceSlip(invId) {
+      const inv = DB.invoices.find(x => x.id === invId);
+      if (!inv) return;
+      const tc = (DB.config.tcInvoice || "").replace(/\n/g, "<br>");
+      const html = `
+        <div style="padding: 16px; max-width: 760px; margin: auto;">
+          ${buildShopHeaderHTML("INVOICE BILL", inv.id, inv.date)}
+          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
+            <strong style="color: #334155;">Billed To:</strong><br>
+            <span style="font-size: 14px; font-weight: bold;">${escapeHtml(inv.custName)}</span><br>
+            Phone: ${escapeHtml(inv.custPhone)}<br>
+            ${inv.custAddress ? `Address: ${escapeHtml(inv.custAddress)}` : ''}
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
+            <thead>
+              <tr style="background: #0f172a; color: white; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1; width: 30px;">#</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">Item Description / Service</th>
+                <th style="padding: 8px; text-align: center; border: 1px solid #cbd5e1; width: 60px;">Qty</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 90px;">Rate</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 100px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${inv.items.map((it, idx) => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${idx + 1}</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${escapeHtml(it.desc)}</td>
+                  <td style="padding: 8px; text-align: center; border: 1px solid #cbd5e1;">${it.qty}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">${formatINR(it.rate)}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">${formatINR(it.total)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
+            <tr>
+              <td style="width: 50%; vertical-align: top; background: #f1f5f9; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <strong>Payment Details:</strong><br>
+                UPI ID: <span style="font-family: monospace; font-weight: bold; color: #047857;">${escapeHtml(DB.config.upi)}</span><br>
+                Phone: ${escapeHtml(DB.config.phone)}
+              </td>
+              <td style="width: 50%; vertical-align: top; text-align: right;">
+                <p style="margin: 4px 0;">Subtotal: <strong>${formatINR(inv.subtotal)}</strong></p>
+                ${Number(inv.discount) > 0 ? `<p style="margin: 4px 0; color: #dc2626;">Discount: -<strong>${formatINR(inv.discount)}</strong></p>` : ''}
+                <p style="font-size: 16px; font-weight: bold; color: #047857; border-top: 2px solid #047857; padding-top: 4px; margin-top: 4px;">
+                  Grand Total: ${formatINR(inv.grandTotal)}
+                </p>
+              </td>
+            </tr>
+          </table>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
+            <strong style="color: #0f172a; text-transform: uppercase;">Terms & Conditions:</strong><br>
+            ${tc}
+          </div>
+        </div>
+      `;
+      printDocumentSlip(html);
+    }
+
+    function printQuoteSlip(quoteId) {
+      const q = DB.quotes.find(x => x.id === quoteId);
+      if (!q) return;
+      const tc = (DB.config.tcQuote || "").replace(/\n/g, "<br>");
+      const html = `
+        <div style="padding: 16px; max-width: 760px; margin: auto;">
+          ${buildShopHeaderHTML("ESTIMATE / QUOTATION", q.id, q.date)}
+          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
+            <strong style="color: #334155;">Quotation For:</strong><br>
+            <span style="font-size: 14px; font-weight: bold;">${escapeHtml(q.custName)}</span><br>
+            Phone: ${escapeHtml(q.custPhone)}<br>
+            ${q.custAddress ? `Address: ${escapeHtml(q.custAddress)}` : ''}
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
+            <thead>
+              <tr style="background: #0f172a; color: white; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1; width: 30px;">#</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">Proposed Hardware / Service</th>
+                <th style="padding: 8px; text-align: center; border: 1px solid #cbd5e1; width: 60px;">Qty</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 90px;">Unit Rate</th>
+                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 100px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${q.items.map((it, idx) => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${idx + 1}</td>
+                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${escapeHtml(it.desc)}</td>
+                  <td style="padding: 8px; text-align: center; border: 1px solid #cbd5e1;">${it.qty}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">${formatINR(it.rate)}</td>
+                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">${formatINR(it.total)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
+            <tr>
+              <td style="width: 50%;"></td>
+              <td style="width: 50%; text-align: right;">
+                <p style="margin: 4px 0;">Subtotal: <strong>${formatINR(q.subtotal)}</strong></p>
+                ${Number(q.discount) > 0 ? `<p style="margin: 4px 0; color: #dc2626;">Discount: -<strong>${formatINR(q.discount)}</strong></p>` : ''}
+                <p style="font-size: 16px; font-weight: bold; color: #1e3a8a; border-top: 2px solid #1e3a8a; padding-top: 4px; margin-top: 4px;">
+                  Quotation Total: ${formatINR(q.grandTotal)}
+                </p>
+              </td>
+            </tr>
+          </table>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
+            <strong style="color: #0f172a; text-transform: uppercase;">Quotation Terms:</strong><br>
+            ${tc}
+          </div>
+        </div>
+      `;
+      printDocumentSlip(html);
+    }
+
+    // --- 9. WHATSAPP SHARING ---
+    function openWhatsAppURL(phone, message) {
+      if (!phone) {
+        alert("Customer phone number is missing.");
+        return;
+      }
+      let cleanPhone = phone.replace(/[^0-9]/g, '');
+      if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+
+    function shareJobWhatsApp(jobId) {
+      const j = DB.jobs.find(x => x.id === jobId);
+      if (!j) return;
+      const msg = 
+`*${DB.config.name}*
+*Service Job Card: ${j.id}*
+------------------------------
+Dear ${j.custName || 'Customer'},
+
+We have registered your device for service and diagnostics:
+
+*Device:* ${j.deviceType || 'Device'} ${j.brandModel ? `(${j.brandModel})` : ''}
+*Reported Issue:* ${j.fault}
+*Status:* ${j.status || 'Received'}
+${Number(j.cost) > 0 ? `*Estimated Cost:* ${formatINR(j.cost)}\n` : ''}
+We will notify you once diagnosis or repair is completed.
+
+Contact: ${DB.config.phone}
+Address: ${DB.config.address}`;
+      openWhatsAppURL(j.custPhone, msg);
+    }
+
+    function shareInvoiceWhatsApp(invId) {
+      const inv = DB.invoices.find(x => x.id === invId);
+      if (!inv) return;
+      const lines = inv.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
+      const msg = 
+`*${DB.config.name}*
+*Invoice Bill: ${inv.id}*
+------------------------------
+Dear ${inv.custName}, thank you for your business!
+
+*Billed Items:*
+${lines}
+
+Subtotal: ${formatINR(inv.subtotal)}
+${Number(inv.discount) > 0 ? `Discount: -${formatINR(inv.discount)}\n` : ''}*Grand Total: ${formatINR(inv.grandTotal)}*
+
+UPI ID: ${DB.config.upi}
+Contact: ${DB.config.phone}
+Address: ${DB.config.address}`;
+      openWhatsAppURL(inv.custPhone, msg);
+    }
+
+    function shareQuoteWhatsApp(quoteId) {
+      const q = DB.quotes.find(x => x.id === quoteId);
+      if (!q) return;
+      const lines = q.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
+      const msg = 
+`*${DB.config.name}*
+*Quotation / Estimate: ${q.id}*
+------------------------------
+Dear ${q.custName}, here is the estimate you requested:
+
+${lines}
+
+Subtotal: ${formatINR(q.subtotal)}
+${Number(q.discount) > 0 ? `Discount: -${formatINR(q.discount)}\n` : ''}*Quotation Total: ${formatINR(q.grandTotal)}*
+
+Please confirm to proceed.
+Contact: ${DB.config.phone}
+Address: ${DB.config.address}`;
+      openWhatsAppURL(q.custPhone, msg);
+    }
+
+    // --- MODAL UTILS ---
+    function openModal(id) {
+      document.getElementById(id).classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    // Startup flow
+    window.addEventListener("DOMContentLoaded", () => {
+      loadDB();
+      updateAppBranding();
+      updateSyncStatusUI();
+      checkURLPairing();
+      switchTab("dashboard");
+
+      if (DB.github.token && DB.github.owner && DB.github.repo) {
+        pullFromGitHub(false);
+      }
+    });
+  </script>
+</body>
+</html>
