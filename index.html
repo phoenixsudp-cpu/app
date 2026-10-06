@@ -219,12 +219,12 @@
       <div id="contacts-container" class="space-y-3"></div>
     </section>
 
-    <!-- 7. SETTINGS & GITHUB SYNC VIEW -->
+    <!-- 7. SETTINGS & GOOGLE DRIVE SYNC VIEW -->
     <section id="view-settings" class="tab-view hidden space-y-6">
       <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <div>
           <h2 class="text-lg font-bold text-slate-800">Phoenix Solutions Settings & Multi-Device Sync</h2>
-          <p class="text-xs text-slate-500">Pair your mobile device via QR, sync live with GitHub, and edit shop policies.</p>
+          <p class="text-xs text-slate-500">Pair your mobile device via QR, sync live with Google Drive, and edit shop policies.</p>
         </div>
 
         <!-- 1-Click Mobile QR Pairing Panel -->
@@ -235,7 +235,7 @@
               <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wide">Instant Mobile Setup (No typing on phone)</h3>
             </div>
             <p class="text-xs text-amber-800 mt-1 max-w-xl">
-              Scan this QR code from your Android phone camera to automatically install your GitHub token, configure cloud sync, and load all shop history in 1 second.
+              Scan this QR code from your Android phone camera to configure Google Drive sync and load all shop records instantly.
             </p>
           </div>
           <button onclick="openPairingQRModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm whitespace-nowrap">
@@ -243,37 +243,27 @@
           </button>
         </div>
 
-        <!-- GitHub Two-Way Cloud Sync Panel -->
+        <!-- Google Drive Cloud Sync Panel -->
         <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <i data-lucide="git-branch" class="w-5 h-5 text-indigo-700"></i>
-              <h3 class="text-sm font-bold text-indigo-950 uppercase tracking-wide">GitHub Live Sync (data/shop_data.json)</h3>
+              <i data-lucide="hard-drive" class="w-5 h-5 text-indigo-700"></i>
+              <h3 class="text-sm font-bold text-indigo-950 uppercase tracking-wide">Google Drive Live Sync (shop_data.json)</h3>
             </div>
-            <span class="text-xs text-indigo-700 font-semibold bg-indigo-100 px-2 py-0.5 rounded">Auto-Sync Active</span>
+            <span class="text-xs text-indigo-700 font-semibold bg-indigo-100 px-2 py-0.5 rounded">Drive Connected</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">GitHub Personal Access Token</label>
-              <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Repo Owner (Username)</label>
-              <input type="text" id="gh-owner" placeholder="e.g. phoenixsudp-cpu" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Repository Name</label>
-              <input type="text" id="gh-repo" placeholder="e.g. app" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Google Apps Script Web App URL</label>
+            <input type="text" id="gdrive-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-3 py-2 border rounded-lg text-xs bg-white">
           </div>
           <div class="flex flex-wrap items-center gap-2 pt-1">
-            <button onclick="saveGitHubConfig()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-              <i data-lucide="check" class="w-3.5 h-3.5"></i> Save Credentials
+            <button onclick="saveGDriveConfig()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Save & Test URL
             </button>
-            <button onclick="pushToGitHub(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+            <button onclick="pushToGDrive(true)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Push Now
             </button>
-            <button onclick="pullFromGitHub(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+            <button onclick="pullFromGDrive(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <i data-lucide="download-cloud" class="w-3.5 h-3.5"></i> Pull Now
             </button>
           </div>
@@ -396,7 +386,7 @@
       </div>
       <div id="qrcode-container" class="flex justify-center p-3 bg-white border border-slate-200 rounded-xl"></div>
       <p class="text-xs text-slate-600 leading-relaxed">
-        Scan this QR with Google Lens or Camera on your Android phone. It securely links your token, downloads your database, and sets up instant sync!
+        Scan this QR with Google Lens or Camera on your Android phone to connect Google Drive and load all records immediately!
       </p>
       <button onclick="closeModal('modal-pairing-qr')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold">Done</button>
     </div>
@@ -816,7 +806,7 @@
 
     let DB = {
       config: { ...DEFAULT_CONFIG },
-      github: { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" },
+      gdrive: { url: "" },
       sequences: { job: 1001, invoice: 3001, quote: 2001, sku: 101, contact: 101 },
       jobs: [],
       invoices: [],
@@ -871,12 +861,12 @@
         try {
           const payload = atob(hash.replace("#pair=", ""));
           const creds = JSON.parse(payload);
-          if (creds.token && creds.owner && creds.repo) {
-            DB.github = { ...DB.github, ...creds };
+          if (creds.url) {
+            DB.gdrive = { url: creds.url };
             saveDB(false);
             history.replaceState(null, null, window.location.pathname);
-            alert("Mobile successfully paired with GitHub! Fetching latest records...");
-            pullFromGitHub(false);
+            alert("Mobile successfully paired with Google Drive! Fetching records...");
+            pullFromGDrive(false);
           }
         } catch (e) {
           console.error("Pairing parse error:", e);
@@ -885,14 +875,14 @@
     }
 
     function openPairingQRModal() {
-      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
-        alert("Please save your GitHub token, owner, and repo on this computer first.");
+      if (!DB.gdrive || !DB.gdrive.url) {
+        alert("Please save your Google Drive Apps Script URL first.");
         return;
       }
       const container = document.getElementById("qrcode-container");
       container.innerHTML = "";
 
-      const creds = { token: DB.github.token, owner: DB.github.owner, repo: DB.github.repo };
+      const creds = { url: DB.gdrive.url };
       const encoded = btoa(JSON.stringify(creds));
       const pairUrl = window.location.origin + window.location.pathname + "#pair=" + encoded;
 
@@ -915,7 +905,7 @@
           const parsed = JSON.parse(saved);
           DB = { ...DB, ...parsed };
           if (!DB.config) DB.config = { ...DEFAULT_CONFIG };
-          if (!DB.github) DB.github = { token: "", owner: "phoenixsudp-cpu", repo: "app", branch: "main", sha: "" };
+          if (!DB.gdrive) DB.gdrive = { url: "" };
           if (!Array.isArray(DB.jobs)) DB.jobs = [];
           if (!Array.isArray(DB.invoices)) DB.invoices = [];
           if (!Array.isArray(DB.quotes)) DB.quotes = [];
@@ -931,8 +921,8 @@
     function saveDB(triggerCloudPush = false) {
       localStorage.setItem("phoenix_solutions_db", JSON.stringify(DB));
       updateDatalists();
-      if (triggerCloudPush && DB.github.token) {
-        pushToGitHub(false);
+      if (triggerCloudPush && DB.gdrive && DB.gdrive.url) {
+        pushToGDrive(false);
       }
     }
 
@@ -2050,7 +2040,7 @@
       lucide.createIcons();
     }
 
-    // --- 6. SETTINGS & GITHUB REST API SYNC ---
+    // --- 6. SETTINGS & GOOGLE DRIVE REST API SYNC ---
     function loadSettingsTab() {
       document.getElementById("tab-cfg-shop-name").value = DB.config.name;
       document.getElementById("tab-cfg-shop-sub").value = DB.config.sub;
@@ -2064,19 +2054,16 @@
       document.getElementById("tab-cfg-tc-inv").value = DB.config.tcInvoice || "";
       document.getElementById("tab-cfg-tc-quote").value = DB.config.tcQuote || "";
 
-      document.getElementById("gh-token").value = DB.github.token || "";
-      document.getElementById("gh-owner").value = DB.github.owner || "phoenixsudp-cpu";
-      document.getElementById("gh-repo").value = DB.github.repo || "app";
+      document.getElementById("gdrive-url").value = (DB.gdrive && DB.gdrive.url) ? DB.gdrive.url : "";
     }
 
-    function saveGitHubConfig() {
-      DB.github.token = document.getElementById("gh-token").value.trim();
-      DB.github.owner = document.getElementById("gh-owner").value.trim() || "phoenixsudp-cpu";
-      DB.github.repo = document.getElementById("gh-repo").value.trim() || "app";
+    function saveGDriveConfig() {
+      const url = document.getElementById("gdrive-url").value.trim();
+      DB.gdrive = { url: url };
       saveDB(false);
       updateSyncStatusUI();
-      alert("GitHub credentials saved! Now syncing with repository...");
-      pullFromGitHub(true);
+      alert("Google Drive Web App URL saved! Pulling latest records...");
+      pullFromGDrive(true);
     }
 
     function updateSyncStatusUI() {
@@ -2084,147 +2071,80 @@
       const text = document.getElementById("sync-text");
       if (!dot || !text) return;
 
-      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
+      if (!DB.gdrive || !DB.gdrive.url) {
         dot.className = "w-2 h-2 rounded-full bg-slate-400";
         text.innerText = "Local Mode";
       } else {
         dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-        text.innerText = "Synced with GitHub";
+        text.innerText = "Synced with Drive";
       }
     }
 
-    async function pushToGitHub(showAlert = false) {
-      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
-        if (showAlert) alert("Configure GitHub credentials first.");
+    async function pushToGDrive(showAlert = false) {
+      if (!DB.gdrive || !DB.gdrive.url) {
+        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
         return;
       }
 
-      const token = DB.github.token.trim();
-      const owner = DB.github.owner.trim();
-      const repo = DB.github.repo.trim();
-      const branch = DB.github.branch || "main";
-      const path = "data/shop_data.json";
-
-      const safeDB = JSON.parse(JSON.stringify(DB));
-      if (safeDB.github) {
-        safeDB.github.token = "";
-      }
-
-      const jsonStr = JSON.stringify(safeDB, null, 2);
-      const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
-
       try {
-        let sha = "";
-        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
-        const getRes = await fetch(getUrl, {
-          method: "GET",
-          headers: {
-            "Authorization": `token ${token}`,
-            "Accept": "application/vnd.github.v3+json"
-          }
+        const res = await fetch(DB.gdrive.url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ data: DB })
         });
-
-        if (getRes.ok) {
-          const getData = await getRes.json();
-          sha = getData.sha;
-        } else if (getRes.status === 401) {
-          alert("GitHub Token is invalid or expired. Please generate a new classic token with 'repo' scope.");
-          return;
-        }
-
-        const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-        const bodyPayload = {
-          message: `Sync Phoenix ERP - ${new Date().toLocaleString("en-IN")}`,
-          content: contentBase64,
-          branch: branch
-        };
-        if (sha) bodyPayload.sha = sha;
-
-        const putRes = await fetch(putUrl, {
-          method: "PUT",
-          headers: {
-            "Authorization": `token ${token}`,
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github.v3+json"
-          },
-          body: JSON.stringify(bodyPayload)
-        });
-
-        if (putRes.ok) {
-          const putData = await putRes.json();
-          DB.github.sha = putData.content.sha;
-          saveDB(false);
-          updateSyncStatusUI();
-          if (showAlert) alert("All data successfully pushed to GitHub (data/shop_data.json)!");
-        } else {
-          const err = await putRes.json().catch(() => ({}));
-          alert("GitHub push error: " + (err.message || putRes.statusText || "Status " + putRes.status));
-        }
-      } catch (err) {
-        console.error("Push Error:", err);
-        alert("Push failed: " + err.message + ". Verify token has 'repo' scope and internet is active.");
-      }
-    }
-
-    async function pullFromGitHub(showAlert = false) {
-      if (!DB.github.token || !DB.github.owner || !DB.github.repo) {
-        if (showAlert) alert("Configure GitHub credentials first.");
-        return;
-      }
-
-      const token = DB.github.token.trim();
-      const owner = DB.github.owner.trim();
-      const repo = DB.github.repo.trim();
-      const branch = DB.github.branch || "main";
-      const path = "data/shop_data.json";
-
-      const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}&_t=${Date.now()}`;
-
-      try {
-        const res = await fetch(getUrl, {
-          method: "GET",
-          headers: {
-            "Authorization": `token ${token}`,
-            "Accept": "application/vnd.github.v3+json"
-          }
-        });
-
-        if (!res.ok) {
-          if (res.status === 404) {
-            if (showAlert) alert("File data/shop_data.json not found on GitHub. Click 'Push Now' first.");
-          } else {
-            const err = await res.json().catch(() => ({}));
-            if (showAlert) alert("GitHub pull error: " + (err.message || res.statusText));
-          }
-          return;
-        }
 
         const data = await res.json();
-        const decodedContent = decodeURIComponent(escape(atob(data.content)));
-        const pulledDB = JSON.parse(decodedContent);
-
-        const localGitHub = { ...DB.github, sha: data.sha };
-        DB = { ...pulledDB, github: localGitHub };
-        saveDB(false);
-        updateAppBranding();
-        updateSyncStatusUI();
-        renderJobs();
-        renderInvoices();
-        renderQuotes();
-        renderInventory();
-        renderDashboard();
-        if (showAlert) alert(`Successfully synced! Loaded ${DB.jobs.length} Job Cards from GitHub.`);
+        if (data.status === "success") {
+          updateSyncStatusUI();
+          if (showAlert) alert("All data successfully pushed to Google Drive (shop_data.json)!");
+        } else {
+          alert("Drive Push Error: " + data.message);
+        }
       } catch (err) {
-        console.error("Pull Error:", err);
+        console.error("GDrive Push Error:", err);
+        if (showAlert) alert("Push failed: " + err.message + ". Verify the Web App URL and internet connection.");
+      }
+    }
+
+    async function pullFromGDrive(showAlert = false) {
+      if (!DB.gdrive || !DB.gdrive.url) {
+        if (showAlert) alert("Configure your Google Drive Web App URL in Settings first.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${DB.gdrive.url}?_t=${Date.now()}`);
+        const result = await res.json();
+
+        if (result.status === "success" && result.data) {
+          const currentUrl = DB.gdrive.url;
+          DB = { ...result.data, gdrive: { url: currentUrl } };
+          saveDB(false);
+          updateAppBranding();
+          updateSyncStatusUI();
+          renderJobs();
+          renderInvoices();
+          renderQuotes();
+          renderInventory();
+          renderDashboard();
+          if (showAlert) alert(`Successfully synced! Loaded ${DB.jobs.length} Job Cards from Google Drive.`);
+        } else if (result.status === "success" && !result.data) {
+          if (showAlert) alert("File not found on Drive. Pushing current data to initialize it...");
+          pushToGDrive(true);
+        } else {
+          if (showAlert) alert("Pull error: " + result.message);
+        }
+      } catch (err) {
+        console.error("GDrive Pull Error:", err);
         if (showAlert) alert("Pull error: " + err.message);
       }
     }
 
     function manualSyncNow() {
-      if (!DB.github.token) {
+      if (!DB.gdrive || !DB.gdrive.url) {
         switchTab("settings");
       } else {
-        pullFromGitHub(true);
+        pullFromGDrive(true);
       }
     }
 
@@ -2255,7 +2175,7 @@
 
       updateAppBranding();
       saveDB(true);
-      alert("Settings and Policies saved & synced to GitHub!");
+      alert("Settings and Policies saved & synced to Google Drive!");
     }
 
     // --- 7. EXPORT ENGINE ---
@@ -2413,283 +2333,4 @@
     }
 
     function printJobCardSlip(jobId) {
-      const j = DB.jobs.find(x => x.id === jobId);
-      if (!j) return;
-      const tc = (DB.config.tcJob || "").replace(/\n/g, "<br>");
-      const html = `
-        <div style="padding: 16px; max-width: 760px; margin: auto;">
-          ${buildShopHeaderHTML("SERVICE JOB CARD TICKET", j.id, j.date)}
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px;">
-            <tr>
-              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-                <strong style="color: #334155;">Customer Information:</strong><br>
-                <span style="font-size: 14px; font-weight: bold;">${escapeHtml(j.custName)}</span><br>
-                Phone: ${escapeHtml(j.custPhone)}<br>
-                ${j.custAddress ? `Address: ${escapeHtml(j.custAddress)}` : ''}
-              </td>
-              <td style="width: 50%; vertical-align: top; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
-                <strong style="color: #334155;">Device Information:</strong><br>
-                Type: <strong>${escapeHtml(j.deviceType || 'Device')}</strong><br>
-                Model: ${escapeHtml(j.brandModel || 'N/A')}<br>
-                Serial / Tag: ${escapeHtml(j.serialNo || 'N/A')}
-              </td>
-            </tr>
-          </table>
-          <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px;">
-            <strong style="color: #b91c1c;">Reported Problem / Symptoms:</strong>
-            <p style="margin: 4px 0 10px 0; font-size: 13px;">${escapeHtml(j.fault)}</p>
-            <strong>Accessories Received:</strong>
-            <p style="margin: 4px 0 0 0; color: #475569;">${escapeHtml(j.accessories || 'Device only (No accessories)')}</p>
-          </div>
-          ${j.photo ? `
-            <div style="margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center;">
-              <span style="font-size: 10px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px;">PHYSICAL CONDITION INTAKE PHOTO</span>
-              <img src="${j.photo}" alt="Intake Photo" style="max-height: 150px; max-width: 100%; border-radius: 4px; display: inline-block;">
-            </div>
-          ` : ''}
-          <table style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-bottom: 14px; font-size: 12px;">
-            <tr>
-              <td>
-                Status: <strong>${j.status || 'Received'}</strong><br>
-                Estimated Cost: <strong>${Number(j.cost) > 0 ? formatINR(j.cost) : 'To be diagnosed'}</strong>
-              </td>
-              <td style="text-align: right; width: 200px;">
-                <br><br>
-                <div style="border-top: 1px dashed #64748b; font-size: 11px;">Customer Signature</div>
-              </td>
-            </tr>
-          </table>
-          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
-            <strong style="color: #0f172a; text-transform: uppercase;">Service Terms:</strong><br>
-            ${tc}
-          </div>
-        </div>
-      `;
-      printDocumentSlip(html);
-    }
-
-    function printInvoiceSlip(invId) {
-      const inv = DB.invoices.find(x => x.id === invId);
-      if (!inv) return;
-      const tc = (DB.config.tcInvoice || "").replace(/\n/g, "<br>");
-      const html = `
-        <div style="padding: 16px; max-width: 760px; margin: auto;">
-          ${buildShopHeaderHTML("INVOICE BILL", inv.id, inv.date)}
-          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
-            <strong style="color: #334155;">Billed To:</strong><br>
-            <span style="font-size: 14px; font-weight: bold;">${escapeHtml(inv.custName)}</span><br>
-            Phone: ${escapeHtml(inv.custPhone)}<br>
-            ${inv.custAddress ? `Address: ${escapeHtml(inv.custAddress)}` : ''}
-          </div>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
-            <thead>
-              <tr style="background: #0f172a; color: white; text-align: left;">
-                <th style="padding: 8px; border: 1px solid #cbd5e1; width: 30px;">#</th>
-                <th style="padding: 8px; border: 1px solid #cbd5e1;">Item Description / Service</th>
-                <th style="padding: 8px; text-align: center; border: 1px solid #cbd5e1; width: 60px;">Qty</th>
-                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 90px;">Rate</th>
-                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 100px;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${inv.items.map((it, idx) => `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${idx + 1}</td>
-                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${escapeHtml(it.desc)}</td>
-                  <td style="padding: 8px; text-align: center; border: 1px solid #cbd5e1;">${it.qty}</td>
-                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">${formatINR(it.rate)}</td>
-                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">${formatINR(it.total)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
-            <tr>
-              <td style="width: 50%; vertical-align: top; background: #f1f5f9; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
-                <strong>Payment Details:</strong><br>
-                UPI ID: <span style="font-family: monospace; font-weight: bold; color: #047857;">${escapeHtml(DB.config.upi)}</span><br>
-                Phone: ${escapeHtml(DB.config.phone)}
-              </td>
-              <td style="width: 50%; vertical-align: top; text-align: right;">
-                <p style="margin: 4px 0;">Subtotal: <strong>${formatINR(inv.subtotal)}</strong></p>
-                ${Number(inv.discount) > 0 ? `<p style="margin: 4px 0; color: #dc2626;">Discount: -<strong>${formatINR(inv.discount)}</strong></p>` : ''}
-                <p style="font-size: 16px; font-weight: bold; color: #047857; border-top: 2px solid #047857; padding-top: 4px; margin-top: 4px;">
-                  Grand Total: ${formatINR(inv.grandTotal)}
-                </p>
-              </td>
-            </tr>
-          </table>
-          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
-            <strong style="color: #0f172a; text-transform: uppercase;">Terms & Conditions:</strong><br>
-            ${tc}
-          </div>
-        </div>
-      `;
-      printDocumentSlip(html);
-    }
-
-    function printQuoteSlip(quoteId) {
-      const q = DB.quotes.find(x => x.id === quoteId);
-      if (!q) return;
-      const tc = (DB.config.tcQuote || "").replace(/\n/g, "<br>");
-      const html = `
-        <div style="padding: 16px; max-width: 760px; margin: auto;">
-          ${buildShopHeaderHTML("ESTIMATE / QUOTATION", q.id, q.date)}
-          <div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0;">
-            <strong style="color: #334155;">Quotation For:</strong><br>
-            <span style="font-size: 14px; font-weight: bold;">${escapeHtml(q.custName)}</span><br>
-            Phone: ${escapeHtml(q.custPhone)}<br>
-            ${q.custAddress ? `Address: ${escapeHtml(q.custAddress)}` : ''}
-          </div>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px;">
-            <thead>
-              <tr style="background: #0f172a; color: white; text-align: left;">
-                <th style="padding: 8px; border: 1px solid #cbd5e1; width: 30px;">#</th>
-                <th style="padding: 8px; border: 1px solid #cbd5e1;">Proposed Hardware / Service</th>
-                <th style="padding: 8px; text-align: center; border: 1px solid #cbd5e1; width: 60px;">Qty</th>
-                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 90px;">Unit Rate</th>
-                <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; width: 100px;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${q.items.map((it, idx) => `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${idx + 1}</td>
-                  <td style="padding: 8px; border: 1px solid #cbd5e1;">${escapeHtml(it.desc)}</td>
-                  <td style="padding: 8px; text-align: center; border: 1px solid #cbd5e1;">${it.qty}</td>
-                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">${formatINR(it.rate)}</td>
-                  <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">${formatINR(it.total)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <table style="width: 100%; margin-bottom: 14px; font-size: 12px;">
-            <tr>
-              <td style="width: 50%;"></td>
-              <td style="width: 50%; text-align: right;">
-                <p style="margin: 4px 0;">Subtotal: <strong>${formatINR(q.subtotal)}</strong></p>
-                ${Number(q.discount) > 0 ? `<p style="margin: 4px 0; color: #dc2626;">Discount: -<strong>${formatINR(q.discount)}</strong></p>` : ''}
-                <p style="font-size: 16px; font-weight: bold; color: #1e3a8a; border-top: 2px solid #1e3a8a; padding-top: 4px; margin-top: 4px;">
-                  Quotation Total: ${formatINR(q.grandTotal)}
-                </p>
-              </td>
-            </tr>
-          </table>
-          <div style="border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #64748b; line-height: 1.4;">
-            <strong style="color: #0f172a; text-transform: uppercase;">Quotation Terms:</strong><br>
-            ${tc}
-          </div>
-        </div>
-      `;
-      printDocumentSlip(html);
-    }
-
-    // --- 9. WHATSAPP SHARING ---
-    function openWhatsAppURL(phone, message) {
-      if (!phone) {
-        alert("Customer phone number is missing.");
-        return;
-      }
-      let cleanPhone = phone.replace(/[^0-9]/g, '');
-      if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
-      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-      window.open(url, "_blank");
-    }
-
-    function shareJobWhatsApp(jobId) {
-      const j = DB.jobs.find(x => x.id === jobId);
-      if (!j) return;
-      const msg = 
-`*${DB.config.name}*
-*Service Job Card: ${j.id}*
-------------------------------
-Dear ${j.custName || 'Customer'},
-
-We have registered your device for service and diagnostics:
-
-*Device:* ${j.deviceType || 'Device'} ${j.brandModel ? `(${j.brandModel})` : ''}
-*Reported Issue:* ${j.fault}
-*Status:* ${j.status || 'Received'}
-${Number(j.cost) > 0 ? `*Estimated Cost:* ${formatINR(j.cost)}\n` : ''}
-We will notify you once diagnosis or repair is completed.
-
-Contact: ${DB.config.phone}
-Address: ${DB.config.address}`;
-      openWhatsAppURL(j.custPhone, msg);
-    }
-
-    function shareInvoiceWhatsApp(invId) {
-      const inv = DB.invoices.find(x => x.id === invId);
-      if (!inv) return;
-      const lines = inv.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
-      const msg = 
-`*${DB.config.name}*
-*Invoice Bill: ${inv.id}*
-------------------------------
-Dear ${inv.custName}, thank you for your business!
-
-*Billed Items:*
-${lines}
-
-Subtotal: ${formatINR(inv.subtotal)}
-${Number(inv.discount) > 0 ? `Discount: -${formatINR(inv.discount)}\n` : ''}*Grand Total: ${formatINR(inv.grandTotal)}*
-
-UPI ID: ${DB.config.upi}
-Contact: ${DB.config.phone}
-Address: ${DB.config.address}`;
-      openWhatsAppURL(inv.custPhone, msg);
-    }
-
-    function shareQuoteWhatsApp(quoteId) {
-      const q = DB.quotes.find(x => x.id === quoteId);
-      if (!q) return;
-      const lines = q.items.map(it => `• ${it.desc} (x${it.qty}) - ${formatINR(it.total)}`).join("\n");
-      const msg = 
-`*${DB.config.name}*
-*Quotation / Estimate: ${q.id}*
-------------------------------
-Dear ${q.custName}, here is the estimate you requested:
-
-${lines}
-
-Subtotal: ${formatINR(q.subtotal)}
-${Number(q.discount) > 0 ? `Discount: -${formatINR(q.discount)}\n` : ''}*Quotation Total: ${formatINR(q.grandTotal)}*
-
-Please confirm to proceed.
-Contact: ${DB.config.phone}
-Address: ${DB.config.address}`;
-      openWhatsAppURL(q.custPhone, msg);
-    }
-
-    // --- MODAL UTILS ---
-    function openModal(id) {
-      document.getElementById(id).classList.remove("hidden");
-      lucide.createIcons();
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add("hidden");
-    }
-
-    function escapeHtml(str) {
-      if (!str) return "";
-      return String(str).replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-      });
-    }
-
-    // Startup flow
-    window.addEventListener("DOMContentLoaded", () => {
-      loadDB();
-      updateAppBranding();
-      updateSyncStatusUI();
-      checkURLPairing();
-      switchTab("dashboard");
-
-      if (DB.github.token && DB.github.owner && DB.github.repo) {
-        pullFromGitHub(false);
-      }
-    });
-  </script>
-</body>
-</html>
+      const j = DB.jobs.
